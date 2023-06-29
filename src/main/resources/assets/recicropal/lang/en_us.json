@@ -1,0 +1,20 @@
+{
+  "itemGroup.recicropal" : "Recicropal",
+  "block.recicropal.trellis" : "Trellis",
+  "block.recicropal.bottle_gourd": "Gourd Bottle",
+  "block.recicropal.bottle_gourd_fruit": "Bottle Gourd",
+  "block.recicropal.bottle_gourd_crop": "Bottle Gourd Crop",
+  "block.recicropal.bottle_gourd_vine": "Bottle Gourd Vine",
+  "block.recicropal.melon_crop": "Melon Crop",
+  "block.recicropal.melon_vine": "Melon Vine",
+  "block.recicropal.pumpkin_crop": "Pumpkin Crop",
+  "block.recicropal.pumpkin_vine": "Pumpkin Vine",
+  "item.recicropal.bottle_gourd_seeds": "Bottle Gourd Seeds",
+  "item.recicropal.climbing_melon_seeds": "Melon Seeds",
+  "item.recicropal.climbing_pumpkin_seeds": "Pumpkin Seeds",
+  "item.recicropal.bottle_gourd": "Gourd Bottle",
+  "item.recicropal.glamorous_gourd": "Glamorous Gourd",
+  "item.minecraft.potion.effect.revitalization": "Potion of Revitalization",
+  "item.minecraft.splash_potion.effect.revitalization": "Splash Potion of Revitalization",
+  "item.minecraft.lingering_potion.effect.revitalization": "Lingering Potion of Revitalization"
+}

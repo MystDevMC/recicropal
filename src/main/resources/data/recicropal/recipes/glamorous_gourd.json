@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "forge:tag_empty",
+      "tag": "forge:plates/gold"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:gold_ingot"
+    },
+    "X": {
+      "item": "recicropal:bottle_gourd_fruit"
+    }
+  },
+  "result": {
+    "item": "recicropal:glamorous_gourd"
+  }
+}

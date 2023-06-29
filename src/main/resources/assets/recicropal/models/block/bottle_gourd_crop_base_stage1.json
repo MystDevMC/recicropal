@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:block/cross",
+	"render_type": "cutout",
+	"textures": {
+		"cross": "recicropal:block/bottle_gourd_crop_base_stage1"
+	}
+}

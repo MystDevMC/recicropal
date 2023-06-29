@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:plates/gold"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:plates/gold"
+    },
+    "X": {
+      "item": "recicropal:bottle_gourd"
+    }
+  },
+  "result": {
+    "item": "recicropal:glamorous_gourd"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "recicropal:block/trellis",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "recicropal:block/trellis",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "recicropal:block/trellis",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "recicropal:block/trellis"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "recicropal:block/trellis",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "recicropal:block/trellis",
+        "y": 270
+      }
+    }
+  ]
+}

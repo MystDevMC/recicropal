@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "recicropal:bottle_gourd_fruit"
+  },
+  "result": "recicropal:bottle_gourd",
+  "experience": 0.35,
+  "cookingtime": 100
+}

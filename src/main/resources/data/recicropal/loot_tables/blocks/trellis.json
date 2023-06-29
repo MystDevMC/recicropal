@@ -1,0 +1,94 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "recicropal:trellis",
+                  "properties": {
+                    "up": "true"
+                  }
+                }
+              ],
+              "name": "recicropal:trellis"
+            },            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "recicropal:trellis",
+                  "properties": {
+                    "down": "true"
+                  }
+                }
+              ],
+              "name": "recicropal:trellis"
+            },            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "recicropal:trellis",
+                  "properties": {
+                    "south": "true"
+                  }
+                }
+              ],
+              "name": "recicropal:trellis"
+            },            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "recicropal:trellis",
+                  "properties": {
+                    "north": "true"
+                  }
+                }
+              ],
+              "name": "recicropal:trellis"
+            },            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "recicropal:trellis",
+                  "properties": {
+                    "east": "true"
+                  }
+                }
+              ],
+              "name": "recicropal:trellis"
+            },            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "recicropal:trellis",
+                  "properties": {
+                    "west": "true"
+                  }
+                }
+              ],
+              "name": "recicropal:trellis"
+            }
+          ]
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

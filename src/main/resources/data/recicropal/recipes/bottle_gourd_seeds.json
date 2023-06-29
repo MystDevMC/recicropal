@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "recicropal:bottle_gourd"
+    }
+  ],
+  "result": {
+    "item": "recicropal:bottle_gourd_seeds",
+    "count": 2
+  }
+}
