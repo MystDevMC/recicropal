@@ -1,14 +1,18 @@
 package com.mystdev.recicropal;
 
 import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdItem;
+import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdListing;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraftforge.event.village.VillagerTradesEvent;
 
 import static com.mystdev.recicropal.Recicropal.REGISTRATE;
 
@@ -56,5 +60,11 @@ public class ModItems {
         ComposterBlock.COMPOSTABLES.put(ModBlocks.BOTTLE_GOURD_FRUIT.get().asItem(), 0.65F);
         ComposterBlock.COMPOSTABLES.put(CLIMBING_MELON_SEEDS.get(), 0.3F);
         ComposterBlock.COMPOSTABLES.put(CLIMBING_PUMPKIN_SEEDS.get(), 0.3F);
+    }
+
+    public static void registerTrades(VillagerTradesEvent event) {
+        if (event.getType() == VillagerProfession.FARMER) {
+            event.getTrades().get(1).add(new BottleGourdListing());
+        }
     }
 }

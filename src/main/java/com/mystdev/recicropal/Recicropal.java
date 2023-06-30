@@ -41,6 +41,7 @@ public class Recicropal {
 
         var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addGenericListener(ItemStack.class, Recicropal::attachItemCaps);
+        forgeBus.addListener(ModItems::registerTrades);
 
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(Recicropal::onCommonSetup);

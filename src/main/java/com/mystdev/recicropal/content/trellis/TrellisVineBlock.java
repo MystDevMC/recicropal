@@ -85,9 +85,7 @@ public abstract class TrellisVineBlock extends CropBlock {
                 newValue = newValue || (aboveState.is(this) && aboveState.getValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(
                         side.getKey())));
 
-                Recicropal.LOGGER.debug("above" + aboveState);
                 var adjState = levelAccessor.getBlockState(pos.above().relative(side.getKey()));
-                Recicropal.LOGGER.debug("adj" + adjState);
                 newValue = newValue || (adjState.is(this) && adjState.getValue(VinelikeProps.DOWN) &&
                         MultifaceBlock.canAttachTo(levelAccessor,
                                                    Direction.DOWN,
@@ -270,7 +268,7 @@ public abstract class TrellisVineBlock extends CropBlock {
         var dirs = new ArrayList<Pair<BlockPos, Direction>>();
         sides.forEach(e -> {
             var side = e.getKey();
-            var sideHasVines = state.getValue(e.getValue());
+            boolean sideHasVines = state.getValue(e.getValue());
 
             var adj = pos.relative(side);
             var topAdj = adj.above();
