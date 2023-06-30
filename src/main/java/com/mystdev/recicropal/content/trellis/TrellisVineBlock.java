@@ -1,5 +1,6 @@
 package com.mystdev.recicropal.content.trellis;
 
+import com.mystdev.recicropal.Recicropal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -73,25 +74,29 @@ public abstract class TrellisVineBlock extends CropBlock {
         var blockstate = state;
         var sides = PROPS.streamProps().filter(e -> state.getValue(e.getValue())).toList();
         for (var side : sides) {
-            var oldValue = state.getValue(side.getValue());
-            if (oldValue) {
-                var attached = pos.relative(side.getKey());
-                var newValue = MultifaceBlock.canAttachTo(levelAccessor,
-                                                          side.getKey(),
-                                                          attached,
-                                                          levelAccessor.getBlockState(attached));
+            var attached = pos.relative(side.getKey());
+            var newValue = MultifaceBlock.canAttachTo(levelAccessor,
+                                                      side.getKey(),
+                                                      attached,
+                                                      levelAccessor.getBlockState(attached));
 
-                if (side.getKey().getAxis().isHorizontal()) {
-                    var aboveState = levelAccessor.getBlockState(pos.above());
-                    newValue = newValue || aboveState.is(this) && aboveState.getValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(
-                            side.getKey()));
-                    var adjState = levelAccessor.getBlockState(pos.above().relative(side.getKey()));
-                    newValue = newValue || adjState.is(this) && adjState.getValue(VinelikeProps.DOWN);
+            if (side.getKey().getAxis().isHorizontal()) {
+                var aboveState = levelAccessor.getBlockState(pos.above());
+                newValue = newValue || (aboveState.is(this) && aboveState.getValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(
+                        side.getKey())));
 
-                }
-                if (!newValue)
-                    blockstate = state.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(side.getKey()), Boolean.FALSE);
+                Recicropal.LOGGER.debug("above" + aboveState);
+                var adjState = levelAccessor.getBlockState(pos.above().relative(side.getKey()));
+                Recicropal.LOGGER.debug("adj" + adjState);
+                newValue = newValue || (adjState.is(this) && adjState.getValue(VinelikeProps.DOWN) &&
+                        MultifaceBlock.canAttachTo(levelAccessor,
+                                                   Direction.DOWN,
+                                                   attached,
+                                                   levelAccessor.getBlockState(attached)));
+
             }
+            if (!newValue)
+                blockstate = blockstate.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(side.getKey()), Boolean.FALSE);
         }
         return !PROPS.hasFaces(blockstate) ? Blocks.AIR.defaultBlockState() : blockstate;
     }
@@ -193,6 +198,7 @@ public abstract class TrellisVineBlock extends CropBlock {
         var sides = PROPS.streamProps().filter(e -> state.getValue(e.getValue())).toList();
         if (sides.size() < PROPS.streamProps().count()) {
             // Find first supporting block adjacent to this or vines above this
+            // Why don't I make it filter the sides that haven't got any vines...
             var attachableDir = Direction.allShuffled(randomSource).stream().filter(d -> {
                 var adj = pos.relative(d);
                 var floatCheck = false;
@@ -201,8 +207,7 @@ public abstract class TrellisVineBlock extends CropBlock {
                     floatCheck = aboveState.is(this) && aboveState.getValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(d));
                     if (floatCheck) return true;
                     var adjState = level.getBlockState(pos.above().relative(d));
-                    floatCheck = adjState.is(this) && (adjState.getValue(VinelikeProps.DOWN) || adjState.getValue(
-                            VinelikeProps.PROPERTY_BY_DIRECTION.get(d)));
+                    floatCheck = adjState.is(this) && adjState.getValue(VinelikeProps.DOWN);
                     if (floatCheck) return true;
                 }
                 return MultifaceBlock.canAttachTo(level, d, adj, level.getBlockState(adj));

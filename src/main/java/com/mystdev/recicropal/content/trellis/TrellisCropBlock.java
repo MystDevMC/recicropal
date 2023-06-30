@@ -81,16 +81,14 @@ public abstract class TrellisCropBlock extends CropBlock {
             var blockstate = state;
             var sides = PROPS.streamProps().filter(e -> state.getValue(e.getValue())).toList();
             for (var side : sides) {
-                var oldValue = state.getValue(side.getValue());
-                if (oldValue) {
-                    var attached = pos.relative(side.getKey());
-                    var newValue = MultifaceBlock.canAttachTo(levelAccessor,
-                                                              side.getKey(),
-                                                              attached,
-                                                              levelAccessor.getBlockState(attached));
-                    if (!newValue) blockstate = state.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(side.getKey()),
-                                                               Boolean.FALSE);
-                }
+
+                var attached = pos.relative(side.getKey());
+                var newValue = MultifaceBlock.canAttachTo(levelAccessor,
+                                                          side.getKey(),
+                                                          attached,
+                                                          levelAccessor.getBlockState(attached));
+                if (!newValue) blockstate = blockstate.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(side.getKey()),
+                                                           Boolean.FALSE);
             }
             return blockstate;
         }
