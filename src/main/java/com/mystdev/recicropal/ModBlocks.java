@@ -8,7 +8,6 @@ import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdCropBlock;
 import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdFruitBlock;
 import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdVineBlock;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import com.tterrag.registrate.util.entry.FluidEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.food.FoodProperties;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.common.util.NonNullLazy;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;

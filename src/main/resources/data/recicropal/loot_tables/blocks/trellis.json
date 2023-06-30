@@ -24,7 +24,8 @@
                 }
               ],
               "name": "recicropal:trellis"
-            },            {
+            },
+            {
               "type": "minecraft:item",
               "conditions": [
                 {
@@ -36,7 +37,8 @@
                 }
               ],
               "name": "recicropal:trellis"
-            },            {
+            },
+            {
               "type": "minecraft:item",
               "conditions": [
                 {
@@ -48,7 +50,8 @@
                 }
               ],
               "name": "recicropal:trellis"
-            },            {
+            },
+            {
               "type": "minecraft:item",
               "conditions": [
                 {
@@ -60,7 +63,8 @@
                 }
               ],
               "name": "recicropal:trellis"
-            },            {
+            },
+            {
               "type": "minecraft:item",
               "conditions": [
                 {
@@ -72,7 +76,8 @@
                 }
               ],
               "name": "recicropal:trellis"
-            },            {
+            },
+            {
               "type": "minecraft:item",
               "conditions": [
                 {

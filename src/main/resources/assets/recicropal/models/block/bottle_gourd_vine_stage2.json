@@ -1,48 +1,176 @@
 {
-	"credit": "Made with Blockbench",
-	"ambientocclusion": false,
-	"render_type": "cutout",
-	"textures": {
-		"0": "recicropal:block/bottle_gourd_vine_stage0_base",
-		"1": "recicropal:block/bottle_gourd_vine_stage2_foliage",
-		"particle": "recicropal:block/bottle_gourd_vine_stage2_base"
-	},
-	"elements": [
-		{
-			"from": [0, 0, 0.8],
-			"to": [16, 16, 0.8],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 16, 0]},
-			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#0"}
-			}
-		},
-		{
-			"from": [-1, 10, 0],
-			"to": [17, 16, 0],
-			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 16, 0]},
-			"faces": {
-				"north": {"uv": [0, 0, 16, 6], "texture": "#1"},
-				"south": {"uv": [0, 0, 16, 6], "texture": "#1"}
-			}
-		},
-		{
-			"from": [-1, 0, 0],
-			"to": [17, 6, 0],
-			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 6, 0]},
-			"faces": {
-				"north": {"uv": [0, 0, 16, 6], "texture": "#1"},
-				"south": {"uv": [0, 0, 16, 6], "texture": "#1"}
-			}
-		},
-		{
-			"from": [-1, 4, 0],
-			"to": [17, 12, 0],
-			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 12, 0]},
-			"faces": {
-				"north": {"uv": [0, 8, 16, 16], "texture": "#1"},
-				"south": {"uv": [0, 8, 16, 16], "texture": "#1"}
-			}
-		}
-	]
+  "credit": "Made with Blockbench",
+  "ambientocclusion": false,
+  "render_type": "cutout",
+  "textures": {
+    "0": "recicropal:block/bottle_gourd_vine_stage0_base",
+    "1": "recicropal:block/bottle_gourd_vine_stage2_foliage",
+    "particle": "recicropal:block/bottle_gourd_vine_stage2_base"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0.8
+      ],
+      "to": [
+        16,
+        16,
+        0.8
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          16,
+          0
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "from": [
+        -1,
+        10,
+        0
+      ],
+      "to": [
+        17,
+        16,
+        0
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          16,
+          0
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            6
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            6
+          ],
+          "texture": "#1"
+        }
+      }
+    },
+    {
+      "from": [
+        -1,
+        0,
+        0
+      ],
+      "to": [
+        17,
+        6,
+        0
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          6,
+          0
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            6
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            6
+          ],
+          "texture": "#1"
+        }
+      }
+    },
+    {
+      "from": [
+        -1,
+        4,
+        0
+      ],
+      "to": [
+        17,
+        12,
+        0
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          12,
+          0
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            16,
+            16
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            16,
+            16
+          ],
+          "texture": "#1"
+        }
+      }
+    }
+  ]
 }

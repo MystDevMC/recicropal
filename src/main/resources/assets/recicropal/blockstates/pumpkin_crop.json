@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-       "model": "recicropal:block/bottle_gourd_vine_stage0",
+        "model": "recicropal:block/bottle_gourd_vine_stage0",
         "x": 90
       }
     },
