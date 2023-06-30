@@ -3,11 +3,12 @@
 Crops and content, mutually reciprocal.
 
 ![cover.png](assets%2Fcover.png)
+*Screenshots were taken while using [BSL Shaders](https://www.curseforge.com/minecraft/customization/bsl-shaders) and various other mods installed*
 
 This is a Minecraft mod that focuses on adding crops and other curiosities which 
 complements one another. Inspired by a lot of aesthetic, vanilla plus mods out there.
 My goal was to bring varied and fresh content starting from sowing some seeds.
-I always feel that I need mods that add more depth to farming and agriculture,
+I always feel that I need more mods that add depth to farming and agriculture,
 but not just by adding a massive amount of kinds of food to work with nor
 introducing too huge of a gameplay change.
 
