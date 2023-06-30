@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:tag_empty",
+      "tag": "forge:wires/iron"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "# #",
+    " # "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "result": {
+    "item": "recicropal:trellis",
+    "count": 5
+  }
+}

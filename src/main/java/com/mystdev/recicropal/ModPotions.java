@@ -12,14 +12,10 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.mystdev.recicropal.Recicropal.REGISTRATE;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModPotions {
 
     public static void init() {
@@ -53,7 +49,6 @@ public class ModPotions {
 
 
     public static void addRecipes() {
-//        PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD);
         BrewingRecipeRegistry.addRecipe(
                 Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
                 Ingredient.of(ModItems.GLAMOROUS_GOURD.get()),
@@ -71,8 +66,4 @@ public class ModPotions {
         );
     }
 
-    @SubscribeEvent
-    public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(ModPotions::addRecipes);
-    }
 }

@@ -1,6 +1,10 @@
 {
   "values": [
     "recicropal:bottle_gourd_crop",
-    "recicropal:bottle_gourd_vine"
+    "recicropal:bottle_gourd_vine",
+    "recicropal:pumpkin_crop",
+    "recicropal:pumpkin_vine",
+    "recicropal:melon_crop",
+    "recicropal:melon_vine"
   ]
 }

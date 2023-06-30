@@ -10,9 +10,10 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -38,14 +39,23 @@ public class Recicropal {
         ModBlockEntities.init();
         ModPotions.init();
 
-        MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, Recicropal::attachItemCaps);
+        var forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.addGenericListener(ItemStack.class, Recicropal::attachItemCaps);
+
+        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modBus.addListener(Recicropal::onCommonSetup);
     }
 
-    @SubscribeEvent
     public static void attachItemCaps(AttachCapabilitiesEvent<ItemStack> event) {
         if (!(event.getObject().getItem() instanceof BottleGourdItem)) return;
         event.addCapability(new ResourceLocation(Recicropal.MOD_ID, "bottle_gourd"),
                             new FluidHandlerItemStack(event.getObject(), BottleGourdBlockEntity.MAX_CAPACITY));
+    }
+
+
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ModPotions::addRecipes);
+        event.enqueueWork(ModItems::registerCompostables);
     }
 
 }

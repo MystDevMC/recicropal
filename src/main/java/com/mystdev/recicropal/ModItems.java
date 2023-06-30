@@ -8,6 +8,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.ComposterBlock;
 
 import static com.mystdev.recicropal.Recicropal.REGISTRATE;
 
@@ -50,4 +51,10 @@ public class ModItems {
                       .register();
 
 
+    public static void registerCompostables() {
+        ComposterBlock.COMPOSTABLES.put(BOTTLE_GOURD_SEEDS.get(), 0.3F);
+        ComposterBlock.COMPOSTABLES.put(ModBlocks.BOTTLE_GOURD_FRUIT.get().asItem(), 0.65F);
+        ComposterBlock.COMPOSTABLES.put(CLIMBING_MELON_SEEDS.get(), 0.3F);
+        ComposterBlock.COMPOSTABLES.put(CLIMBING_PUMPKIN_SEEDS.get(), 0.3F);
+    }
 }
