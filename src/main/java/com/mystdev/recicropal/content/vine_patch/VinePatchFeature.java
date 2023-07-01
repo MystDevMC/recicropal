@@ -1,13 +1,11 @@
 package com.mystdev.recicropal.content.vine_patch;
 
 import com.mojang.serialization.Codec;
-import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.content.trellis.TrellisVineBlock;
 import com.mystdev.recicropal.content.trellis.VinelikeProps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 

@@ -243,10 +243,6 @@ public abstract class TrellisCropBlock extends CropBlock {
         return true;
     }
 
-    public boolean isBonemealSuccess(Level level, RandomSource randomSource, BlockPos pos, BlockState state) {
-        return true;
-    }
-
     public void performBonemeal(ServerLevel level, RandomSource randomSource, BlockPos pos, BlockState state) {
         if (!this.isMaxAge(state)) {
             int i = this.getAge(state) + this.getBonemealAgeIncrease(level);

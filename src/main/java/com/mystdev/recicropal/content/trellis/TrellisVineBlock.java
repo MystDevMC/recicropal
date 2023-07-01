@@ -1,6 +1,5 @@
 package com.mystdev.recicropal.content.trellis;
 
-import com.mystdev.recicropal.Recicropal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
