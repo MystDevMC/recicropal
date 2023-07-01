@@ -67,8 +67,7 @@ public class VinelikeProps {
         return voxelshape.isEmpty() ? Shapes.block() : voxelshape;
     }
 
-    // TODO
-    // These two will break if state has no either one of NSEW
+    // These two will break if state does not have all the directions
     public BlockState rotate(BlockState state, Rotation rot) {
         return switch (rot) {
             case CLOCKWISE_180 -> state

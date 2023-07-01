@@ -45,6 +45,8 @@ public class Recicropal {
 
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(Recicropal::onCommonSetup);
+
+        ModLootAPI.init(modBus);
     }
 
     public static void attachItemCaps(AttachCapabilitiesEvent<ItemStack> event) {

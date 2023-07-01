@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "entries": [
+    "recicropal:inject_village_desert_house",
+    "recicropal:inject_village_savanna_house",
+    "recicropal:inject_village_snowy_house",
+    "recicropal:inject_village_taiga_house"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "pools": [
+    {
+      "rolls": {
+        "min": 0.0,
+        "max": 2.0,
+        "type": "minecraft:uniform"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1.0,
+                "max": 2.0,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "recicropal:bottle_gourd_seeds"
+        }
+      ]
+    },
+    {
+      "rolls": {
+        "min": 0,
+        "max": 3,
+        "type": "minecraft:uniform"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "recicropal:set_fluid",
+              "fluid": "minecraft:water",
+              "amount": {
+                "min": 0,
+                "max": 400,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "recicropal:bottle_gourd"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "recicropal:set_fluid",
+              "fluid": "minecraft:water",
+              "amount": {
+                "min": 0,
+                "max": 256,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "recicropal:bottle_gourd"
+        }
+      ]
+    }
+  ]
+}
