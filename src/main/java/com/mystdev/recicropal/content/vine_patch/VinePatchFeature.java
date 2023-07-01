@@ -4,8 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mystdev.recicropal.content.trellis.TrellisVineBlock;
 import com.mystdev.recicropal.content.trellis.VinelikeProps;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
@@ -29,7 +35,8 @@ public class VinePatchFeature extends Feature<VinePatchConfiguration> {
         var mayPlace = trellisCropBlock.mayPlaceOn(level.getBlockState(origin.below()), level, origin);
 
         if (!mayPlace) return false;
-        var randAge = fpctx.random().nextInt(3);
+        var random = fpctx.random();
+        var randAge = random.nextInt(3);
         var stateToPlace = trellisCropBlock.defaultBlockState().setValue(TrellisVineBlock.AGE, randAge);
 
         var test = level.setBlock(origin, stateToPlace, 2);
@@ -50,7 +57,23 @@ public class VinePatchFeature extends Feature<VinePatchConfiguration> {
                         return mayPlaceOn && isAir;
                     },
                     level, origin, fpctx.random())
-            .forEach(pos -> level.setBlock(pos, vineToPlace.setValue(TrellisVineBlock.AGE, fpctx.random().nextInt(3)), 2));
+                .forEach(pos -> {
+                    var holder = new Object(){ BlockState value = Blocks.AIR.defaultBlockState(); };
+                    var shouldFruitInstead = random.nextInt(5) == 0;
+                    if (shouldFruitInstead) {
+                        holder.value = vine.getFruitBlock().defaultBlockState();
+                    } else {
+                        holder.value = vineToPlace.setValue(TrellisVineBlock.AGE, random.nextInt(3));
+                        Direction.Plane.HORIZONTAL
+                                .stream()
+                                .filter(direction -> vine.canAttachTo(pos, direction, level) && random.nextInt(5) != 0)
+                                .forEach(direction -> {
+                                    holder.value = holder.value.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(direction), Boolean.TRUE);
+                                });
+                    }
+                    level.setBlock(pos, holder.value, 2);
+
+            });
 
         return true;
     }
@@ -71,7 +94,6 @@ public class VinePatchFeature extends Feature<VinePatchConfiguration> {
             var rand = random.nextBoolean();
             if (canPlace && rand) result.add(pos);
         }
-
         return result;
     }
 }

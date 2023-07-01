@@ -38,7 +38,7 @@ public class ModWorldGen {
                         new ResourceLocation(Recicropal.MOD_ID, "vine_patch"),
                         new ConfiguredFeature<>(
                                 VINE_PATCH_BIOME_FEATURE.get(),
-                                new VinePatchConfiguration("recicropal:bottle_gourd_crop", 5, 3)
+                                new VinePatchConfiguration("recicropal:bottle_gourd_crop", 8, 3)
                         )
                 );
         VINE_PATCH_PLACEMENT = BuiltinRegistries
@@ -48,7 +48,7 @@ public class ModWorldGen {
                         new PlacedFeature(
                                 Holder.hackyErase(VINE_PATCH_CONFIGURED_FEATURE),
                                 List.of(
-                                        RarityFilter.onAverageOnceEvery(300),
+                                        RarityFilter.onAverageOnceEvery(128),
                                         InSquarePlacement.spread(),
                                         PlacementUtils.HEIGHTMAP,
                                         BiomeFilter.biome()

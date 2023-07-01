@@ -63,6 +63,10 @@ public abstract class TrellisVineBlock extends CropBlock {
         return shapesCache.get(state);
     }
 
+    public Block getFruitBlock() {
+        return fruitBlock;
+    }
+
     public BlockState updateShape(BlockState state,
                                   Direction direction,
                                   BlockState otherState,
@@ -201,19 +205,11 @@ public abstract class TrellisVineBlock extends CropBlock {
         if (sides.size() < PROPS.streamProps().count()) {
             // Find first supporting block adjacent to this or vines above this
             // Why don't I make it filter the sides that haven't got any vines...
-            var attachableDir = Direction.allShuffled(randomSource).stream().filter(d -> {
-                var adj = pos.relative(d);
-                var floatCheck = false;
-                if (d.getAxis().isHorizontal()) {
-                    var aboveState = level.getBlockState(pos.above());
-                    floatCheck = aboveState.is(this) && aboveState.getValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(d));
-                    if (floatCheck) return true;
-                    var adjState = level.getBlockState(pos.above().relative(d));
-                    floatCheck = adjState.is(this) && adjState.getValue(VinelikeProps.DOWN);
-                    if (floatCheck) return true;
-                }
-                return MultifaceBlock.canAttachTo(level, d, adj, level.getBlockState(adj));
-            }).findFirst();
+            var attachableDir = Direction
+                    .allShuffled(randomSource)
+                    .stream()
+                    .filter(d -> canAttachTo(pos, d, level))
+                    .findFirst();
 
             if (attachableDir.isPresent()) {
                 float f = getGrowthSpeed(this, level, pos);
@@ -238,6 +234,20 @@ public abstract class TrellisVineBlock extends CropBlock {
 
             }
         }
+    }
+
+    public boolean canAttachTo(BlockPos thisPos, Direction d, LevelAccessor level) {
+        var adj = thisPos.relative(d);
+        var floatCheck = false;
+        if (d.getAxis().isHorizontal()) {
+            var aboveState = level.getBlockState(thisPos.above());
+            floatCheck = aboveState.is(this) && aboveState.getValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(d));
+            if (floatCheck) return true;
+            var adjState = level.getBlockState(thisPos.above().relative(d));
+            floatCheck = adjState.is(this) && adjState.getValue(VinelikeProps.DOWN);
+            if (floatCheck) return true;
+        }
+        return MultifaceBlock.canAttachTo(level, d, adj, level.getBlockState(adj));
     }
 
     protected int getBonemealAgeIncrease(Level level) {
