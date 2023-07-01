@@ -1,18 +1,21 @@
 package com.mystdev.recicropal;
 
-import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdItem;
-import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdListing;
+import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
+import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdItem;
+import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdListing;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import static com.mystdev.recicropal.Recicropal.REGISTRATE;
 
@@ -67,4 +70,11 @@ public class ModItems {
             event.getTrades().get(1).add(new BottleGourdListing());
         }
     }
+
+    public static void attachItemCaps(AttachCapabilitiesEvent<ItemStack> event) {
+        if (!(event.getObject().getItem() instanceof BottleGourdItem)) return;
+        event.addCapability(new ResourceLocation(Recicropal.MOD_ID, "bottle_gourd"),
+                            new FluidHandlerItemStack(event.getObject(), BottleGourdBlockEntity.MAX_CAPACITY));
+    }
+
 }

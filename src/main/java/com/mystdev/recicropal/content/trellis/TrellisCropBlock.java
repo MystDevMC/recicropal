@@ -31,13 +31,17 @@ public abstract class TrellisCropBlock extends CropBlock {
             new VinelikeProps(3D, (e) -> e.getKey() != Direction.DOWN && e.getKey() != Direction.UP);
     private final Map<BlockState, VoxelShape> shapesCache;
 
-    private final Block vineBlock;
+    private final TrellisVineBlock vineBlock;
 
-    public TrellisCropBlock(Properties props, Block vineBlock) {
+    public TrellisCropBlock(Properties props, TrellisVineBlock vineBlock) {
         super(props);
         this.vineBlock = vineBlock;
         this.registerDefaultState(PROPS.generateDefaultState(this.stateDefinition.any()).setValue(AGE, 0));
         this.shapesCache = PROPS.generateShapesCache(this.stateDefinition);
+    }
+
+    public TrellisVineBlock getVineBlock() {
+        return vineBlock;
     }
 
     public @NotNull IntegerProperty getAgeProperty() {
@@ -63,7 +67,7 @@ public abstract class TrellisCropBlock extends CropBlock {
         PROPS.generateStateDefinition(stateBuilder).add(AGE);
     }
 
-    protected boolean mayPlaceOn(BlockState state, BlockGetter blockGetter, BlockPos pos) {
+    public boolean mayPlaceOn(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return state.is(BlockTags.DIRT);
     }
 

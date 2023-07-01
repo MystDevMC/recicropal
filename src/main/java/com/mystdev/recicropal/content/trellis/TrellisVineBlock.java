@@ -103,7 +103,7 @@ public abstract class TrellisVineBlock extends CropBlock {
         PROPS.generateStateDefinition(stateBuilder).add(AGE, ATTACHED);
     }
 
-    protected boolean mayPlaceOn(BlockState state, BlockGetter blockGetter, BlockPos pos) {
+    public boolean mayPlaceOn(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return MultifaceBlock.canAttachTo(blockGetter, Direction.DOWN, pos, blockGetter.getBlockState(pos));
     }
 
@@ -158,16 +158,21 @@ public abstract class TrellisVineBlock extends CropBlock {
     }
 
     private CropSearchResult isCropInReasonableDistance(ServerLevel level, BlockPos thisPos) {
-        var innerSize = 1;
+        var innerSize = 2;
         var innerPoss = BlockPos.withinManhattan(thisPos, innerSize, innerSize, innerSize);
-        var outerSize = 4;
+        var outerSize = 8;
         var outerPoss = BlockPos.withinManhattan(thisPos, outerSize, outerSize, outerSize);
+
         for (var pos : innerPoss) {
+            // Without the distance check, this would just return a cube somehow
+            // Lets see...
+            if (Math.round(thisPos.distSqr(pos)) > innerSize) continue;
             if (level.getBlockState(pos).is(lazyCropBlock.get())) {
                 return CropSearchResult.CANNOT_FRUIT;
             }
         }
         for (BlockPos pos : outerPoss) {
+            if (Math.round(thisPos.distSqr(pos)) > outerSize) continue;
             if (level.getBlockState(pos).is(lazyCropBlock.get())) {
                 return CropSearchResult.CAN_FRUIT;
             }

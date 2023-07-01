@@ -1,16 +1,11 @@
 package com.mystdev.recicropal;
 
 import com.mojang.logging.LogUtils;
-import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdBlockEntity;
-import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdItem;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -40,25 +35,24 @@ public class Recicropal {
         ModPotions.init();
 
         var forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.addGenericListener(ItemStack.class, Recicropal::attachItemCaps);
+        forgeBus.addGenericListener(ItemStack.class, ModItems::attachItemCaps);
         forgeBus.addListener(ModItems::registerTrades);
 
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modBus.addListener(Recicropal::onCommonSetup);
-
         ModLootAPI.init(modBus);
+        ModWorldGen.init(modBus);
+
+        modBus.addListener(Recicropal::onCommonSetup);
     }
 
-    public static void attachItemCaps(AttachCapabilitiesEvent<ItemStack> event) {
-        if (!(event.getObject().getItem() instanceof BottleGourdItem)) return;
-        event.addCapability(new ResourceLocation(Recicropal.MOD_ID, "bottle_gourd"),
-                            new FluidHandlerItemStack(event.getObject(), BottleGourdBlockEntity.MAX_CAPACITY));
-    }
 
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(ModPotions::addRecipes);
-        event.enqueueWork(ModItems::registerCompostables);
+        event.enqueueWork(() -> {
+            ModPotions.addRecipes();
+            ModItems.registerCompostables();
+            ModWorldGen.register();
+        });
     }
 
 }

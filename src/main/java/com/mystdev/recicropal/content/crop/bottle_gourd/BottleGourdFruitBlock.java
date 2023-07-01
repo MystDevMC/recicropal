@@ -1,4 +1,4 @@
-package com.mystdev.recicropal.crop.bottle_gourd;
+package com.mystdev.recicropal.content.crop.bottle_gourd;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;

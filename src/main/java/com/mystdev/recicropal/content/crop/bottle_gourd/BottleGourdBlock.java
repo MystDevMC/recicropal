@@ -1,4 +1,4 @@
-package com.mystdev.recicropal.crop.bottle_gourd;
+package com.mystdev.recicropal.content.crop.bottle_gourd;
 
 import com.mystdev.recicropal.ModBlockEntities;
 import net.minecraft.core.BlockPos;

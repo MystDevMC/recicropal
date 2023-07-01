@@ -1,9 +1,11 @@
-package com.mystdev.recicropal;
+package com.mystdev.recicropal.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Vector3f;
-import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdBlockEntity;
+import com.mystdev.recicropal.ModItems;
+import com.mystdev.recicropal.Recicropal;
+import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

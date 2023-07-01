@@ -1,0 +1,3 @@
+- Gourd bottles now can be emptied in the crafting table.
+- Add this mod's seeds and gourd bottles into villager house loot tables
+- Bottle gourd patches now spawn as a vegetation feature in vanilla savanna biomes, in a similar manner to pumpkins.

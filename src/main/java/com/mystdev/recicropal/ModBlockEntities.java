@@ -1,6 +1,6 @@
 package com.mystdev.recicropal;
 
-import com.mystdev.recicropal.crop.bottle_gourd.BottleGourdBlockEntity;
+import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
 public class ModBlockEntities {
