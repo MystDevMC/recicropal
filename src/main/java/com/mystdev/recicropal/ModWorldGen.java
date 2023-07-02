@@ -68,7 +68,6 @@ public class ModWorldGen {
     }
 
     public static void addVillageBuildings(ServerAboutToStartEvent event) {
-        Recicropal.LOGGER.debug("Called!");
         var tpReg = event.getServer().registryAccess().registry(Registry.TEMPLATE_POOL_REGISTRY).get();
 
         var pool = tpReg.get(new ResourceLocation("minecraft:village/desert/houses"));

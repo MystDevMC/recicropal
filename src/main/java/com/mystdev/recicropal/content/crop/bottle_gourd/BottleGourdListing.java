@@ -2,10 +2,10 @@ package com.mystdev.recicropal.content.crop.bottle_gourd;
 
 import com.mystdev.recicropal.ModBlocks;
 import com.mystdev.recicropal.ModItems;
+import com.mystdev.recicropal.content.trading.SensitiveItemListing;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerDataHolder;
-import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,14 +18,16 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 
-public class BottleGourdListing implements VillagerTrades.ItemListing {
+public class BottleGourdListing extends SensitiveItemListing {
+    public BottleGourdListing() {
+        super(villagerData -> villagerData.getType() == VillagerType.DESERT || villagerData.getType() == VillagerType.SAVANNA);
+    }
+
     @Nullable
     public MerchantOffer getOffer(Entity entity, RandomSource random) {
         if (!(entity instanceof VillagerDataHolder)) return null;
-        var type = ((VillagerDataHolder) entity).getVillagerData().getType();
         var shouldSellFruits = random.nextInt(5) == 0;
-        // TODO: Maybe implement something to patch Vanilla's offer rolls so null != no trade
-        if ((type != VillagerType.DESERT && type != VillagerType.SAVANNA) || shouldSellFruits) {
+        if (shouldSellFruits) {
             var itemstack = new ItemStack(ModBlocks.BOTTLE_GOURD_FRUIT.get(), random.nextInt(1, 4));
             return new MerchantOffer(new ItemStack(Items.EMERALD), itemstack, 10, 3, 0.05F);
         }
