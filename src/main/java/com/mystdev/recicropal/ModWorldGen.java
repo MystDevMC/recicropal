@@ -1,8 +1,10 @@
 package com.mystdev.recicropal;
 
+import com.mojang.datafixers.util.Pair;
 import com.mystdev.recicropal.content.vine_patch.VinePatchConfiguration;
 import com.mystdev.recicropal.content.vine_patch.VinePatchFeature;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -12,11 +14,15 @@ import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModWorldGen {
@@ -59,6 +65,36 @@ public class ModWorldGen {
 
     public static void init(IEventBus modBus) {
         FEATURES.register(modBus);
+    }
+
+    public static void addVillageBuildings(ServerAboutToStartEvent event) {
+        Recicropal.LOGGER.debug("Called!");
+        var tpReg = event.getServer().registryAccess().registry(Registry.TEMPLATE_POOL_REGISTRY).get();
+
+        var pool = tpReg.get(new ResourceLocation("minecraft:village/desert/houses"));
+        if (pool != null) {
+            var piece = SinglePoolElement.single("recicropal:village/houses/drinking_well").apply(
+                    StructureTemplatePool.Projection.RIGID);
+            pool.templates.add(piece);
+            pool.templates.add(piece);
+
+            var entries = new ArrayList<>(pool.rawTemplates);
+            entries.add(new Pair<>(piece, 2));
+            pool.rawTemplates = entries;
+        }
+        pool = tpReg.get(new ResourceLocation("minecraft:village/taiga/houses"));
+        if (pool != null) {
+            var piece = SinglePoolElement.single("recicropal:village/houses/pumpkin_garden").apply(
+                    StructureTemplatePool.Projection.RIGID);
+            pool.templates.add(piece);
+            pool.templates.add(piece);
+            pool.templates.add(piece);
+            pool.templates.add(piece);
+
+            var entries = new ArrayList<>(pool.rawTemplates);
+            entries.add(new Pair<>(piece, 4));
+            pool.rawTemplates = entries;
+        }
     }
 
 }

@@ -37,6 +37,7 @@ public class Recicropal {
         var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addGenericListener(ItemStack.class, ModItems::attachItemCaps);
         forgeBus.addListener(ModItems::registerTrades);
+        forgeBus.addListener(ModWorldGen::addVillageBuildings);
 
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLootAPI.init(modBus);
@@ -44,8 +45,6 @@ public class Recicropal {
 
         modBus.addListener(Recicropal::onCommonSetup);
     }
-
-
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
