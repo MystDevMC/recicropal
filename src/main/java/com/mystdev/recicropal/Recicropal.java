@@ -1,8 +1,10 @@
 package com.mystdev.recicropal;
 
 import com.mojang.logging.LogUtils;
+import com.mystdev.recicropal.content.drinking.DrinkHandler;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,6 +38,7 @@ public class Recicropal {
 
         var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addGenericListener(ItemStack.class, ModItems::attachItemCaps);
+        forgeBus.addGenericListener(Entity.class, DrinkHandler::attachPlayerCaps);
         forgeBus.addListener(ModItems::registerTrades);
         forgeBus.addListener(ModWorldGen::addVillageBuildings);
 

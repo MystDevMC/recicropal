@@ -9,4 +9,4 @@
 
 ## Updates
 - Gourd bottles now can be emptied in the crafting table.
-- Now, only savanna and desert villagers accept trading bottle gourds and water filled gourd bottles
+- Now, only savanna and desert villagers accept trading bottle gourds and water-filled gourd bottles
