@@ -71,10 +71,4 @@ public class ModItems {
         }
     }
 
-    public static void attachItemCaps(AttachCapabilitiesEvent<ItemStack> event) {
-        if (!(event.getObject().getItem() instanceof BottleGourdItem)) return;
-        event.addCapability(new ResourceLocation(Recicropal.MOD_ID, "bottle_gourd"),
-                            new FluidHandlerItemStack(event.getObject(), BottleGourdBlockEntity.MAX_CAPACITY));
-    }
-
 }

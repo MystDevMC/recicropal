@@ -3,6 +3,7 @@ package com.mystdev.recicropal.content.crop.bottle_gourd;
 import com.mystdev.recicropal.ModBlocks;
 import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.content.drinking.DrinkManager;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,8 +20,10 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -158,5 +161,10 @@ public class BottleGourdItem extends BlockItem {
     @Override
     public int getUseDuration(ItemStack stack) {
         return PotionItem.EAT_DURATION;
+    }
+
+    @Override
+    public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+        return new FluidHandlerItemStack(stack, BottleGourdBlockEntity.MAX_CAPACITY);
     }
 }

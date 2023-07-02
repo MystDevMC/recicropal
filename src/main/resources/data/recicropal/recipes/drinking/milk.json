@@ -1,0 +1,24 @@
+{
+  "type": "recicropal:drinking",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "recicropal:fluid_tag_empty",
+        "tag": "minecraft:milk"
+      }
+    }
+  ],
+  "fluid": {
+    "tag": "minecraft:milk"
+  },
+  "results": [
+    {
+      "type": "recicropal:finish_item",
+      "item": "minecraft:milk_bucket"
+    },
+    {
+      "type": "recicropal:heal"
+    }
+  ]
+}

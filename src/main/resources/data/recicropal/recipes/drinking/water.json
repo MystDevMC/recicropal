@@ -1,0 +1,11 @@
+{
+  "type": "recicropal:drinking",
+  "fluid": {
+    "id" : "minecraft:water"
+  },
+  "amount": 250,
+  "results": [{
+    "type": "recicropal:finish_item_transfer_nbt",
+    "item": "minecraft:potion"
+  }]
+}

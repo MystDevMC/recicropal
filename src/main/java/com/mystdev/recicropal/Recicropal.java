@@ -1,16 +1,21 @@
 package com.mystdev.recicropal;
 
 import com.mojang.logging.LogUtils;
+import com.mystdev.recicropal.content.FluidTagEmptyCondition;
 import com.mystdev.recicropal.content.drinking.DrinkHandler;
+import com.mystdev.recicropal.content.drinking.result.DrinkResults;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.*;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -37,7 +42,6 @@ public class Recicropal {
         ModPotions.init();
 
         var forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.addGenericListener(ItemStack.class, ModItems::attachItemCaps);
         forgeBus.addGenericListener(Entity.class, DrinkHandler::attachPlayerCaps);
         forgeBus.addListener(ModItems::registerTrades);
         forgeBus.addListener(ModWorldGen::addVillageBuildings);
@@ -45,6 +49,12 @@ public class Recicropal {
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLootAPI.init(modBus);
         ModWorldGen.init(modBus);
+        ModRecipes.init(modBus);
+
+        modBus.addListener(Recicropal::registerConditions);
+
+        DrinkResults.DRINK_RESULTS.makeRegistry(RegistryBuilder::new);
+        DrinkResults.init(modBus);
 
         modBus.addListener(Recicropal::onCommonSetup);
     }
@@ -57,4 +67,9 @@ public class Recicropal {
         });
     }
 
+    public static void registerConditions(RegisterEvent event) {
+        event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
+                       helper -> CraftingHelper.register(FluidTagEmptyCondition.SERIALIZER)
+        );
+    }
 }

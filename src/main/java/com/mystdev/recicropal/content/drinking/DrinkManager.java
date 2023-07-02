@@ -1,5 +1,7 @@
 package com.mystdev.recicropal.content.drinking;
 
+import com.mystdev.recicropal.ModRecipes;
+import com.mystdev.recicropal.Recicropal;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,22 +18,9 @@ import java.util.Optional;
 
 public class DrinkManager {
 
-    // TODO: Implement this
-    public static Optional<DrinkRecipe> hasDrink(ItemStack stack) {
-        var fluidOpt = FluidUtil.getFluidContained(stack);
-        if (fluidOpt.isEmpty()) return Optional.empty();
-        var fluid = fluidOpt.get();
-        if (fluid.isFluidEqual(new FluidStack(Fluids.WATER, 250))) {
-            return Optional.of(new DrinkRecipe(
-                    List.of(
-                            DrinkRecipe.SET_FIRE,
-                            DrinkRecipe.ZAP,
-                            DrinkRecipe.HEAL
-                    ),
-                    250
-            ));
-        }
-        return Optional.empty();
+    public static Optional<DrinkingRecipe> hasDrink(ItemStack stack, Level level) {
+        var rm = level.getRecipeManager();
+        return rm.getRecipeFor(ModRecipes.DRINKING_RECIPE.get(), new FluidHandlerItemContainer(stack), level);
     }
 
     // TODO: Maybe make this predicate sensitive so users can add predicates to recipes
@@ -48,7 +37,7 @@ public class DrinkManager {
     public static boolean tryDrinking(Player player, Level level, ItemStack stack, InteractionHand usedHand) {
         if (!canDrink(player, level, stack)) return false;
 
-        var drinkRecipe = hasDrink(stack);
+        var drinkRecipe = hasDrink(stack, level);
         if (drinkRecipe.isEmpty()) return false;
 
         player.startUsingItem(usedHand);
@@ -68,15 +57,16 @@ public class DrinkManager {
             // Drink the liquid
             var voidTank = new FluidTank(Integer.MAX_VALUE);
             var wrappedInventory = new PlayerInvWrapper(player.getInventory());
+
             var fluidRes =
                     FluidUtil.tryEmptyContainerAndStow(
-                            ctx.stack(), voidTank, wrappedInventory, recipe.amount, player, true);
+                            ctx.stack(), voidTank, wrappedInventory, recipe.stack.getAmount(), player, true);
 
             // Return the new stack to player
             player.setItemInHand(hand, fluidRes.result);
 
             // Apply post-drinking effects
-            recipe.results.forEach(res -> res.apply(player, ctx.level(), recipe.getDrunk()));
+            recipe.results.forEach(res -> res.apply(player, ctx.level(), recipe.getDrunk(ctx)));
 
             // Reset
             handler.setContext(null);
