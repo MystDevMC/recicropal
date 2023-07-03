@@ -29,3 +29,4 @@
 
 ## Fixes
 - Fix minor gourd bottle placement issue (I hope).
+- Empty gourd bottles now drop as clean items (without NBT).

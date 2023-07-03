@@ -14,6 +14,14 @@
             },
             {
               "function": "minecraft:copy_nbt",
+              "conditions": [
+                {
+                  "condition": "minecraft:inverted",
+                  "term": {
+                    "condition": "recicropal:empty_tank"
+                  }
+                }
+              ],
               "source": "block_entity",
               "ops": [
                 {
