@@ -1,4 +1,6 @@
 package com.mystdev.recicropal.content.drinking.result;
 
-public record DrinkResultType<T extends IDrinkResult>(IDrinkResult drinkResult) {
+import java.util.function.Supplier;
+
+public record DrinkResultType<T extends IDrinkResult>(Supplier<T> drinkResultFactory) {
 }
