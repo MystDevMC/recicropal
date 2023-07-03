@@ -1,23 +1,18 @@
-package com.mystdev.recicropal.content;
+package com.mystdev.recicropal.common.fluid;
 
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -48,19 +43,25 @@ public class FluidIngredient implements Predicate<FluidStack> {
         if (!dissolved()) dissolve();
         for (var f : dissolved) {
             if (f != stack.getFluid()) continue;
-            if (isTagSet && !(tag == null ? stack.getTag() == null : stack.getTag() != null && tag.equals(stack.getTag()))) continue;
+            if (isTagSet && !hasTheSameTagWith(stack)) continue;
             if (amount != null && stack.getAmount() < amount) continue;
             return true;
         }
         return false;
     }
 
+    private boolean hasTheSameTagWith(FluidStack stack) {
+        return tag == null ? stack.getTag() == null : stack.getTag() != null && tag.equals(stack.getTag());
+    }
+
     public int getAmount() {
         return amount == null ? 0 : amount;
     }
+
     public boolean hasTag() {
         return isTagSet && tag != null;
     }
+
     public CompoundTag getTag() {
         return tag;
     }
@@ -109,38 +110,38 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
         @Override
         public void readJson(JsonObject object) {
-            this.fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(GsonHelper.getAsString(object, "fluid")));
-            if (this.fluid == null) this.fluid = Fluids.EMPTY;
+            this.fluid = ModFluidUtils.fluidOrAir(GsonHelper.getAsString(object, "fluid"));
         }
 
         @Override
         public void writeJson(JsonObject object) {
-            object.addProperty("fluid", Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(this.fluid)).toString());
+            object.addProperty("fluid", ModFluidUtils.key(fluid));
         }
 
         @Override
         public void write(FriendlyByteBuf buf) {
             buf.writeBoolean(false);
-            buf.writeUtf(Objects.requireNonNull(ForgeRegistries.FLUIDS.getKey(this.fluid)).toString());
+            buf.writeUtf(ModFluidUtils.key(fluid));
         }
 
         @Override
         public void read(FriendlyByteBuf buf) {
-            this.fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(buf.readUtf()));
+            this.fluid = ModFluidUtils.fluid(buf.readUtf());
         }
     }
 
     public static class FluidTagValue implements Value {
 
         private TagKey<Fluid> fluidTag;
+
         @Override
         public Collection<Fluid> getFluids() {
-            return Objects.requireNonNull(ForgeRegistries.FLUIDS.tags()).getTag(this.fluidTag).stream().toList();
+            return ModFluidUtils.members(fluidTag);
         }
 
         @Override
         public void readJson(JsonObject object) {
-            this.fluidTag = FluidTags.create(new ResourceLocation(GsonHelper.getAsString(object, "tag")));
+            this.fluidTag = ModFluidUtils.tag(GsonHelper.getAsString(object, "tag"));
         }
 
         @Override
@@ -156,7 +157,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
         @Override
         public void read(FriendlyByteBuf buf) {
-            this.fluidTag = FluidTags.create(new ResourceLocation(buf.readUtf()));
+            this.fluidTag = ModFluidUtils.tag(buf.readUtf());
         }
     }
 

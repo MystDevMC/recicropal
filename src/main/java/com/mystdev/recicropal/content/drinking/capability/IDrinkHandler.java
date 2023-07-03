@@ -1,4 +1,4 @@
-package com.mystdev.recicropal.content.drinking;
+package com.mystdev.recicropal.content.drinking.capability;
 
 import com.mystdev.recicropal.Recicropal;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +11,8 @@ import javax.annotation.Nullable;
 
 @AutoRegisterCapability
 public interface IDrinkHandler {
-    Capability<IDrinkHandler> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
+    Capability<IDrinkHandler> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
     ResourceLocation ID = new ResourceLocation(Recicropal.MOD_ID, "drink_handler");
 
     void setContext(@Nullable DrinkContext ctx);

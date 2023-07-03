@@ -37,11 +37,10 @@ public class ModWorldGen {
     public static Holder<PlacedFeature> VINE_PATCH_PLACEMENT;
 
     public static void register() {
-        // TODO: Make Biome Modifiers instead so vine patches could accept other vines as well
         VINE_PATCH_CONFIGURED_FEATURE = BuiltinRegistries
                 .register(
                         BuiltinRegistries.CONFIGURED_FEATURE,
-                        new ResourceLocation(Recicropal.MOD_ID, "vine_patch"),
+                        Recicropal.rl("vine_patch"),
                         new ConfiguredFeature<>(
                                 VINE_PATCH_BIOME_FEATURE.get(),
                                 new VinePatchConfiguration("recicropal:bottle_gourd_crop", 8, 3)
@@ -50,7 +49,7 @@ public class ModWorldGen {
         VINE_PATCH_PLACEMENT = BuiltinRegistries
                 .register(
                         BuiltinRegistries.PLACED_FEATURE,
-                        new ResourceLocation(Recicropal.MOD_ID, "vine_patch"),
+                        Recicropal.rl("vine_patch"),
                         new PlacedFeature(
                                 Holder.hackyErase(VINE_PATCH_CONFIGURED_FEATURE),
                                 List.of(

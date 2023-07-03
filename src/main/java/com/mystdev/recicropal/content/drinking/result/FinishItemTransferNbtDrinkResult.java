@@ -13,10 +13,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
-public class FinishItemTransferNbtDrinkResult implements ISerializableDrinkResult<FinishItemTransferNbtDrinkResult>{
+public class FinishItemTransferNbtDrinkResult implements ISerializableDrinkResult<FinishItemTransferNbtDrinkResult> {
     private Item item;
+
     @Override
     public void apply(Player player, Level level, FluidStack drunkStack) {
         var stack = new ItemStack(item);
@@ -25,8 +25,8 @@ public class FinishItemTransferNbtDrinkResult implements ISerializableDrinkResul
     }
 
     @Override
-    public Supplier<DrinkResultType<? extends IDrinkResult>> getType() {
-        return DrinkResults.FINISH_ITEM_TRANSFER_NBT::get;
+    public DrinkResultType<? extends IDrinkResult> getType() {
+        return DrinkResults.FINISH_ITEM_TRANSFER_NBT.get();
     }
 
     @Override

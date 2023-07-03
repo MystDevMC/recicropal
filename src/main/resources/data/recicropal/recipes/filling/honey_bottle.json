@@ -13,7 +13,7 @@
     "item": "minecraft:honey_bottle"
   },
   "fluid": {
-    "chooseFromTag": "forge:honey",
+    "tag": "forge:honey",
     "amount": 250
   },
   "result": {

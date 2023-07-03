@@ -78,10 +78,10 @@ public class BottleGourdBlock extends Block implements EntityBlock {
      * By default, the way things happen are like so:
      * Filling > Emptying > {@code FluidHandlerItem} interaction
      * <p>
-     *     When one happens, the others should not be triggered. This is
-     *     useful if someone wants to alter the interaction of common
-     *     {@code FluidHandlerItem}-attached items
-     *     (like milk buckets, honey bottles, potions, etc.).
+     * When one happens, the others should not be triggered. This is
+     * useful if someone wants to alter the interaction of common
+     * {@code FluidHandlerItem}-attached items
+     * (like milk buckets, honey bottles, potions, etc.).
      * </p>
      */
     @SubscribeEvent

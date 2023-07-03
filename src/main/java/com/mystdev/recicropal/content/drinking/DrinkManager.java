@@ -1,13 +1,15 @@
 package com.mystdev.recicropal.content.drinking;
 
 import com.mystdev.recicropal.ModRecipes;
+import com.mystdev.recicropal.common.fluid.ModFluidUtils;
+import com.mystdev.recicropal.content.drinking.capability.DrinkContext;
+import com.mystdev.recicropal.content.drinking.capability.IDrinkHandler;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 
 import java.util.Optional;
@@ -19,8 +21,7 @@ public class DrinkManager {
         return rm.getRecipeFor(ModRecipes.DRINKING_RECIPE.get(), new FluidHandlerItemContainer(stack), level);
     }
 
-    // TODO: Maybe make this predicate sensitive so users can add predicates to recipes
-    public static boolean canDrink(Player player, Level level, ItemStack stack) {
+    public static boolean canDrink(Player player) {
         var opt = getDrinkHandler(player);
         return opt.isPresent() && opt.orElseThrow(IllegalArgumentException::new).getContext() == null;
     }
@@ -31,7 +32,7 @@ public class DrinkManager {
     }
 
     public static boolean tryDrinking(Player player, Level level, ItemStack stack, InteractionHand usedHand) {
-        if (!canDrink(player, level, stack)) return false;
+        if (!canDrink(player)) return false;
 
         var drinkRecipe = hasDrink(stack, level);
         if (drinkRecipe.isEmpty()) return false;
@@ -40,7 +41,7 @@ public class DrinkManager {
 
         if (!level.isClientSide)
             getDrinkHandler(player).ifPresent(handler -> handler
-                .setContext(new DrinkContext(player, level, stack, drinkRecipe.get())));
+                    .setContext(new DrinkContext(player, level, stack, drinkRecipe.get())));
         return true;
     }
 
@@ -49,14 +50,16 @@ public class DrinkManager {
             var ctx = handler.getContext();
             var recipe = ctx.recipe();
 
-            // Assuming that it has already been checked
+            // Assuming that it has already matched
+            // This replaces the `assemble` call
             // Drink the liquid
-            var voidTank = new FluidTank(Integer.MAX_VALUE);
             var wrappedInventory = new PlayerInvWrapper(player.getInventory());
 
             var fluidRes =
                     FluidUtil.tryEmptyContainerAndStow(
-                            ctx.stack(), voidTank, wrappedInventory, recipe.ingredient.getAmount(), player, true);
+                            ctx.stack(), ModFluidUtils.voidTank(),
+                            wrappedInventory, recipe.ingredient.getAmount(), player, true
+                    );
 
             // Return the new stack to player
             player.setItemInHand(hand, fluidRes.result);

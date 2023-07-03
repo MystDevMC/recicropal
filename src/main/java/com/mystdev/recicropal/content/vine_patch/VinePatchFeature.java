@@ -6,10 +6,7 @@ import com.mystdev.recicropal.content.trellis.VinelikeProps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -57,21 +54,25 @@ public class VinePatchFeature extends Feature<VinePatchConfiguration> {
                         return mayPlaceOn && isAir;
                     },
                     level, origin, fpctx.random())
-                .forEach(pos -> {
-                    var holder = new Object(){ BlockState value = Blocks.AIR.defaultBlockState(); };
-                    var shouldFruitInstead = random.nextInt(5) == 0;
-                    if (shouldFruitInstead) {
-                        holder.value = vine.getFruitBlock().defaultBlockState();
-                    } else {
-                        holder.value = vineToPlace.setValue(TrellisVineBlock.AGE, random.nextInt(3));
-                        Direction.Plane.HORIZONTAL
-                                .stream()
-                                .filter(direction -> vine.canAttachTo(pos, direction, level) && random.nextInt(5) != 0)
-                                .forEach(direction -> {
-                                    holder.value = holder.value.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(direction), Boolean.TRUE);
-                                });
-                    }
-                    level.setBlock(pos, holder.value, 2);
+            .forEach(pos -> {
+                var holder = new Object() {
+                    BlockState value = Blocks.AIR.defaultBlockState();
+                };
+                var shouldFruitInstead = random.nextInt(5) == 0;
+                if (shouldFruitInstead) {
+                    holder.value = vine.getFruitBlock().defaultBlockState();
+                }
+                else {
+                    holder.value = vineToPlace.setValue(TrellisVineBlock.AGE, random.nextInt(3));
+                    Direction.Plane.HORIZONTAL
+                            .stream()
+                            .filter(direction -> vine.canAttachTo(pos, direction, level) && random.nextInt(5) != 0)
+                            .forEach(direction -> {
+                                holder.value = holder.value.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(direction),
+                                                                     Boolean.TRUE);
+                            });
+                }
+                level.setBlock(pos, holder.value, 2);
 
             });
 

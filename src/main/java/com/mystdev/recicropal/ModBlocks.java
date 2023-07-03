@@ -1,12 +1,12 @@
 package com.mystdev.recicropal;
 
-import com.mystdev.recicropal.content.trellis.TrellisBlock;
-import com.mystdev.recicropal.content.trellis.TrellisCropBlock;
-import com.mystdev.recicropal.content.trellis.TrellisVineBlock;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlock;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdCropBlock;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdFruitBlock;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdVineBlock;
+import com.mystdev.recicropal.content.trellis.TrellisBlock;
+import com.mystdev.recicropal.content.trellis.TrellisCropBlock;
+import com.mystdev.recicropal.content.trellis.TrellisVineBlock;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -40,8 +40,7 @@ public class ModBlocks {
                       .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                       .lang("Trellis")
                       .item()
-                      .model((ctx, provider) -> provider.generated(ctx,
-                                                                   new ResourceLocation(MOD_ID + ":block/trellis")))
+                      .model((ctx, provider) -> provider.generated(ctx, Recicropal.rl(":block/trellis")))
                       .build()
                       .register();
 

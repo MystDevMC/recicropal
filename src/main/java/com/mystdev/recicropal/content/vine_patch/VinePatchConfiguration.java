@@ -40,5 +40,8 @@ public class VinePatchConfiguration implements FeatureConfiguration {
     public int getSpreadRadius() {
         return spreadRadius;
     }
-    public int getHeightRange() {return heightRange;}
+
+    public int getHeightRange() {
+        return heightRange;
+    }
 }

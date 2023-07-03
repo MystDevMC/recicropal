@@ -6,7 +6,8 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 
 public class ModFluids {
 
-    public static void init() {}
+    public static void init() {
+    }
 
     public static final FluidEntry<? extends ForgeFlowingFluid> MIXTURE = fluid("mixture");
     public static final FluidEntry<? extends ForgeFlowingFluid> POTION = fluid("potion");

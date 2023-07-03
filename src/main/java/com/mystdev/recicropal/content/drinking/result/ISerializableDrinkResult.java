@@ -5,6 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Make sure that the readers modify {@code this}
+ *
  * @param <T>
  */
 public interface ISerializableDrinkResult<T extends ISerializableDrinkResult<T>> extends IDrinkResult {

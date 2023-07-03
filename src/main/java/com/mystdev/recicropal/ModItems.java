@@ -1,6 +1,5 @@
 package com.mystdev.recicropal;
 
-import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdItem;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdListing;
 import com.tterrag.registrate.util.entry.ItemEntry;
@@ -10,12 +9,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import static com.mystdev.recicropal.Recicropal.REGISTRATE;
 

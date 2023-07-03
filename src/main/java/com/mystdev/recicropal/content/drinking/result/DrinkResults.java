@@ -25,31 +25,31 @@ public class DrinkResults {
             DRINK_RESULT_TYPE_KEY,
             Recicropal.MOD_ID);
 
-    public static final RegistryObject<DrinkResultType<FinishItemDrinkResult>> FINISH_ITEM = DRINK_RESULTS
-            .register("finish_item", () -> new DrinkResultType<>(FinishItemDrinkResult::new));
+    public static final RegistryObject<DrinkResultType<?>> FINISH_ITEM =
+            DRINK_RESULTS.register("finish_item", type(FinishItemDrinkResult::new));
 
-    public static final RegistryObject<DrinkResultType<FinishItemTransferNbtDrinkResult>> FINISH_ITEM_TRANSFER_NBT = DRINK_RESULTS
-            .register("finish_item_transfer_nbt", () -> new DrinkResultType<>(FinishItemTransferNbtDrinkResult::new));
+    public static final RegistryObject<DrinkResultType<?>> FINISH_ITEM_TRANSFER_NBT =
+            DRINK_RESULTS.register("finish_item_transfer_nbt", type(FinishItemTransferNbtDrinkResult::new));
 
     // TODO: These are debugs that may be got cleaned up one day
-    public static final RegistryObject<DrinkResultType<IDrinkResult>> HEAL = DRINK_RESULTS
-            .register("heal", () -> new DrinkResultType<>(HealDrinkResult::new));
+    public static final RegistryObject<DrinkResultType<?>> HEAL =
+            DRINK_RESULTS.register("heal", type(HealDrinkResult::new));
 
-    public static final RegistryObject<DrinkResultType<IDrinkResult>> SET_FIRE = DRINK_RESULTS
-            .register("set_fire", () -> new DrinkResultType<>(() -> new IDrinkResult() {
+    public static final RegistryObject<DrinkResultType<IDrinkResult>> SET_FIRE =
+            DRINK_RESULTS.register("set_fire", type(() -> new IDrinkResult() {
                 @Override
                 public void apply(Player player, Level level, FluidStack drunkStack) {
                     player.setRemainingFireTicks(100);
                 }
 
                 @Override
-                public Supplier<DrinkResultType<? extends IDrinkResult>> getType() {
-                    return SET_FIRE::get;
+                public DrinkResultType<? extends IDrinkResult> getType() {
+                    return SET_FIRE.get();
                 }
             }));
 
-    public static final RegistryObject<DrinkResultType<IDrinkResult>> ZAP = DRINK_RESULTS
-            .register("zap", () -> new DrinkResultType<>(() -> new IDrinkResult() {
+    public static final RegistryObject<DrinkResultType<IDrinkResult>> ZAP =
+            DRINK_RESULTS.register("zap", type(() -> new IDrinkResult() {
                 @Override
                 public void apply(Player player, Level level, FluidStack drunkStack) {
                     var bolt = Objects.requireNonNull(EntityType.LIGHTNING_BOLT.create(level));
@@ -59,8 +59,8 @@ public class DrinkResults {
                 }
 
                 @Override
-                public Supplier<DrinkResultType<? extends IDrinkResult>> getType() {
-                    return ZAP::get;
+                public DrinkResultType<? extends IDrinkResult> getType() {
+                    return ZAP.get();
                 }
             }));
 
@@ -73,12 +73,17 @@ public class DrinkResults {
 
     public static Optional<String> getKey(IDrinkResult drinkResult) {
         var resourceLocation =
-                RegistryManager.ACTIVE.getRegistry(DRINK_RESULT_TYPE_KEY).getKey(drinkResult.getType().get());
+                RegistryManager.ACTIVE.getRegistry(DRINK_RESULT_TYPE_KEY).getKey(drinkResult.getType());
         if (resourceLocation == null) return Optional.empty();
         return Optional.of(resourceLocation.toString());
     }
+
     public static void init(IEventBus modBus) {
         DRINK_RESULTS.register(modBus);
+    }
+
+    private static <T extends IDrinkResult> Supplier<DrinkResultType<T>> type(Supplier<T> factory) {
+        return () -> new DrinkResultType<>(factory);
     }
 
 }

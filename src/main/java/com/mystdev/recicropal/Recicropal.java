@@ -1,12 +1,13 @@
 package com.mystdev.recicropal;
 
 import com.mojang.logging.LogUtils;
-import com.mystdev.recicropal.content.condition.DebugCondition;
-import com.mystdev.recicropal.content.condition.FluidTagEmptyCondition;
-import com.mystdev.recicropal.content.drinking.DrinkHandler;
+import com.mystdev.recicropal.common.condition.DebugCondition;
+import com.mystdev.recicropal.common.condition.FluidTagEmptyCondition;
+import com.mystdev.recicropal.content.drinking.capability.DrinkHandler;
 import com.mystdev.recicropal.content.drinking.result.DrinkResults;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -20,13 +21,10 @@ import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(Recicropal.MOD_ID)
 public class Recicropal {
 
-    // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "recicropal";
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
     public static boolean debug = true;
     public static final NonNullSupplier<Registrate> REGISTRATE = NonNullSupplier.lazy(() -> Registrate
@@ -37,6 +35,10 @@ public class Recicropal {
                     return ModItems.BOTTLE_GOURD.asStack();
                 }
             }));
+
+    public static ResourceLocation rl(String name) {
+        return new ResourceLocation(MOD_ID, name);
+    }
 
     public Recicropal() {
         ModBlocks.init();

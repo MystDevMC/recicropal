@@ -13,7 +13,7 @@
     "item": "minecraft:milk_bucket"
   },
   "fluid": {
-    "chooseFromTag": "forge:milk",
+    "tag": "forge:milk",
     "amount": 1000
   },
   "result": {

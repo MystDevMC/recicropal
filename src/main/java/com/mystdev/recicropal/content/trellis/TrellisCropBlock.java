@@ -92,7 +92,7 @@ public abstract class TrellisCropBlock extends CropBlock {
                                                           attached,
                                                           levelAccessor.getBlockState(attached));
                 if (!newValue) blockstate = blockstate.setValue(VinelikeProps.PROPERTY_BY_DIRECTION.get(side.getKey()),
-                                                           Boolean.FALSE);
+                                                                Boolean.FALSE);
             }
             return blockstate;
         }

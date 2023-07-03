@@ -3,7 +3,8 @@ package com.mystdev.recicropal.content.drinking;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mystdev.recicropal.ModRecipes;
-import com.mystdev.recicropal.content.FluidIngredient;
+import com.mystdev.recicropal.common.fluid.FluidIngredient;
+import com.mystdev.recicropal.content.drinking.capability.DrinkContext;
 import com.mystdev.recicropal.content.drinking.result.DrinkResults;
 import com.mystdev.recicropal.content.drinking.result.IDrinkResult;
 import com.mystdev.recicropal.content.drinking.result.ISerializableDrinkResult;
@@ -38,7 +39,7 @@ import java.util.List;
  *     </li>
  * </ul>
  * <p>
- * DO NOT USE THIS OUTSIDE THE CONTEXT OF DRINKING such as calling {@link DrinkingRecipe#assemble} and other methods
+ * DO NOT USE THIS OUTSIDE THE CONTEXT OF DRINKING such as calling {@link DrinkingRecipe#getResultItem()} and other methods
  * marked as {@link Deprecated}.
  */
 public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
@@ -101,7 +102,7 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
 
             var amount = GsonHelper.getAsInt(jsonObject, "amount", DEFAULT_AMOUNT);
             var fluidJsonObject = jsonObject.getAsJsonObject("fluid");
-            var ingredient =  FluidIngredient.fromJson(fluidJsonObject).withAmount(amount);
+            var ingredient = FluidIngredient.fromJson(fluidJsonObject).withAmount(amount);
 
             if (fluidJsonObject.has("nbt")) {
                 var nbt = CompoundTag.CODEC.decode(JsonOps.INSTANCE, fluidJsonObject.getAsJsonObject("nbt"))

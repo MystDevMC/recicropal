@@ -140,7 +140,6 @@ public class BottleGourdItem extends BlockItem {
         super.releaseUsing(stack, level, livingEntity, ticksUsed);
     }
 
-    // TODO: Maybe make this configurable depending on how much are going to be drunk
     @Override
     public int getUseDuration(ItemStack stack) {
         return PotionItem.EAT_DURATION;

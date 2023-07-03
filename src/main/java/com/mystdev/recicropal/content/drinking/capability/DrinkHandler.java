@@ -1,4 +1,4 @@
-package com.mystdev.recicropal.content.drinking;
+package com.mystdev.recicropal.content.drinking.capability;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;

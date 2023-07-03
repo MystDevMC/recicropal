@@ -1,9 +1,10 @@
-package com.mystdev.recicropal.content.loot;
+package com.mystdev.recicropal.common.loot;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.serialization.JsonOps;
+import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -23,14 +24,11 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.Optional;
 
 public class SetFluidFunction extends LootItemConditionalFunction {
 
     public static final LootItemFunctionType TYPE = new LootItemFunctionType(new Serializer());
-
-    // TODO: Make FluidProvider?
     private final Fluid fluid;
     private final NumberProvider amount;
     private final CompoundTag nbt;
@@ -69,9 +67,7 @@ public class SetFluidFunction extends LootItemConditionalFunction {
         @Override
         public void serialize(JsonObject jsonObject, SetFluidFunction function, JsonSerializationContext ctx) {
             super.serialize(jsonObject, function, ctx);
-            jsonObject.addProperty("fluid", Objects
-                    .requireNonNull(ForgeRegistries.FLUIDS.getKey(function.fluid))
-                    .toString());
+            jsonObject.addProperty("fluid", ModFluidUtils.key(function.fluid));
             jsonObject.add("amount", ctx.serialize(function.amount));
             if (function.nbt != null) {
                 var nbtJson = CompoundTag.CODEC.encodeStart(JsonOps.INSTANCE, function.nbt).get().left();

@@ -11,17 +11,21 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ModRecipes {
 
-    public static final DeferredRegister<RecipeType<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, Recicropal.MOD_ID);
-    public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Recicropal.MOD_ID);
+    public static final DeferredRegister<RecipeType<?>> RECIPES =
+            DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, Recicropal.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
+            DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Recicropal.MOD_ID);
 
     public static final RegistryObject<RecipeType<DrinkingRecipe>> DRINKING_RECIPE =
-            RECIPES.register("drinking", () -> new RecipeType<>(){});
+            RECIPES.register("drinking", () -> new RecipeType<>() {
+            });
 
     public static final RegistryObject<RecipeSerializer<DrinkingRecipe>> DRINKING_SERIALIZER =
             SERIALIZERS.register("drinking", () -> DrinkingRecipe.SERIALIZER);
 
     public static final RegistryObject<RecipeType<FillingRecipe>> FILLING_RECIPE =
-            RECIPES.register("filling", () -> new RecipeType<>(){});
+            RECIPES.register("filling", () -> new RecipeType<>() {
+            });
 
     public static final RegistryObject<RecipeSerializer<FillingRecipe>> FILLING_SERIALIZER =
             SERIALIZERS.register("filling", () -> FillingRecipe.SERIALIZER);

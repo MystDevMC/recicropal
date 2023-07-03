@@ -8,6 +8,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 public class BottleInteractionContainer extends RecipeWrapper {
 
     private final BottleGourdBlockEntity bottle;
+
     public BottleInteractionContainer(ItemStack stack, BottleGourdBlockEntity bottle) {
         super(new ItemStackHandler());
         this.setItem(0, stack);

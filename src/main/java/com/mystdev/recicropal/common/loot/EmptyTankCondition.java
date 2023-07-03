@@ -1,4 +1,4 @@
-package com.mystdev.recicropal.content.loot;
+package com.mystdev.recicropal.common.loot;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;

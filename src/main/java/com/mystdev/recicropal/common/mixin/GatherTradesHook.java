@@ -1,4 +1,4 @@
-package com.mystdev.recicropal.content.mixin;
+package com.mystdev.recicropal.common.mixin;
 
 import com.mystdev.recicropal.content.trading.GatherTradesEvent;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public abstract class GatherTradesHook extends Entity {
 
     private final Villager recicropal_theVillager = (Villager) (Object) this;
+
     public GatherTradesHook(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
     }

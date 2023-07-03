@@ -1,6 +1,6 @@
 package com.mystdev.recicropal.content.trading;
 
-import com.mystdev.recicropal.content.mixin.GatherTradesHook;
+import com.mystdev.recicropal.common.mixin.GatherTradesHook;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerTrades;

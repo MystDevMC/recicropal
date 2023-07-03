@@ -32,7 +32,14 @@ public class BottleGourdListing extends SensitiveItemListing {
             return new MerchantOffer(new ItemStack(Items.EMERALD), itemstack, 10, 3, 0.05F);
         }
         var itemstack = new ItemStack(ModItems.BOTTLE_GOURD.get());
-        FluidUtil.getFluidHandler(itemstack).ifPresent(bottle -> bottle.fill(new FluidStack(Fluids.WATER, 2000), IFluidHandler.FluidAction.EXECUTE));
-        return new MerchantOffer(ItemHandlerHelper.copyStackWithSize(itemstack, random.nextInt(3, 6)), new ItemStack(Items.EMERALD), 10, 3, 0.05F);
+        FluidUtil
+                .getFluidHandler(itemstack)
+                .ifPresent(bottle -> bottle.fill(new FluidStack(Fluids.WATER, 2000),
+                                                 IFluidHandler.FluidAction.EXECUTE));
+        return new MerchantOffer(ItemHandlerHelper.copyStackWithSize(itemstack, random.nextInt(3, 6)),
+                                 new ItemStack(Items.EMERALD),
+                                 10,
+                                 3,
+                                 0.05F);
     }
 }

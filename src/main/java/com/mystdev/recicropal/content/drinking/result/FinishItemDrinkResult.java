@@ -13,18 +13,18 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
-public class FinishItemDrinkResult implements ISerializableDrinkResult<FinishItemDrinkResult>{
+public class FinishItemDrinkResult implements ISerializableDrinkResult<FinishItemDrinkResult> {
     private Item item;
+
     @Override
     public void apply(Player player, Level level, FluidStack drunkStack) {
         new ItemStack(item).finishUsingItem(level, player);
     }
 
     @Override
-    public Supplier<DrinkResultType<? extends IDrinkResult>> getType() {
-        return DrinkResults.FINISH_ITEM::get;
+    public DrinkResultType<? extends IDrinkResult> getType() {
+        return DrinkResults.FINISH_ITEM.get();
     }
 
     @Override
