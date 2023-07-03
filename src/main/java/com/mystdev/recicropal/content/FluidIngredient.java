@@ -23,11 +23,12 @@ import java.util.function.Predicate;
 
 // Inspired by the Creators of Create
 // i use some kind of lazy strategy pattern here XD
-// This decomposes the FluidStack so maybe it isn't the best
+// This decomposes the FluidStack, so maybe it isn't the best
 public class FluidIngredient implements Predicate<FluidStack> {
     private final Value value;
     private final List<Fluid> dissolved = new ObjectArrayList<>();
     private CompoundTag tag;
+    private boolean isTagSet;
     private Integer amount;
 
     private FluidIngredient(Value value) {
@@ -47,7 +48,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         if (!dissolved()) dissolve();
         for (var f : dissolved) {
             if (f != stack.getFluid()) continue;
-            if (!(tag == null ? stack.getTag() == null : stack.getTag() != null && tag.equals(stack.getTag()))) continue;
+            if (isTagSet && !(tag == null ? stack.getTag() == null : stack.getTag() != null && tag.equals(stack.getTag()))) continue;
             if (amount != null && stack.getAmount() < amount) continue;
             return true;
         }
@@ -58,7 +59,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return amount == null ? 0 : amount;
     }
     public boolean hasTag() {
-        return tag != null;
+        return isTagSet && tag != null;
     }
     public CompoundTag getTag() {
         return tag;
@@ -69,8 +70,10 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return this;
     }
 
+    // Only set this when needed.
     public FluidIngredient withNbt(CompoundTag tag) {
         this.tag = tag;
+        this.isTagSet = true;
         return this;
     }
 

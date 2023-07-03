@@ -21,7 +21,7 @@ public class FinishItemTransferNbtDrinkResult implements ISerializableDrinkResul
     public void apply(Player player, Level level, FluidStack drunkStack) {
         var stack = new ItemStack(item);
         stack.setTag(drunkStack.getTag());
-        item.finishUsingItem(stack, level, player);
+        stack.finishUsingItem(level, player);
     }
 
     @Override

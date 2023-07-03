@@ -101,12 +101,15 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
 
             var amount = GsonHelper.getAsInt(jsonObject, "amount", DEFAULT_AMOUNT);
             var fluidJsonObject = jsonObject.getAsJsonObject("fluid");
-            CompoundTag nbt = null;
-            if (fluidJsonObject.has("nbt"))
-                nbt = CompoundTag.CODEC.decode(JsonOps.INSTANCE, fluidJsonObject.getAsJsonObject("nbt"))
-                                       .get().orThrow().getFirst();
+            var ingredient =  FluidIngredient.fromJson(fluidJsonObject).withAmount(amount);
 
-            return new DrinkingRecipe(rl, drinkResults, FluidIngredient.fromJson(fluidJsonObject).withAmount(amount).withNbt(nbt));
+            if (fluidJsonObject.has("nbt")) {
+                var nbt = CompoundTag.CODEC.decode(JsonOps.INSTANCE, fluidJsonObject.getAsJsonObject("nbt"))
+                                           .get().orThrow().getFirst();
+                ingredient = ingredient.withNbt(nbt);
+            }
+
+            return new DrinkingRecipe(rl, drinkResults, ingredient);
         }
 
         @Override

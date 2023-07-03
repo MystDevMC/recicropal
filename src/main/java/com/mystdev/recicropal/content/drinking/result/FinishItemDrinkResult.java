@@ -19,7 +19,7 @@ public class FinishItemDrinkResult implements ISerializableDrinkResult<FinishIte
     private Item item;
     @Override
     public void apply(Player player, Level level, FluidStack drunkStack) {
-        item.finishUsingItem(new ItemStack(item), level, player);
+        new ItemStack(item).finishUsingItem(level, player);
     }
 
     @Override
