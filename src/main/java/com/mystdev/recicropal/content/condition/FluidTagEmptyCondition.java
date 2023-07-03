@@ -1,8 +1,7 @@
-package com.mystdev.recicropal.content;
+package com.mystdev.recicropal.content.condition;
 
 import com.google.gson.JsonObject;
 import com.mystdev.recicropal.Recicropal;
-import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.GsonHelper;

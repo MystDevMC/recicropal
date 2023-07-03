@@ -5,12 +5,12 @@
       "type": "forge:not",
       "value": {
         "type": "recicropal:fluid_tag_empty",
-        "tag": "minecraft:milk"
+        "tag": "forge:milk"
       }
     }
   ],
   "fluid": {
-    "tag": "minecraft:milk"
+    "tag": "forge:milk"
   },
   "results": [
     {

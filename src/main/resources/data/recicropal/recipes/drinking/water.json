@@ -1,7 +1,7 @@
 {
   "type": "recicropal:drinking",
   "fluid": {
-    "id" : "minecraft:water"
+    "fluid" : "minecraft:water"
   },
   "amount": 250,
   "results": [{

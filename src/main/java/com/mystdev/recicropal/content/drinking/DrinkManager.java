@@ -60,7 +60,7 @@ public class DrinkManager {
 
             var fluidRes =
                     FluidUtil.tryEmptyContainerAndStow(
-                            ctx.stack(), voidTank, wrappedInventory, recipe.stack.getAmount(), player, true);
+                            ctx.stack(), voidTank, wrappedInventory, recipe.ingredient.getAmount(), player, true);
 
             // Return the new stack to player
             player.setItemInHand(hand, fluidRes.result);
