@@ -3,9 +3,9 @@ package com.mystdev.recicropal.content.mixing;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mystdev.recicropal.ModRecipes;
-import com.mystdev.recicropal.Recicropal;
-import com.mystdev.recicropal.common.fluid.ModFluidUtils;
-import com.mystdev.recicropal.common.fluid.provider.FluidStackProvider;
+import com.mystdev.recicropal.common.fluid.FluidIngredient;
+import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -18,21 +18,22 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 
-public class FillingRecipe implements Recipe<BottleInteractionContainer> {
+public class PouringRecipe implements Recipe<BottleInteractionContainer> {
+
     private final ResourceLocation rl;
     private final Ingredient ingredient;
-    private final FluidStackProvider resultProvider;
+    private final FluidIngredient fluidIngredient;
     private final IMixingProcess process;
     private final ItemStack result;
 
-    public FillingRecipe(ResourceLocation rl,
+    public PouringRecipe(ResourceLocation rl,
                          Ingredient ingredient,
-                         FluidStackProvider resultProvider,
+                         FluidIngredient fluidIngredient,
                          IMixingProcess process,
                          ItemStack result) {
         this.rl = rl;
         this.ingredient = ingredient;
-        this.resultProvider = resultProvider;
+        this.fluidIngredient = fluidIngredient;
         this.process = process;
         this.result = result;
     }
@@ -40,90 +41,104 @@ public class FillingRecipe implements Recipe<BottleInteractionContainer> {
     @Override
     public boolean matches(BottleInteractionContainer container, Level level) {
         if (process == null) {
-            // Idk why sometimes when you use a FluidHandlerItem, it'll detect air instead of the item
             if (!ingredient.test(container.getItem(0))) return false;
-            var stackToFill = resultProvider.get();
-            var test = container.getBottle().tank.fill(stackToFill, IFluidHandler.FluidAction.SIMULATE);
-            return test == stackToFill.getAmount();
+            return fluidIngredient.test(container.getBottle().tank.getFluid());
         }
         else {
-            return process.matchForFilling(container, level);
+            return process.matchForPouring(container, level);
         }
     }
 
     @Override
     public ItemStack assemble(BottleInteractionContainer container) {
         if (process == null) {
-            var stackToFill = resultProvider.get();
-            container.getBottle().tank.fill(stackToFill, IFluidHandler.FluidAction.EXECUTE);
+            container.getBottle().tank.drain(fluidIngredient.getAmount(), IFluidHandler.FluidAction.EXECUTE);
             return result.copy();
         }
         else {
-            return process.assembleForFilling(container);
+            return process.assembleForPouring(container);
         }
     }
 
+
     @Override
-    public ResourceLocation getId() {
-        return rl;
+    public RecipeSerializer<?> getSerializer() {
+        return ModRecipes.POURING_SERIALIZER.get();
     }
 
     @Override
     public RecipeType<?> getType() {
-        return ModRecipes.FILLING_RECIPE.get();
+        return ModRecipes.POURING_RECIPE.get();
     }
 
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.FILLING_SERIALIZER.get();
-    }
+    public static final Serializer SERIALIZER = new Serializer();
 
-    public static final FillingRecipe.Serializer SERIALIZER = new FillingRecipe.Serializer();
-
-    public static class Serializer implements RecipeSerializer<FillingRecipe> {
+    public static class Serializer implements RecipeSerializer<PouringRecipe> {
 
         @Override
-        public FillingRecipe fromJson(ResourceLocation rl, JsonObject jsonObject) {
+        public PouringRecipe fromJson(ResourceLocation rl, JsonObject jsonObject) {
             if (jsonObject.has("process"))
-                return new FillingRecipe(rl, Ingredient.EMPTY, null,
+                return new PouringRecipe(rl, Ingredient.EMPTY, null,
                                          IMixingProcess.get(GsonHelper.getAsString(jsonObject, "process")),
                                          ItemStack.EMPTY);
 
             var ingredient = Ingredient.fromJson(jsonObject.get("ingredient"));
-            var provider = FluidStackProvider.fromJson(jsonObject.getAsJsonObject("fluid"));
+            var fluidJson = jsonObject.getAsJsonObject("fluid");
+            var amt = GsonHelper.getAsInt(fluidJson, "amount", DrinkingRecipe.DEFAULT_AMOUNT);
+            var fluidIngredient = FluidIngredient.fromJson(fluidJson);
+            if (fluidJson.has("nbt")) {
+                var nbt = CompoundTag.CODEC.decode(JsonOps.INSTANCE, fluidJson.get("nbt"))
+                                           .result().orElseThrow().getFirst();
+                fluidIngredient.withNbt(nbt);
+            }
+
             var result = ItemStack.CODEC
                     .decode(JsonOps.INSTANCE, jsonObject.get("result"))
                     .result().orElseThrow().getFirst();
-            return new FillingRecipe(rl, ingredient, provider, null, result);
+            return new PouringRecipe(rl, ingredient, fluidIngredient.withAmount(amt), null, result);
         }
 
         @Override
-        public @Nullable FillingRecipe fromNetwork(ResourceLocation rl, FriendlyByteBuf buf) {
+        public @Nullable PouringRecipe fromNetwork(ResourceLocation rl, FriendlyByteBuf buf) {
             if (buf.readBoolean())
-                return new FillingRecipe(rl,
+                return new PouringRecipe(rl,
                                          Ingredient.EMPTY,
                                          null,
                                          IMixingProcess.get(buf.readUtf()),
                                          ItemStack.EMPTY);
 
             var ingredient = Ingredient.fromNetwork(buf);
-            var provider = FluidStackProvider.fromNetwork(buf);
+            var fluidIngredient = FluidIngredient.read(buf);
+            var amt = buf.readInt();
+            if (buf.readBoolean())
+                fluidIngredient.withNbt(buf.readNbt());
             var result = buf.readItem();
-            return new FillingRecipe(rl, ingredient, provider, null, result);
+            return new PouringRecipe(rl, ingredient, fluidIngredient.withAmount(amt), null, result);
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buf, FillingRecipe recipe) {
+        public void toNetwork(FriendlyByteBuf buf, PouringRecipe recipe) {
             if (recipe.process != null) {
                 buf.writeBoolean(true);
                 buf.writeUtf(recipe.process.getId());
                 return;
             }
             recipe.ingredient.toNetwork(buf);
-            recipe.resultProvider.toNetwork(buf);
+            recipe.fluidIngredient.write(buf);
+            buf.writeInt(recipe.fluidIngredient.getAmount());
+            var hasTag = recipe.fluidIngredient.hasTag();
+            buf.writeBoolean(hasTag);
+            if (hasTag) {
+                buf.writeNbt(recipe.fluidIngredient.getTag());
+            }
             buf.writeItem(recipe.result);
         }
 
+    }
+
+    @Override
+    public ItemStack getResultItem() {
+        return result.copy();
     }
 
     @Override
@@ -133,8 +148,8 @@ public class FillingRecipe implements Recipe<BottleInteractionContainer> {
     }
 
     @Override
-    public ItemStack getResultItem() {
-        return result.copy();
+    @Deprecated
+    public ResourceLocation getId() {
+        return rl;
     }
-
 }

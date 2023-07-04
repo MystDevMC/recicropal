@@ -1,0 +1,23 @@
+{
+  "type": "recicropal:pouring",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "recicropal:fluid_tag_empty",
+        "tag": "forge:milk"
+      }
+    }
+  ],
+  "ingredient": {
+    "item": "minecraft:bucket"
+  },
+  "fluid": {
+    "tag": "forge:milk",
+    "amount": 1000
+  },
+  "result": {
+    "id": "minecraft:milk_bucket",
+    "Count": 1
+  }
+}

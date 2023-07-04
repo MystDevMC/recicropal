@@ -7,8 +7,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -99,85 +101,118 @@ public class BottleGourdBlock extends Block implements EntityBlock {
 
             var usedStack = ItemHandlerHelper.copyStackWithSize(stack, 1);
 
+            // Filling
             var container = new BottleInteractionContainer(usedStack, bottle);
-
-            var recipe = level.getRecipeManager()
-                              .getRecipeFor(
-                                      ModRecipes.FILLING_RECIPE.get(),
-                                      container,
-                                      level
-                              );
-            recipe.ifPresent(fillingRecipe -> {
-                var res = fillingRecipe.assemble(container);
-                player.setItemInHand(hand, ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - 1));
-                ItemHandlerHelper.giveItemToPlayer(player, res);
-                playSound(event, pos, SoundEvents.BOTTLE_EMPTY);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-                event.setCanceled(true);
-            });
+            if (!isSneaking) {
+                filling(event, pos, player, hand, stack, level, container);
+                if (event.isCanceled()) return;
+            }
+            // Pouring
+            pouring(event, pos, player, hand, stack, level, container);
             if (event.isCanceled()) return;
 
-            var fluidTankItem = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
-            fluidTankItem.ifPresent((tank) -> {
-                if (isSneaking) {
-                    var result = FluidUtil
-                            .tryFillContainerAndStow(stack,
-                                                     bottle.tank,
-                                                     new PlayerArmorInvWrapper(player.getInventory()),
-                                                     1000,
-                                                     player,
-                                                     false);
-                    if (!result.isSuccess()) {
-                        event.setCancellationResult(InteractionResult.FAIL);
-                        return;
-                    }
-                    result = FluidUtil
-                            .tryFillContainerAndStow(stack,
-                                                     bottle.tank,
-                                                     new PlayerArmorInvWrapper(player.getInventory()),
-                                                     1000,
-                                                     player,
-                                                     true);
-                    playSound(event, pos, SoundEvents.BOTTLE_EMPTY);
-                    player.setItemInHand(hand, result.result);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                }
-                else {
-                    var result = FluidUtil
-                            .tryEmptyContainerAndStow(stack,
-                                                      bottle.tank,
-                                                      new PlayerArmorInvWrapper(player.getInventory()),
-                                                      1000,
-                                                      player,
-                                                      false);
-                    if (!result.isSuccess()) {
-                        event.setCancellationResult(InteractionResult.FAIL);
-                        return;
-                    }
-                    result = FluidUtil
-                            .tryEmptyContainerAndStow(stack,
-                                                      bottle.tank,
-                                                      new PlayerArmorInvWrapper(player.getInventory()),
-                                                      1000,
-                                                      player,
-                                                      true);
-                    playSound(event, pos, SoundEvents.BOTTLE_FILL);
-
-                    player.setItemInHand(hand, result.result);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-
-                }
-            });
+            // FluidHandlerItem interactions
+            interactCapability(event, pos, player, hand, bottle, stack, isSneaking);
         }
     }
 
+    private static void interactCapability(PlayerInteractEvent.RightClickBlock event,
+                                           BlockPos pos,
+                                           Player player,
+                                           InteractionHand hand,
+                                           BottleGourdBlockEntity bottle,
+                                           ItemStack stack,
+                                           boolean isSneaking) {
+        var fluidTankItem = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
+        fluidTankItem.ifPresent((tank) -> {
+            if (isSneaking) {
+                var result = FluidUtil.tryFillContainerAndStow(stack,
+                                                               bottle.tank,
+                                                               new PlayerArmorInvWrapper(player.getInventory()),
+                                                               1000,
+                                                               player,
+                                                               false);
+                if (!result.isSuccess()) {
+                    event.setCancellationResult(InteractionResult.FAIL);
+                    return;
+                }
+                result = FluidUtil.tryFillContainerAndStow(stack,
+                                                           bottle.tank,
+                                                           new PlayerArmorInvWrapper(player.getInventory()),
+                                                           1000,
+                                                           player,
+                                                           true);
+                playSound(event, pos, SoundEvents.BOTTLE_EMPTY);
+                player.setItemInHand(hand, result.result);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+            }
+            else {
+                var result = FluidUtil.tryEmptyContainerAndStow(stack,
+                                                                bottle.tank,
+                                                                new PlayerArmorInvWrapper(player.getInventory()),
+                                                                1000,
+                                                                player,
+                                                                false);
+                if (!result.isSuccess()) {
+                    event.setCancellationResult(InteractionResult.FAIL);
+                    return;
+                }
+                result = FluidUtil.tryEmptyContainerAndStow(stack,
+                                                            bottle.tank,
+                                                            new PlayerArmorInvWrapper(player.getInventory()),
+                                                            1000,
+                                                            player,
+                                                            true);
+                playSound(event, pos, SoundEvents.BOTTLE_FILL);
+
+                player.setItemInHand(hand, result.result);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+
+            }
+        });
+    }
+
+    private static void pouring(PlayerInteractEvent.RightClickBlock event,
+                                BlockPos pos,
+                                Player player,
+                                InteractionHand hand,
+                                ItemStack stack,
+                                Level level,
+                                BottleInteractionContainer container) {
+        var pouringRecipeOpt = level.getRecipeManager().getRecipeFor(ModRecipes.POURING_RECIPE.get(), container, level);
+        pouringRecipeOpt.ifPresent(pouringRecipe -> {
+            var res = pouringRecipe.assemble(container);
+            player.setItemInHand(hand, ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - 1));
+            ItemHandlerHelper.giveItemToPlayer(player, res);
+            playSound(event, pos, SoundEvents.BOTTLE_FILL);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            event.setCanceled(true);
+        });
+    }
+
+    private static void filling(PlayerInteractEvent.RightClickBlock event,
+                                BlockPos pos,
+                                Player player,
+                                InteractionHand hand,
+                                ItemStack stack,
+                                Level level,
+                                BottleInteractionContainer container) {
+        var fillingRecipeOpt = level.getRecipeManager().getRecipeFor(ModRecipes.FILLING_RECIPE.get(), container, level);
+        fillingRecipeOpt.ifPresent(fillingRecipe -> {
+            var res = fillingRecipe.assemble(container);
+            player.setItemInHand(hand, ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - 1));
+            ItemHandlerHelper.giveItemToPlayer(player, res);
+            playSound(event, pos, SoundEvents.BOTTLE_EMPTY);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            event.setCanceled(true);
+        });
+    }
+
     private static void playSound(PlayerInteractEvent.RightClickBlock event, BlockPos pos, SoundEvent soundEvent) {
-        event.getLevel()
-             .playLocalSound(pos.getX(), pos.getY(), pos.getZ(),
-                             soundEvent,
-                             SoundSource.BLOCKS,
-                             1, 1, false);
+        event
+                .getLevel()
+                .playLocalSound(pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.BLOCKS, 1, 1, false);
     }
 }

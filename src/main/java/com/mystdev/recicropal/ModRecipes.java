@@ -2,6 +2,7 @@ package com.mystdev.recicropal;
 
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import com.mystdev.recicropal.content.mixing.FillingRecipe;
+import com.mystdev.recicropal.content.mixing.PouringRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -29,6 +30,13 @@ public class ModRecipes {
 
     public static final RegistryObject<RecipeSerializer<FillingRecipe>> FILLING_SERIALIZER =
             SERIALIZERS.register("filling", () -> FillingRecipe.SERIALIZER);
+
+    public static final RegistryObject<RecipeType<PouringRecipe>> POURING_RECIPE =
+            RECIPES.register("pouring", () -> new RecipeType<>() {
+            });
+
+    public static final RegistryObject<RecipeSerializer<PouringRecipe>> POURING_SERIALIZER =
+            SERIALIZERS.register("pouring", () -> PouringRecipe.SERIALIZER);
 
     public static void init(IEventBus modBus) {
         RECIPES.register(modBus);

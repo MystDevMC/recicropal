@@ -1,7 +1,6 @@
 package com.mystdev.recicropal.content.mixing;
 
 import com.mystdev.recicropal.ModFluids;
-import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -11,13 +10,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 
-class PotionProcess implements IFillingProcess {
+class PotionProcess implements IMixingProcess {
     public static PotionProcess INSTANCE = new PotionProcess();
 
     @Override
-    public boolean matches(BottleInteractionContainer container, Level level) {
+    public boolean matchForFilling(BottleInteractionContainer container, Level level) {
         var item = container.getItem(0).getItem();
 
         // Gonna hardcode this one for the moment
@@ -28,7 +26,7 @@ class PotionProcess implements IFillingProcess {
     }
 
     @Override
-    public ItemStack assemble(BottleInteractionContainer container) {
+    public ItemStack assembleForFilling(BottleInteractionContainer container) {
         var stack = container.getItem(0);
         var item = stack.getItem();
 
@@ -53,6 +51,30 @@ class PotionProcess implements IFillingProcess {
         }
         container.getBottle().tank.fill(fluid, IFluidHandler.FluidAction.EXECUTE);
         return new ItemStack(Items.GLASS_BOTTLE);
+    }
+
+    @Override
+    public boolean matchForPouring(BottleInteractionContainer container, Level level) {
+        var item = container.getItem(0).getItem();
+
+        // Gonna hardcode this one for the moment
+        if (item != Items.GLASS_BOTTLE) return false;
+
+        var tank = container.getBottle().tank;
+        return tank.getFluid().getFluid() == ModFluids.POTION.get() && tank.getFluidAmount() >= DrinkingRecipe.DEFAULT_AMOUNT;
+    }
+
+    @Override
+    public ItemStack assembleForPouring(BottleInteractionContainer container) {
+        var stack = new ItemStack(Items.POTION);
+
+        var tank = container.getBottle().tank;
+        var fluidTag = tank.getFluid().getTag();
+
+        stack.setTag(fluidTag);
+
+        tank.drain(DrinkingRecipe.DEFAULT_AMOUNT, IFluidHandler.FluidAction.EXECUTE);
+        return stack;
     }
 
     @Override

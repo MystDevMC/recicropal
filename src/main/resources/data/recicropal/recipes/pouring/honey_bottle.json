@@ -1,0 +1,23 @@
+{
+  "type": "recicropal:pouring",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "recicropal:fluid_tag_empty",
+        "tag": "forge:honey"
+      }
+    }
+  ],
+  "ingredient": {
+    "item": "minecraft:glass_bottle"
+  },
+  "fluid": {
+    "tag": "forge:honey",
+    "amount": 250
+  },
+  "result": {
+    "id": "minecraft:honey_bottle",
+    "Count": 1
+  }
+}
