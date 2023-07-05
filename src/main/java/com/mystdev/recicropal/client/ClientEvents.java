@@ -6,6 +6,7 @@ import com.mojang.math.Vector3f;
 import com.mystdev.recicropal.ModFluids;
 import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.Recicropal;
+import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -37,12 +38,13 @@ public class ClientEvents {
                         .withStyle(ChatFormatting.AQUA);
                 if (fluid.isEmpty()) component = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
                 event.getTooltipElements().add(1, Either.left(component));
-                if (fluid.getFluid() == ModFluids.POTION.get()) {
-                    var potionTag = fluid.getTag();
+                if (fluid.getFluid().is(ModFluidUtils.tag("forge:potion"))) {
+                    var potionTag = fluid.getOrCreateTag().getString(PotionUtils.TAG_POTION);
+                    if (potionTag.equals("")) return;
                     var potionComponent = Component
                             // Wouldn't this create name collisions?
                             .translatable(Potion
-                                                  .byName(potionTag.getString(PotionUtils.TAG_POTION))
+                                                  .byName(potionTag)
                                                   .getName("item.minecraft.potion.effect."))
                             .withStyle(ChatFormatting.GRAY);
                     event.getTooltipElements().add(2, Either.left(potionComponent));
