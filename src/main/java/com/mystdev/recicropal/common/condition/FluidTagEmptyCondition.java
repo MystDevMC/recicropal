@@ -43,4 +43,4 @@ public class FluidTagEmptyCondition implements ICondition {
             return FLUID_TAG_EMPTY_RL;
         }
     };
-};
+}

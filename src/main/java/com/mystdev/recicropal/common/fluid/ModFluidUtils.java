@@ -5,7 +5,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.registries.ForgeRegistries;

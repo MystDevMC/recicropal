@@ -28,6 +28,7 @@ public class BottleGourdTank extends FluidTank {
                 .getRecipeManager()
                 .getRecipeFor(ModRecipes.MIXING_RECIPE.get(), container, lazyLevel.get());
     }
+
     @Override
     public int fill(FluidStack resource, FluidAction action) {
         if (resource.isEmpty() || !isFluidValid(resource)) {
@@ -36,7 +37,6 @@ public class BottleGourdTank extends FluidTank {
         if (action.simulate()) {
             var container = new MixingContainer(this, resource);
             var recipe = getMixingRecipe(container);
-
             if (recipe.isPresent()) {
                 var resAmount = recipe.get().getResult(container).getAmount();
                 return Math.min(capacity, resAmount) - fluid.getAmount();
@@ -58,14 +58,13 @@ public class BottleGourdTank extends FluidTank {
             var result = recipe.get().getResult(container);
             var resAmount = result.getAmount();
             if ((resAmount - fluid.getAmount()) < filled) {
+                filled = resAmount - fluid.getAmount();
                 fluid = result;
-                filled = (resAmount - fluid.getAmount());
             }
             else {
-                fluid = new FluidStack(result.getFluid(), capacity, result.getTag());
+                fluid.grow(filled);
             }
-            if (filled > 0)
-                onContentsChanged();
+            onContentsChanged();
             return filled;
         }
         if (fluid.isEmpty()) {

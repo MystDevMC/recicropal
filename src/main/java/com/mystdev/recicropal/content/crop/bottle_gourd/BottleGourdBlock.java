@@ -165,7 +165,6 @@ public class BottleGourdBlock extends Block implements EntityBlock {
                                                             player,
                                                             true);
                 playSound(event, pos, SoundEvents.BOTTLE_FILL);
-
                 player.setItemInHand(hand, result.result);
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);

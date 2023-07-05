@@ -8,6 +8,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 public class MixingContainer extends RecipeWrapper {
     private final BottleGourdTank bottle;
     private final FluidStack incomingFluid;
+
     public MixingContainer(BottleGourdTank bottle, FluidStack incomingFluid) {
         super(new ItemStackHandler());
         this.bottle = bottle;

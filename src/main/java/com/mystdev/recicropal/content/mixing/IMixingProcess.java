@@ -11,6 +11,7 @@ public interface IMixingProcess {
 
     boolean matchForMixing(MixingContainer container, Level level);
 
+    // Make sure to NOT modify anything from the inputs
     FluidStack getMixingResult(MixingContainer container);
 
     boolean matchForPouring(BottleInteractionContainer container, Level level);

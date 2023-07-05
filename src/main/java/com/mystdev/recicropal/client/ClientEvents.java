@@ -41,7 +41,9 @@ public class ClientEvents {
                     var potionTag = fluid.getTag();
                     var potionComponent = Component
                             // Wouldn't this create name collisions?
-                            .translatable(Potion.byName(potionTag.getString(PotionUtils.TAG_POTION)).getName("item.minecraft.potion.effect."))
+                            .translatable(Potion
+                                                  .byName(potionTag.getString(PotionUtils.TAG_POTION))
+                                                  .getName("item.minecraft.potion.effect."))
                             .withStyle(ChatFormatting.GRAY);
                     event.getTooltipElements().add(2, Either.left(potionComponent));
                 }

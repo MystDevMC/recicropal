@@ -43,7 +43,8 @@ public class MixingRecipe implements Recipe<MixingContainer> {
             var in = container.getIncomingFluid();
             if (!ingressFluid.test(in) && !insideFluid.test(in)) return false;
             var inBottle = container.getBottle().getFluid();
-            return insideFluid.test(inBottle) || insideFluid.test(inBottle);
+            return (insideFluid.test(inBottle) && ingressFluid.test(in)) || (insideFluid.test(in) && ingressFluid.test(
+                    inBottle));
         }
         else {
             return process.matchForMixing(container, level);
@@ -55,8 +56,8 @@ public class MixingRecipe implements Recipe<MixingContainer> {
         return resultFluid
                 .ifNoAmountSpecified(
                         () -> container.getBottle().getFluidAmount() + container
-                        .getIncomingFluid()
-                        .getAmount())
+                                .getIncomingFluid()
+                                .getAmount())
                 .get();
     }
 
