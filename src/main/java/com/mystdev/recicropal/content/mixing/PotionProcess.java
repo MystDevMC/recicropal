@@ -72,6 +72,7 @@ class PotionProcess implements IMixingProcess {
         if (!fluidIn.getFluid().is(POTION_TAG) && fluidIn.getFluid() != ModFluids.MIXTURE.get().getSource())
             return false;
         var isPotion = fluidInside.getFluid().is(POTION_TAG);
+        if (fluidIn.getFluid().is(POTION_TAG) && isPotion && FluidStack.areFluidStackTagsEqual(fluidInside, fluidIn)) return false;
         var isMixture = fluidInside.getFluid() == ModFluids.MIXTURE.get().getSource();
         var isEmpty = fluidInside.isEmpty();
         return isEmpty || isMixture || isPotion;
