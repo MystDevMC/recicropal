@@ -147,6 +147,6 @@ public class BottleGourdItem extends BlockItem {
 
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new FluidHandlerItemStack(stack, BottleGourdBlockEntity.MAX_CAPACITY);
+        return new FluidHandlerItemStack(stack, BottleGourdTank.CAPACITY);
     }
 }

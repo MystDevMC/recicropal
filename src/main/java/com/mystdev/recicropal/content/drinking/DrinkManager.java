@@ -58,14 +58,14 @@ public class DrinkManager {
             var fluidRes =
                     FluidUtil.tryEmptyContainerAndStow(
                             ctx.stack(), ModFluidUtils.voidTank(),
-                            wrappedInventory, recipe.ingredient.getAmount(), player, true
+                            wrappedInventory, recipe.getAmount(), player, true
                     );
 
             // Return the new stack to player
             player.setItemInHand(hand, fluidRes.result);
 
             // Apply post-drinking effects
-            recipe.results.forEach(res -> res.apply(player, ctx.level(), recipe.getDrunk(ctx)));
+            recipe.getResults().forEach(res -> res.apply(player, ctx.level(), recipe.getDrunk(ctx)));
 
             // Reset
             handler.setContext(null);

@@ -15,11 +15,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 // Inspired by the Creators of Create
 // i use some kind of lazy strategy pattern here XD
 // This decomposes the FluidStack, so maybe it isn't the best
 public class FluidIngredient implements Predicate<FluidStack> {
+
+    public static final FluidIngredient EMPTY = new FluidIngredient(new EmptyValue());
     private final Value value;
     private final List<Fluid> dissolved = new ObjectArrayList<>();
     private CompoundTag tag;
@@ -98,6 +101,33 @@ public class FluidIngredient implements Predicate<FluidStack> {
         var either = Either.<JsonObject, FriendlyByteBuf>right(buf);
         var val = Value.getAppropriateFactory(either).apply(either);
         return new FluidIngredient(val);
+    }
+
+    private static class EmptyValue implements Value {
+        @Override
+        public Collection<Fluid> getFluids() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void readJson(JsonObject object) {
+
+        }
+
+        @Override
+        public void writeJson(JsonObject object) {
+
+        }
+
+        @Override
+        public void write(FriendlyByteBuf buf) {
+
+        }
+
+        @Override
+        public void read(FriendlyByteBuf buf) {
+
+        }
     }
 
     public static class FluidValue implements Value {

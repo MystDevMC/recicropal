@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BottleGourdBlockEntity extends BlockEntity {
-    public static final int MAX_CAPACITY = 2000;
-    public FluidTank tank = new FluidTank(MAX_CAPACITY);
+    public BottleGourdTank tank = new BottleGourdTank(this);
     private final LazyOptional<IFluidHandler> lazyTank = LazyOptional.of(() -> this.tank);
 
     public BottleGourdBlockEntity(BlockEntityType type, BlockPos pos, BlockState state) {
@@ -38,7 +37,7 @@ public class BottleGourdBlockEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        this.tank = new FluidTank(MAX_CAPACITY);
+        this.tank = new BottleGourdTank(this);
         this.tank.readFromNBT(tag.getCompound("Fluid"));
     }
 

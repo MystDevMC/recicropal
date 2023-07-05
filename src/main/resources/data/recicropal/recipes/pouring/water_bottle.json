@@ -1,0 +1,17 @@
+{
+  "type": "recicropal:pouring",
+  "ingredient": {
+    "item": "minecraft:glass_bottle"
+  },
+  "fluid": {
+    "fluid": "minecraft:water",
+    "amount": 250
+  },
+  "result": {
+    "id": "minecraft:potion",
+    "tag": {
+      "Potion": "minecraft:water"
+    },
+    "Count": 1
+  }
+}

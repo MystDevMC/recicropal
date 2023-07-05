@@ -101,7 +101,7 @@ public class BottleGourdBlock extends Block implements EntityBlock {
 
             var usedStack = ItemHandlerHelper.copyStackWithSize(stack, 1);
 
-            // Filling
+            // Filling & Mixing
             var container = new BottleInteractionContainer(usedStack, bottle);
             if (!isSneaking) {
                 filling(event, pos, player, hand, stack, level, container);

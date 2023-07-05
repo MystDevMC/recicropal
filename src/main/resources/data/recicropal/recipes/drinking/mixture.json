@@ -1,0 +1,11 @@
+{
+  "type": "recicropal:drinking",
+  "fluid": {
+    "fluid": "recicropal:mixture"
+  },
+  "results": [
+    {
+      "type": "recicropal:mixture"
+    }
+  ]
+}

@@ -114,8 +114,8 @@ public class FillingRecipe implements Recipe<BottleInteractionContainer> {
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, FillingRecipe recipe) {
+            buf.writeBoolean(recipe.process != null);
             if (recipe.process != null) {
-                buf.writeBoolean(true);
                 buf.writeUtf(recipe.process.getId());
                 return;
             }

@@ -2,11 +2,16 @@ package com.mystdev.recicropal.content.mixing;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.FluidStack;
 
 public interface IMixingProcess {
     boolean matchForFilling(BottleInteractionContainer container, Level level);
 
     ItemStack assembleForFilling(BottleInteractionContainer container);
+
+    boolean matchForMixing(MixingContainer container, Level level);
+
+    FluidStack getMixingResult(MixingContainer container);
 
     boolean matchForPouring(BottleInteractionContainer container, Level level);
 

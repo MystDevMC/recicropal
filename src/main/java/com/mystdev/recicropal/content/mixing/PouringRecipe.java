@@ -20,11 +20,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class PouringRecipe implements Recipe<BottleInteractionContainer> {
 
-    private final ResourceLocation rl;
-    private final Ingredient ingredient;
-    private final FluidIngredient fluidIngredient;
-    private final IMixingProcess process;
-    private final ItemStack result;
+    public final ResourceLocation rl;
+    public final Ingredient ingredient;
+    public final FluidIngredient fluidIngredient;
+    public final IMixingProcess process;
+    public final ItemStack result;
 
     public PouringRecipe(ResourceLocation rl,
                          Ingredient ingredient,
@@ -78,7 +78,9 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
         @Override
         public PouringRecipe fromJson(ResourceLocation rl, JsonObject jsonObject) {
             if (jsonObject.has("process"))
-                return new PouringRecipe(rl, Ingredient.EMPTY, null,
+                return new PouringRecipe(rl,
+                                         Ingredient.EMPTY,
+                                         null,
                                          IMixingProcess.get(GsonHelper.getAsString(jsonObject, "process")),
                                          ItemStack.EMPTY);
 
@@ -87,14 +89,14 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
             var amt = GsonHelper.getAsInt(fluidJson, "amount", DrinkingRecipe.DEFAULT_AMOUNT);
             var fluidIngredient = FluidIngredient.fromJson(fluidJson);
             if (fluidJson.has("nbt")) {
-                var nbt = CompoundTag.CODEC.decode(JsonOps.INSTANCE, fluidJson.get("nbt"))
-                                           .result().orElseThrow().getFirst();
+                var nbt = CompoundTag.CODEC.parse(JsonOps.INSTANCE, fluidJson.get("nbt")).result().orElseThrow();
                 fluidIngredient.withNbt(nbt);
             }
 
             var result = ItemStack.CODEC
-                    .decode(JsonOps.INSTANCE, jsonObject.get("result"))
-                    .result().orElseThrow().getFirst();
+                    .parse(JsonOps.INSTANCE, jsonObject.get("result"))
+                    .result()
+                    .orElseThrow();
             return new PouringRecipe(rl, ingredient, fluidIngredient.withAmount(amt), null, result);
         }
 
@@ -110,16 +112,15 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
             var ingredient = Ingredient.fromNetwork(buf);
             var fluidIngredient = FluidIngredient.read(buf);
             var amt = buf.readInt();
-            if (buf.readBoolean())
-                fluidIngredient.withNbt(buf.readNbt());
+            if (buf.readBoolean()) fluidIngredient.withNbt(buf.readNbt());
             var result = buf.readItem();
             return new PouringRecipe(rl, ingredient, fluidIngredient.withAmount(amt), null, result);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, PouringRecipe recipe) {
+            buf.writeBoolean(recipe.process != null);
             if (recipe.process != null) {
-                buf.writeBoolean(true);
                 buf.writeUtf(recipe.process.getId());
                 return;
             }

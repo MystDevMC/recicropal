@@ -44,9 +44,9 @@ import java.util.List;
  */
 public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
     public static final int DEFAULT_AMOUNT = 250;  // TODO: Make this configurable
-    public final ResourceLocation id;
-    public final List<IDrinkResult> results;
-    public final FluidIngredient ingredient;
+    private final ResourceLocation id;
+    private final List<IDrinkResult> results;
+    private final FluidIngredient ingredient;
 
     public DrinkingRecipe(ResourceLocation id, List<IDrinkResult> results, FluidIngredient ingredient) {
         this.id = id;
@@ -59,6 +59,14 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
         if (fluidOpt.isEmpty()) return FluidStack.EMPTY;
         var fluid = fluidOpt.get();
         return new FluidStack(fluid.getFluid(), ingredient.getAmount(), fluid.getTag());
+    }
+
+    public List<IDrinkResult> getResults() {
+        return results;
+    }
+
+    public int getAmount() {
+        return ingredient.getAmount();
     }
 
     @Override
@@ -105,8 +113,8 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
             var ingredient = FluidIngredient.fromJson(fluidJsonObject).withAmount(amount);
 
             if (fluidJsonObject.has("nbt")) {
-                var nbt = CompoundTag.CODEC.decode(JsonOps.INSTANCE, fluidJsonObject.getAsJsonObject("nbt"))
-                                           .get().orThrow().getFirst();
+                var nbt = CompoundTag.CODEC.parse(JsonOps.INSTANCE, fluidJsonObject.getAsJsonObject("nbt"))
+                                           .result().orElseThrow();
                 ingredient = ingredient.withNbt(nbt);
             }
 

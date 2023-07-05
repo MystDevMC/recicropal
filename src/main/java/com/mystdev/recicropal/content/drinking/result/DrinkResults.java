@@ -31,6 +31,9 @@ public class DrinkResults {
     public static final RegistryObject<DrinkResultType<?>> FINISH_ITEM_TRANSFER_NBT =
             DRINK_RESULTS.register("finish_item_transfer_nbt", type(FinishItemTransferNbtDrinkResult::new));
 
+    public static final RegistryObject<DrinkResultType<?>> MIXTURE =
+            DRINK_RESULTS.register("mixture", type(MixtureDrinkResult::new));
+
     // TODO: These are debugs that may be got cleaned up one day
     public static final RegistryObject<DrinkResultType<?>> HEAL =
             DRINK_RESULTS.register("heal", type(HealDrinkResult::new));

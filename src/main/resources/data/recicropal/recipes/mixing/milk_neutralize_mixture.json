@@ -1,0 +1,12 @@
+{
+  "type": "recicropal:mixing",
+  "fluidIn": {
+    "tag": "forge:milk"
+  },
+  "fluidInside": {
+    "fluid": "recicropal:mixture"
+  },
+  "result": {
+    "fluid": "minecraft:water"
+  }
+}

@@ -16,5 +16,13 @@
   "item.recicropal.glamorous_gourd": "Glamorous Gourd",
   "item.minecraft.potion.effect.revitalization": "Potion of Revitalization",
   "item.minecraft.splash_potion.effect.revitalization": "Splash Potion of Revitalization",
-  "item.minecraft.lingering_potion.effect.revitalization": "Lingering Potion of Revitalization"
+  "item.minecraft.lingering_potion.effect.revitalization": "Lingering Potion of Revitalization",
+  "fluid.recicropal.flowing_honey": "Honey",
+  "fluid.recicropal.honey": "Honey",
+  "fluid.recicropal.flowing_milk": "Milk",
+  "fluid.recicropal.milk": "Milk",
+  "fluid.recicropal.flowing_potion": "Potion",
+  "fluid.recicropal.potion": "Potion",
+  "fluid.recicropal.flowing_mixture": "Mixture",
+  "fluid.recicropal.mixture": "Mixture"
 }

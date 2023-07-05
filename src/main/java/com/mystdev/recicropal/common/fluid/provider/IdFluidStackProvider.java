@@ -33,6 +33,6 @@ class IdFluidStackProvider extends FluidStackProvider {
 
     @Override
     public FluidStack get() {
-        return new FluidStack(this.fluid, this.amount, this.nbt);
+        return new FluidStack(this.fluid, this.getAmount(), this.nbt);
     }
 }

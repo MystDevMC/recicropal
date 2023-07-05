@@ -3,6 +3,7 @@ package com.mystdev.recicropal.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Vector3f;
+import com.mystdev.recicropal.ModFluids;
 import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
@@ -10,6 +11,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHighlightEvent;
@@ -34,6 +37,14 @@ public class ClientEvents {
                         .withStyle(ChatFormatting.AQUA);
                 if (fluid.isEmpty()) component = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
                 event.getTooltipElements().add(1, Either.left(component));
+                if (fluid.getFluid() == ModFluids.POTION.get()) {
+                    var potionTag = fluid.getTag();
+                    var potionComponent = Component
+                            // Wouldn't this create name collisions?
+                            .translatable(Potion.byName(potionTag.getString(PotionUtils.TAG_POTION)).getName("item.minecraft.potion.effect."))
+                            .withStyle(ChatFormatting.GRAY);
+                    event.getTooltipElements().add(2, Either.left(potionComponent));
+                }
             });
         }
     }

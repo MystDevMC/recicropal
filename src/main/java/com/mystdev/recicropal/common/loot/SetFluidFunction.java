@@ -88,9 +88,8 @@ public class SetFluidFunction extends LootItemConditionalFunction {
             Optional.ofNullable(ForgeRegistries.FLUIDS.getValue(fluidRL)).ifPresent(fluid -> {
                 holder.fluid = fluid;
                 holder.provider = GsonHelper.getAsObject(object, "amount", ctx, NumberProvider.class);
-                var nbt = CompoundTag.CODEC.decode(JsonOps.INSTANCE, object.get("nbt"))
-                                           .get().left();
-                nbt.ifPresent(tag -> holder.nbt = tag.getFirst());
+                var nbt = CompoundTag.CODEC.parse(JsonOps.INSTANCE, object.get("nbt")).result();
+                nbt.ifPresent(tag -> holder.nbt = tag);
             });
             return new SetFluidFunction(conditions, holder.fluid, holder.provider, holder.nbt);
         }

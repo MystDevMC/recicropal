@@ -35,6 +35,6 @@ class TagFluidStackProvider extends FluidStackProvider {
     @Override
     public FluidStack get() {
         var fluid = ModFluidUtils.forcedMember(this.tag);
-        return new FluidStack(fluid, this.amount, this.nbt);
+        return new FluidStack(fluid, this.getAmount(), this.nbt);
     }
 }
