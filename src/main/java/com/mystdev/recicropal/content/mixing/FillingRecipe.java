@@ -3,8 +3,6 @@ package com.mystdev.recicropal.content.mixing;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mystdev.recicropal.ModRecipes;
-import com.mystdev.recicropal.Recicropal;
-import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.common.fluid.provider.FluidStackProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

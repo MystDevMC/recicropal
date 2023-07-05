@@ -1,6 +1,5 @@
 package com.mystdev.recicropal.content.mixing;
 
-import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdTank;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemStackHandler;

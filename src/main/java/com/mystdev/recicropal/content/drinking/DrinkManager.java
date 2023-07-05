@@ -73,10 +73,7 @@ public class DrinkManager {
     }
 
     public static void resetDrinking(Player player) {
-        getDrinkHandler(player).ifPresent(handler -> {
-            var ctx = handler.getContext();
-            handler.setContext(null);
-        });
+        getDrinkHandler(player).ifPresent(handler -> handler.setContext(null));
     }
 
     public static LazyOptional<IDrinkHandler> getDrinkHandler(Player player) {

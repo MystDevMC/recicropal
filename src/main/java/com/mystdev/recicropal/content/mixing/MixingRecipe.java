@@ -114,7 +114,7 @@ public class MixingRecipe implements Recipe<MixingContainer> {
             if (recipe.process != null) {
                 buf.writeUtf(recipe.process.getId());
                 return;
-            };
+            }
             recipe.ingressFluid.write(buf);
             recipe.insideFluid.write(buf);
             recipe.resultFluid.toNetwork(buf);

@@ -74,6 +74,7 @@ public abstract class FluidStackProvider {
 
     public void toNetwork(FriendlyByteBuf buf) {
         buf.writeUtf(this.getKey());
+        writeAmountAndTag(this, buf);
         this.write(buf);
     }
 

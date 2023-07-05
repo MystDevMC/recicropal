@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 // Inspired by the Creators of Create
 // i use some kind of lazy strategy pattern here XD
