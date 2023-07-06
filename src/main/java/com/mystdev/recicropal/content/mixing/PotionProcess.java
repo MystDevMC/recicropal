@@ -69,11 +69,11 @@ class PotionProcess implements IMixingProcess {
     public boolean matchForMixing(MixingContainer container, Level level) {
         var fluidIn = container.getIncomingFluid();
         var fluidInside = container.getBottle().getFluid();
-        if (!fluidIn.getFluid().is(POTION_TAG) && fluidIn.getFluid() != ModFluids.MIXTURE.get().getSource())
+        if (!fluidIn.getFluid().is(POTION_TAG) && Mixture.isMixture(fluidIn))
             return false;
         var isPotion = fluidInside.getFluid().is(POTION_TAG);
         if (fluidIn.getFluid().is(POTION_TAG) && isPotion && FluidStack.areFluidStackTagsEqual(fluidInside, fluidIn)) return false;
-        var isMixture = fluidInside.getFluid() == ModFluids.MIXTURE.get().getSource();
+        var isMixture = Mixture.isMixture(fluidInside);
         var isEmpty = fluidInside.isEmpty();
         return isEmpty || isMixture || isPotion;
     }
@@ -85,46 +85,9 @@ class PotionProcess implements IMixingProcess {
         if (fluidInside.isEmpty()) {
             return fluidIn.copy();
         }
-        FluidStack newMixture;
-        if (fluidIn.getFluid().is(POTION_TAG)) {
-            newMixture = mixtureFromPotion(fluidIn);
-        }
-        else {
-            newMixture = fluidIn.copy();
-        }
-        FluidStack insideMixture;
-        if (fluidInside.getFluid().is(POTION_TAG)) {
-            insideMixture = mixtureFromPotion(fluidInside);
-        }
-        else {
-            insideMixture = fluidInside.copy();
-        }
-        return mix(newMixture, insideMixture);
-    }
-
-    private static FluidStack mixtureFromPotion(FluidStack potionFluid) {
-        var base = new FluidStack(ModFluids.MIXTURE.get().getSource(), potionFluid.getAmount());
-        var potionTag = potionFluid.getOrCreateTag();
-        var baseTag = new CompoundTag();
-        var potionsTag = new ListTag();
-        var tag = potionTag.get(PotionUtils.TAG_POTION);
-        if (tag != null) {
-            potionsTag.add(tag);
-        }
-        baseTag.put("Potions", potionsTag);
-        base.setTag(baseTag);
-        return base;
-    }
-
-    private static FluidStack mix(FluidStack fluid1, FluidStack fluid2) {
-        var list1 = (ListTag) fluid1.getOrCreateTag().get("Potions");
-        var list2 = (ListTag) fluid2.getOrCreateTag().get("Potions");
-        if (list1 == null) list1 = new ListTag();
-        if (list2 == null) list2 = new ListTag();
-        list1.addAll(list2);
-        var mergedTag = new CompoundTag();
-        mergedTag.put("Potions", list1);
-        return new FluidStack(ModFluids.MIXTURE.get().getSource(), fluid1.getAmount() + fluid2.getAmount(), mergedTag);
+        Mixture newMixture = Mixture.getMixtureFromMixable(fluidIn);
+        Mixture insideMixture = Mixture.getMixtureFromMixable(fluidInside);
+        return Mixture.mix(newMixture, fluidIn.getAmount(), insideMixture, fluidInside.getAmount());
     }
 
     @Override
@@ -137,7 +100,7 @@ class PotionProcess implements IMixingProcess {
         var tank = container.getBottle().tank;
         return tank
                 .getFluid()
-                .getFluid() == ModFluids.POTION.get() && tank.getFluidAmount() >= DrinkingRecipe.DEFAULT_AMOUNT;
+                .getFluid().is(POTION_TAG) && tank.getFluidAmount() >= DrinkingRecipe.DEFAULT_AMOUNT;
     }
 
     @Override

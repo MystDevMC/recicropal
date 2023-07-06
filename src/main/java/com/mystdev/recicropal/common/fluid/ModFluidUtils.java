@@ -25,6 +25,7 @@ public class ModFluidUtils {
         return Objects.requireNonNull(ForgeRegistries.FLUIDS.tags()).getTag(tag).stream().toList();
     }
 
+    // TODO: Make this configurable
     public static Fluid forcedMember(TagKey<Fluid> tag) {
         return Objects
                 .requireNonNull(ForgeRegistries.FLUIDS.tags())

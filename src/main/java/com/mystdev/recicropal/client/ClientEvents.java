@@ -3,7 +3,6 @@ package com.mystdev.recicropal.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Vector3f;
-import com.mystdev.recicropal.ModFluids;
 import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
