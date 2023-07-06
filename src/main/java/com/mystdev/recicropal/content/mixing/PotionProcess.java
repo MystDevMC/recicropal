@@ -69,8 +69,7 @@ class PotionProcess implements IMixingProcess {
     public boolean matchForMixing(MixingContainer container, Level level) {
         var fluidIn = container.getIncomingFluid();
         var fluidInside = container.getBottle().getFluid();
-        if (!fluidIn.getFluid().is(POTION_TAG) && Mixture.isMixture(fluidIn))
-            return false;
+        if (!fluidIn.getFluid().is(POTION_TAG) && !Mixture.isMixture(fluidIn)) return false;
         var isPotion = fluidInside.getFluid().is(POTION_TAG);
         if (fluidIn.getFluid().is(POTION_TAG) && isPotion && FluidStack.areFluidStackTagsEqual(fluidInside, fluidIn)) return false;
         var isMixture = Mixture.isMixture(fluidInside);
