@@ -46,7 +46,7 @@ class PotionProcess implements IMixingProcess {
 
         var tag = voidItem.getOrCreateTag();
         var modifier = Mixture.Modifier.from(stack);
-        tag.putString(MixtureComponent.TAG_MODIFIER, modifier.getSerializedName());
+        tag.putString(MixturePart.TAG_MODIFIER, modifier.getSerializedName());
 
         if (stack.getOrCreateTag().contains(PotionUtils.TAG_CUSTOM_POTION_COLOR)) {
             tag.putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, color);
@@ -106,14 +106,14 @@ class PotionProcess implements IMixingProcess {
         var tank = container.getBottle().tank;
         var fluidTag = tank.getFluid().getTag();
 
-        if (fluidTag.contains(MixtureComponent.TAG_MODIFIER)) {
-            var modifierTag = Mixture.Modifier.from(fluidTag.getString(MixtureComponent.TAG_MODIFIER));
+        if (fluidTag.contains(MixturePart.TAG_MODIFIER)) {
+            var modifierTag = Mixture.Modifier.from(fluidTag.getString(MixturePart.TAG_MODIFIER));
             if (modifierTag == Mixture.Modifier.LINGERING) {
                 stack =  new ItemStack(Items.LINGERING_POTION);
             } else if (modifierTag == Mixture.Modifier.SPLASH) {
                 stack = new ItemStack(Items.SPLASH_POTION);
             }
-            fluidTag.remove(MixtureComponent.TAG_MODIFIER);
+            fluidTag.remove(MixturePart.TAG_MODIFIER);
         }
 
         stack.setTag(fluidTag);

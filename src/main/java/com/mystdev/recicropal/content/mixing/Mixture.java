@@ -1,17 +1,18 @@
 package com.mystdev.recicropal.content.mixing;
 
 import com.mystdev.recicropal.ModFluids;
+import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluid;
@@ -30,7 +31,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
     public static final String TAG_CATEGORY = "Category";
     @Nullable
     private Category category;
-    private final Map<String, MixtureComponent> components = new Object2ObjectOpenHashMap<>();
+    private final Map<String, MixturePart> components = new Object2ObjectOpenHashMap<>();
     @Nullable
     private Integer color;
 
@@ -65,12 +66,12 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             }
 
             var modifier = Modifier.NORMAL;
-            if (potionTag.contains(MixtureComponent.TAG_MODIFIER)) {
-                modifier = Modifier.from(potionTag.getString(MixtureComponent.TAG_MODIFIER));
+            if (potionTag.contains(MixturePart.TAG_MODIFIER)) {
+                modifier = Modifier.from(potionTag.getString(MixturePart.TAG_MODIFIER));
             }
 
-            var comp = new MixtureComponent(tag.getAsString(), 1, color, modifier);
-            mixture.addMixtureComponent(comp, amount, 0);
+            var comp = new MixturePart(tag.getAsString(), 1, PotionUtils.getAllEffects(potionTag), color, modifier);
+            mixture.addMixturePart(comp, amount, 0);
         }
         return mixture;
     }
@@ -101,7 +102,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             var r = 0;
             var g = 0;
             var b = 0;
-            for (MixtureComponent comp : this.components.values()) {
+            for (MixturePart comp : this.components.values()) {
                 var color = comp.getColor();
 
                 r += ((color >> 16) & 0xFF) * comp.getMolarity();
@@ -140,7 +141,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         mixture1.components
                 .values()
                 .forEach(component -> {
-                    var newComponent = new MixtureComponent(component);
+                    var newComponent = new MixturePart(component);
                     var moles = component.getMolarity() * mixture1Amount;
                     newComponent.setMolarity(moles / resultingVolume);
                     newMixture.components.put(component.getId(), newComponent);
@@ -150,7 +151,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         mixture2.components
                 .values()
                 .forEach(component -> {
-                    var newComponent = new MixtureComponent(component);
+                    var newComponent = new MixturePart(component);
                     var m1 = component.getMolarity() * mixture2Amount;
                     var moles = m1;
                     newComponent.setMolarity(m1 / resultingVolume);
@@ -184,7 +185,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(CompoundTag nbt) {
         var potionsTag = nbt.getCompound(TAG_POTIONS);
         potionsTag.getAllKeys().forEach(key -> {
-            var mixture = new MixtureComponent(key);
+            var mixture = new MixturePart(key);
             mixture.deserializeNBT(potionsTag.getCompound(key));
             components.put(key, mixture);
         });
@@ -193,7 +194,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
     }
 
     // Add singular mixture component
-    public void addMixtureComponent(MixtureComponent component, int addedVolume, int previousVolume) {
+    public void addMixturePart(MixturePart component, int addedVolume, int previousVolume) {
         var currentVolume = previousVolume + addedVolume;
         if (previousVolume != 0 && addedVolume != 0) {
             this.components
@@ -209,26 +210,33 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         else {
             component.setMolarity(component.getMolarity() * addedVolume / currentVolume);
             this.components.put(component.getId(), component);
-            this.updateCategory(inferCategory(component.getPotion()));
+            this.updateCategory(inferCategory(component.getEffects()));
             this.updateColor(component.getColor(), component.getMolarity());
         }
     }
 
-    private Collection<MixtureComponent> collateSimilarEffects() {
-        return components.values()
-                         .stream()
-                         .collect(Collectors.groupingBy(
-                                 MixtureComponent::getPotion,
-                                 Collectors.reducing(
-                                         null,
-                                         (e1, e2) -> {
-                                             if (e1 == null) return e2;
-                                             var mixtureComp = new MixtureComponent(e1);
-                                             mixtureComp.setMolarity(mixtureComp.getMolarity() + e2.getMolarity());
-                                             return mixtureComp;
-                                         }
-                                 )))
-                         .values();
+    private Collection<MixturePart.EffectEntry> collateSimilarEffects() {
+        return components
+                .values()
+                .stream()
+                .map(MixturePart::toEffectEntries)
+                .flatMap(Collection::stream)
+                .collect(Collectors.groupingBy(
+                        MixturePart.EffectEntry::name,
+                        Collectors.reducing(
+                                null,
+                                (e1, e2) -> {
+                                    if (e1 == null) return e2;
+                                    var newMolarity = e1.molarity() + e2.molarity();
+                                    return new MixturePart.EffectEntry(e1.name(), newMolarity, e1.effectInstance());
+                                }
+                        )
+                )).values();
+    }
+
+    public static Pair<Integer, Category> getColorAndCategory(FluidStack mixtureFluid) {
+        var tag = mixtureFluid.getOrCreateTag();
+        return Pair.of(tag.getInt(TAG_COLOR), Category.from(tag.getString(TAG_CATEGORY)));
     }
 
     public List<MobEffectInstance> getRationedEffects(int drunkAmount) {
@@ -251,7 +259,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         };
 
         components.forEach((key, value) -> {
-            var list = extractEffectsFromPotion(value.getPotion());
+            var list = value.getEffects();
             for (var e : list) {
                 totalDuration.value += e.getDuration();
                 numberOfEffects.value++;
@@ -262,12 +270,10 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         return this.collateSimilarEffects()
                    .stream()
                    .map(component -> {
-//                       Recicropal.LOGGER.debug(component.getPotionName());
-                       var list = extractEffectsFromPotion(component.getPotion());
+                       var effectInstance = component.effectInstance();
 
                        // Balance the length by shortening it based on its molarity
-                       var ratio = (component
-                               .getMolarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
+                       var ratio = (component.molarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
 
                        // Splash potion averages the durations between sips. Before lingering potion's effects
                        float splashRatio;
@@ -284,25 +290,14 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                        // Lingering potion extends the duration of sips by a percentage
                        var lingeringRatio = lingering.value;
 
-                       return list.stream().map(effectInstance -> {
-                           var oldDuration = effectInstance.getDuration();
+                       var oldDuration = effectInstance.getDuration();
 
-//                           Recicropal.LOGGER.debug("Splash ratio " + splashRatio);
-//                           Recicropal.LOGGER.debug("Average duration " + averageDuration);
+                       var splashedDuration = (oldDuration * (1 - splashRatio)) + (averageDuration * splashRatio);
 
-                           var splashedDuration = (oldDuration * (1 - splashRatio)) + (averageDuration * splashRatio);
+                       var lingeredDuration = splashedDuration * (1 + lingeringRatio);
 
-//                           Recicropal.LOGGER.debug("Old duration " + oldDuration);
-//                           Recicropal.LOGGER.debug("Splashed duration " + splashedDuration);
-
-                           var lingeredDuration = splashedDuration * (1 + lingeringRatio);
-
-//                           Recicropal.LOGGER.debug("Lingering ratio " + lingeringRatio);
-//                           Recicropal.LOGGER.debug("Lingered duration " + lingeredDuration);
-
-                           return copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
-                       }).toList();
-                   }).flatMap(List::stream)
+                       return copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
+                   })
                    .toList();
     }
 
@@ -327,9 +322,9 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         }
     }
 
-    private static Category inferCategory(Potion potion) {
+    private static Category inferCategory(List<MobEffectInstance> effects) {
         Category start = null;
-        for (var effectInstance : potion.getEffects()) {
+        for (var effectInstance : effects) {
             var category = effectInstance.getEffect().getCategory();
             if (start == null) {
                 start = Category.from(category);
@@ -344,14 +339,6 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             }
         }
         return start;
-    }
-
-    private static List<MobEffectInstance> extractEffectsFromPotion(Potion potion) {
-        var list = new ObjectArrayList<MobEffectInstance>();
-        if (potion != null) {
-            list.addAll(potion.getEffects());
-        }
-        return list;
     }
 
     public enum Category implements StringRepresentable {

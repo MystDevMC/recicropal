@@ -113,10 +113,10 @@ public class ClientEvents {
         if (fluid.isEmpty()) content = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
         var fluidColor = 0x00FFFF;
         if (Mixture.isMixture(fluid)) {
-            var mixture = Mixture.fromFluid(fluid);
-            fluidColor = mixture.getColor();
+            var info = Mixture.getColorAndCategory(fluid);
+            fluidColor = info.left();
             content = Component
-                    .translatable(fluid.getTranslationKey() + "." + mixture.getCategory().getSerializedName())
+                    .translatable(fluid.getTranslationKey() + "." + info.right().getSerializedName())
                     .append(" " + fluid.getAmount() + " mB");
         }
         var width = Math.max(mc.font.width(title), mc.font.width(content));
