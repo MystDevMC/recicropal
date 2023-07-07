@@ -13,22 +13,24 @@
   Refer to below for further info.
 - Gourd bottles now can be used to mix potions and allow multiple potions to be drunk
   at the same time.
-  - The proportion of potions inside the mixture is based on actual real-world concept of
-    molarity.
-  - The length of potions is scaled based on their proportions. For example, mixing
-    a 3-minute strength and 3-minute invisibility potions would give a 1.5-min of both
-    when drunk.
-  - Different types of potion also modifies the resulting length of each drink.
-    - Splash potions averages the durations of all effects added. This averaging effect
-      is controlled by the proportions too.
-      - The more splash potion is in the mix, the more well-distributed the durations.
-    - Lingering potions extends the duration of applied effects per drink depending on
-      their proportions in the mix.
-      - The more lingering potion is in the mix, the longer the duration of each effects
-        per drink.
-      - The maximum length can be achieved here is twice the effect's length. This happens
-        when 100% of the potions in the mix were all lingering.
-  - Instant effects currently will be reapplied everytime the mixture is drunk.
+    - The proportion of potions inside the mixture is based on actual real-world concept of
+      molarity.
+    - The length of potions is scaled based on their proportions. For example, mixing
+      a 3-minute strength and 3-minute invisibility potions would give a 1.5-min of both
+      when drunk.
+    - Different types of potion also modifies the resulting length of each drink.
+        - Splash potions averages the durations of all effects added. This averaging effect
+          is controlled by the proportions too.
+            - The more splash potion is in the mix, the more well-distributed the durations.
+        - Lingering potions extends the duration of applied effects per drink depending on
+          their proportions in the mix.
+            - The more lingering potion is in the mix, the longer the duration of each effects
+              per drink.
+            - The maximum length can be achieved here is twice the effect's length. This happens
+              when 100% of the potions in the mix were all lingering.
+    - Instantaneous effects currently will be reapplied everytime the mixture is drunk.
+- Grown bottle gourds now will rot and dry, turning into gourd bottles filled with seeds
+  and surprise!
 
 ### API
 
@@ -97,3 +99,4 @@
 - Fix minor gourd bottle placement issue (I hope).
 - Empty gourd bottles now drop as clean items (without NBT).
 - Fix gourd bottles not saving when chunk is not updated.
+- Fix trellises not dropping the correct amount of items.

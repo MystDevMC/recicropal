@@ -83,7 +83,8 @@ class PotionProcess implements IMixingProcess {
         }
         Mixture newMixture = Mixture.getMixtureFromMixable(fluidIn.copy());
         Mixture insideMixture = Mixture.getMixtureFromMixable(fluidInside.copy());
-        return Mixture.mix(newMixture, fluidIn.getAmount(), insideMixture, fluidInside.getAmount());
+        var mix =  Mixture.mix(newMixture, fluidIn.getAmount(), insideMixture, fluidInside.getAmount());
+        return Mixture.asFluid(mix, fluidIn.getAmount() + fluidInside.getAmount());
     }
 
     @Override

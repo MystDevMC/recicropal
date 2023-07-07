@@ -36,8 +36,8 @@ public class ModLootAPI {
             LOOT_MODIFIER_SERIALIZERS.register("inject_table", InjectTableModifier.CODEC);
 
     public static void init(IEventBus modBus) {
-        LOOT_FUNCTIONS.register(modBus);
         LOOT_CONDITIONS.register(modBus);
+        LOOT_FUNCTIONS.register(modBus);
         LOOT_MODIFIER_SERIALIZERS.register(modBus);
     }
 }

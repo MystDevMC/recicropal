@@ -18,6 +18,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -33,8 +35,15 @@ import org.jetbrains.annotations.Nullable;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BottleGourdBlock extends Block implements EntityBlock {
+    public static final BooleanProperty DROP_SEEDS = BooleanProperty.create("drop_seeds");
     public BottleGourdBlock(Properties props) {
         super(props);
+        this.registerDefaultState(this.stateDefinition.any().setValue(DROP_SEEDS, Boolean.FALSE));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder) {
+        stateBuilder.add(DROP_SEEDS);
     }
 
     public VoxelShape makeShape() {

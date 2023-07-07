@@ -1,13 +1,11 @@
 package com.mystdev.recicropal.content.mixing;
 
 import com.mystdev.recicropal.ModFluids;
-import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -86,8 +84,9 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         throw new IllegalArgumentException("Inserted fluid is not mixable!");
     }
 
-    public static FluidStack saveMixtureData(FluidStack mixtureFluid, Mixture data) {
-        mixtureFluid.setTag(data.serializeNBT());
+    public static FluidStack asFluid(Mixture mixture, int amount) {
+        var mixtureFluid = new FluidStack(getMixtureFluid(), amount);
+        mixtureFluid.setTag(mixture.serializeNBT());
         return mixtureFluid;
     }
 
@@ -135,7 +134,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         }
     }
 
-    public static FluidStack mix(Mixture mixture1, int mixture1Amount, Mixture mixture2, int mixture2Amount) {
+    public static Mixture mix(Mixture mixture1, int mixture1Amount, Mixture mixture2, int mixture2Amount) {
         var newMixture = new Mixture();
         var resultingVolume = mixture1Amount + mixture2Amount;
         mixture1.components
@@ -167,7 +166,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                 });
         newMixture.updateCategory(mixture2.category);
         newMixture.updateColor(mixture2.getColor(), (float) mixture2Amount / resultingVolume);
-        return saveMixtureData(new FluidStack(getMixtureFluid(), mixture1Amount + mixture2Amount), newMixture);
+        return newMixture;
     }
 
     @Override
