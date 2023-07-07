@@ -7,6 +7,7 @@ import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
+import com.mystdev.recicropal.content.mixing.Mixture;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -110,6 +111,15 @@ public class ClientEvents {
                 .getFluid()
                 .getAmount() + " mB");
         if (fluid.isEmpty()) content = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
+        var fluidColor = 0x00FFFF;
+        if (Mixture.isMixture(fluid)) {
+            var mixture = Mixture.fromFluid(bottle.tank.getFluid());
+            fluidColor = mixture.getColor();
+            Recicropal.LOGGER.debug("Color " + fluidColor);
+            content = Component
+                    .translatable(fluid.getTranslationKey() + "." + mixture.getCategory().getSerializedName())
+                    .append(" " + bottle.tank.getFluid().getAmount() + " mB");
+        }
         var width = Math.max(mc.font.width(title), mc.font.width(content));
         var height = mc.font.lineHeight;
         var offset = 4;
@@ -126,7 +136,7 @@ public class ClientEvents {
                      content,
                      (float) -(wtot / 2) + offset,
                      -((float) htot / 2) + height + offset + gap,
-                     0x00FFFF);
+                     fluidColor);
         poseStack.popPose();
         poseStack.popPose();
         poseStack.popPose();

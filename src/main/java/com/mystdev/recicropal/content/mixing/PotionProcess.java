@@ -1,6 +1,7 @@
 package com.mystdev.recicropal.content.mixing;
 
 import com.mystdev.recicropal.ModFluids;
+import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import net.minecraft.nbt.CompoundTag;
@@ -45,13 +46,12 @@ class PotionProcess implements IMixingProcess {
         var color = PotionUtils.getColor(stack);
         var customEffects = PotionUtils.getCustomEffects(stack);
 
-        var voidItem = ItemStack.EMPTY.copy();
+        var voidItem = new ItemStack(Items.POTION);
         PotionUtils.setPotion(voidItem, potion);
         PotionUtils.setCustomEffects(voidItem, customEffects);
 
         if (stack.getOrCreateTag().contains(PotionUtils.TAG_CUSTOM_POTION_COLOR)) {
-            var tag = voidItem.getTag();
-            assert tag != null;
+            var tag = voidItem.getOrCreateTag();
             tag.putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, color);
         }
 
@@ -84,8 +84,8 @@ class PotionProcess implements IMixingProcess {
         if (fluidInside.isEmpty()) {
             return fluidIn.copy();
         }
-        Mixture newMixture = Mixture.getMixtureFromMixable(fluidIn);
-        Mixture insideMixture = Mixture.getMixtureFromMixable(fluidInside);
+        Mixture newMixture = Mixture.getMixtureFromMixable(fluidIn.copy());
+        Mixture insideMixture = Mixture.getMixtureFromMixable(fluidInside.copy());
         return Mixture.mix(newMixture, fluidIn.getAmount(), insideMixture, fluidInside.getAmount());
     }
 

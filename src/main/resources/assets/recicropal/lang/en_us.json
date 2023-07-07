@@ -24,5 +24,8 @@
   "fluid.recicropal.flowing_potion": "Potion",
   "fluid.recicropal.potion": "Potion",
   "fluid.recicropal.flowing_mixture": "Mixture",
-  "fluid.recicropal.mixture": "Mixture"
+  "fluid.recicropal.mixture": "Mixture",
+  "fluid.recicropal.mixture.beneficial": "Potent Mix",
+  "fluid.recicropal.mixture.neutral": "Sus Juice",
+  "fluid.recicropal.mixture.harmful": "Icky Sludge"
 }

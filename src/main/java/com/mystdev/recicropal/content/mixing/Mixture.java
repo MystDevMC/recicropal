@@ -12,10 +12,12 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -23,10 +25,13 @@ import java.util.Map;
 public class Mixture implements INBTSerializable<CompoundTag> {
     public static final String TAG_POTIONS = "Potions";
     public static final String TAG_MODIFIERS = "Modifiers";
-    public static final String TAG_COLOR = "CustomColor";
+    public static final String TAG_COLOR = "Color";
     public static final String TAG_CATEGORY = "Category";
+    @Nullable
     private Category category;
     private final Map<String, MixtureComponent> components = new Object2ObjectOpenHashMap<>();
+    @Nullable
+    private Integer color;
 
     public static Mixture fromFluid(FluidStack mixtureStack) {
         if (!isMixture(mixtureStack)) return new Mixture();
@@ -51,7 +56,14 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         var potionTag = potionFluid.getOrCreateTag();
         var tag = potionTag.get(PotionUtils.TAG_POTION);
         if (tag != null) {
-            mixture.addMixtureComponent(new MixtureComponent(tag.getAsString(), 1), amount, 0);
+            var hasColor = potionTag.contains(PotionUtils.TAG_CUSTOM_POTION_COLOR);
+
+            Integer color = null;
+            if (hasColor) {
+                color = potionTag.getInt(PotionUtils.TAG_CUSTOM_POTION_COLOR);
+            }
+            var comp = new MixtureComponent(tag.getAsString(), 1, color);
+            mixture.addMixtureComponent(comp, amount, 0);
         }
         return mixture;
     }
@@ -71,33 +83,82 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         return mixtureFluid;
     }
 
+    public Category getCategory() {
+        return category == null ? Category.NEUTRAL : category;
+    }
+
+    public Integer getColor() {
+        if (this.color == null) {
+            if (this.components.isEmpty()) return PotionUtils.getColor(Potions.EMPTY);
+
+            var r = 0;
+            var g = 0;
+            var b = 0;
+            for (MixtureComponent comp : this.components.values()) {
+                var color = comp.getColor();
+
+                r += ((color >> 16) & 0xFF) * comp.getMolarity();
+                g += ((color >> 8) & 0xFF) * comp.getMolarity();
+                b += (color & 0xFF) * comp.getMolarity();
+            }
+            this.color = (r << 16) | (g << 8) | b;
+        }
+        return this.color;
+    }
+
+    private void updateColor(int incomingColor, float incomingMolarity) {
+        if (this.color == null) this.color = incomingColor;
+        else {
+            var r1 = (color >> 16) & 0xFF;
+            var g1 = (color >> 8) & 0xFF;
+            var b1 = color & 0xFF;
+
+            var r2 = (incomingColor >> 16) & 0xFF;
+            var g2 = (incomingColor >> 8) & 0xFF;
+            var b2 = incomingColor & 0xFF;
+
+            var selfWeight = 1 - incomingMolarity;
+
+            int r = (int) ((r1 * selfWeight) + (r2 * incomingMolarity));
+            int g = (int) ((g1 * selfWeight) + (g2 * incomingMolarity));
+            int b = (int) ((b1 * selfWeight) + (b2 * incomingMolarity));
+
+            this.color = (r << 16) | (g << 8) | b;
+        }
+    }
+
     public static FluidStack mix(Mixture mixture1, int mixture1Amount, Mixture mixture2, int mixture2Amount) {
         var newMixture = new Mixture();
         var resultingVolume = mixture1Amount + mixture2Amount;
         mixture1.components
                 .values()
                 .forEach(component -> {
-                    var newComponent = new MixtureComponent(component.getId());
+                    var newComponent = new MixtureComponent(component);
                     var moles = component.getMolarity() * mixture1Amount;
                     newComponent.setMolarity(moles / resultingVolume);
                     newMixture.components.put(component.getId(), newComponent);
                 });
         newMixture.updateCategory(mixture1.category);
+        newMixture.updateColor(mixture1.getColor(), (float) mixture1Amount / resultingVolume);
         mixture2.components
                 .values()
                 .forEach(component -> {
-                    var newComponent = new MixtureComponent(component.getId());
+                    var newComponent = new MixtureComponent(component);
                     var m1 = component.getMolarity() * mixture2Amount;
+                    var moles = m1;
                     newComponent.setMolarity(m1 / resultingVolume);
 
                     var oldEntry = newMixture.components.get(component.getId());
                     if (oldEntry != null) {
                         var m2 = oldEntry.getMolarity() * resultingVolume;
-                        newComponent.setMolarity((m1 + m2) / resultingVolume);
+                        moles = m1 + m2;
+                        newComponent.setMolarity(moles / resultingVolume);
                     }
+
                     newMixture.components.put(component.getId(), newComponent);
                 });
         newMixture.updateCategory(mixture2.category);
+        newMixture.updateColor(mixture2.getColor(), (float) mixture2Amount / resultingVolume);
         return saveMixtureData(new FluidStack(getMixtureFluid(), mixture1Amount + mixture2Amount), newMixture);
     }
 
@@ -108,6 +169,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         this.components.forEach((key, value) -> potionsTag.put(key, value.serializeNBT()));
         tag.put(TAG_POTIONS, potionsTag);
         if (this.category != null) tag.putString(TAG_CATEGORY, this.category.name);
+        if (this.color != null) tag.putInt(TAG_COLOR, this.color);
         return tag;
     }
 
@@ -120,6 +182,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             components.put(key, mixture);
         });
         if (nbt.contains(TAG_CATEGORY)) this.category = Category.from(nbt.getString(TAG_CATEGORY));
+        if (nbt.contains(TAG_COLOR)) this.color = nbt.getInt(TAG_COLOR);
     }
 
     // Add singular mixture component
@@ -140,6 +203,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             component.setMolarity(component.getMolarity() * addedVolume / currentVolume);
             this.components.put(component.getId(), component);
             this.updateCategory(inferCategory(component.getPotion()));
+            this.updateColor(component.getColor(), component.getMolarity());
         }
     }
 
