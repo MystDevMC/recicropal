@@ -6,7 +6,6 @@ import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,11 +17,12 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Mixture implements INBTSerializable<CompoundTag> {
     public static final String TAG_POTIONS = "Potions";
@@ -214,19 +214,44 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         }
     }
 
+    private Collection<MixtureComponent> collateSimilarEffects() {
+        return components.values()
+                         .stream()
+                         .collect(Collectors.groupingBy(
+                                 MixtureComponent::getPotion,
+                                 Collectors.reducing(
+                                         null,
+                                         (e1, e2) -> {
+                                             if (e1 == null) return e2;
+                                             var mixtureComp = new MixtureComponent(e1);
+                                             mixtureComp.setMolarity(mixtureComp.getMolarity() + e2.getMolarity());
+                                             return mixtureComp;
+                                         }
+                                 )))
+                         .values();
+    }
+
     public List<MobEffectInstance> getRationedEffects(int drunkAmount) {
         // This should not happen unless the mixture is empty
         if (components.size() == 0) {
             return List.of();
         }
         // Hardcoded potion types handling
-        var lingering = new Object(){ float value = 0; };
-        var splash = new Object(){ float value = 0; };
-        var totalDuration = new Object(){ int value = 0; };
-        var numberOfEffects = new Object(){ int value = 0; };
+        var lingering = new Object() {
+            float value = 0;
+        };
+        var splash = new Object() {
+            float value = 0;
+        };
+        var totalDuration = new Object() {
+            int value = 0;
+        };
+        var numberOfEffects = new Object() {
+            int value = 0;
+        };
 
         components.forEach((key, value) -> {
-            var list = extractEffectsFromPotionName(key);
+            var list = extractEffectsFromPotion(value.getPotion());
             for (var e : list) {
                 totalDuration.value += e.getDuration();
                 numberOfEffects.value++;
@@ -234,51 +259,51 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             if (value.getModifier() == Modifier.SPLASH) splash.value += value.getMolarity();
             if (value.getModifier() == Modifier.LINGERING) lingering.value += value.getMolarity();
         });
-        return components
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    var list = extractEffectsFromPotionName(entry.getKey());
+        return this.collateSimilarEffects()
+                   .stream()
+                   .map(component -> {
+//                       Recicropal.LOGGER.debug(component.getPotionName());
+                       var list = extractEffectsFromPotion(component.getPotion());
 
-                    // Balance the length by shortening it based on its molarity
-                    var ratio = (entry
-                            .getValue()
-                            .getMolarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
+                       // Balance the length by shortening it based on its molarity
+                       var ratio = (component
+                               .getMolarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
 
-                    // Splash potion averages the durations between sips. Before lingering potion's effects
-                    float splashRatio;
-                    float averageDuration;
-                    if (numberOfEffects.value != 0) {
-                        splashRatio = splash.value;
-                        averageDuration = (float) totalDuration.value / numberOfEffects.value;
-                    } else {
-                        splashRatio = 0;
-                        averageDuration = 0;
-                    }
+                       // Splash potion averages the durations between sips. Before lingering potion's effects
+                       float splashRatio;
+                       float averageDuration;
+                       if (numberOfEffects.value != 0) {
+                           splashRatio = splash.value;
+                           averageDuration = (float) totalDuration.value / numberOfEffects.value;
+                       }
+                       else {
+                           splashRatio = 0;
+                           averageDuration = 0;
+                       }
 
-                    // Lingering potion extends the duration of sips by a percentage
-                    var lingeringRatio = lingering.value;
+                       // Lingering potion extends the duration of sips by a percentage
+                       var lingeringRatio = lingering.value;
 
-                    return list.stream().map(effectInstance -> {
-                        var oldDuration = effectInstance.getDuration();
+                       return list.stream().map(effectInstance -> {
+                           var oldDuration = effectInstance.getDuration();
 
-//                        Recicropal.LOGGER.debug("Splash ratio " + splashRatio);
-//                        Recicropal.LOGGER.debug("Average duration " + averageDuration);
+//                           Recicropal.LOGGER.debug("Splash ratio " + splashRatio);
+//                           Recicropal.LOGGER.debug("Average duration " + averageDuration);
 
-                        var splashedDuration = (oldDuration * (1-splashRatio)) + (averageDuration * splashRatio);
+                           var splashedDuration = (oldDuration * (1 - splashRatio)) + (averageDuration * splashRatio);
 
-//                        Recicropal.LOGGER.debug("Old duration " + oldDuration);
-//                        Recicropal.LOGGER.debug("Splashed duration " + splashedDuration);
+//                           Recicropal.LOGGER.debug("Old duration " + oldDuration);
+//                           Recicropal.LOGGER.debug("Splashed duration " + splashedDuration);
 
-                        var lingeredDuration = splashedDuration * (1 + lingeringRatio);
+                           var lingeredDuration = splashedDuration * (1 + lingeringRatio);
 
-//                        Recicropal.LOGGER.debug("Lingering ratio " + lingeringRatio);
-//                        Recicropal.LOGGER.debug("Lingered duration " + lingeredDuration);
+//                           Recicropal.LOGGER.debug("Lingering ratio " + lingeringRatio);
+//                           Recicropal.LOGGER.debug("Lingered duration " + lingeredDuration);
 
-                        return copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
-                    }).toList();
-                }).flatMap(List::stream)
-                .toList();
+                           return copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
+                       }).toList();
+                   }).flatMap(List::stream)
+                   .toList();
     }
 
     private static MobEffectInstance copyEffectWithDuration(MobEffectInstance instance,
@@ -321,8 +346,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         return start;
     }
 
-    private static List<MobEffectInstance> extractEffectsFromPotionName(String name) {
-        var potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(name));
+    private static List<MobEffectInstance> extractEffectsFromPotion(Potion potion) {
         var list = new ObjectArrayList<MobEffectInstance>();
         if (potion != null) {
             list.addAll(potion.getEffects());

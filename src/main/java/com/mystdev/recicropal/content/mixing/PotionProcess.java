@@ -45,7 +45,8 @@ class PotionProcess implements IMixingProcess {
         PotionUtils.setCustomEffects(voidItem, customEffects);
 
         var tag = voidItem.getOrCreateTag();
-        tag.putString(MixtureComponent.TAG_MODIFIER, Mixture.Modifier.from(stack).getSerializedName());
+        var modifier = Mixture.Modifier.from(stack);
+        tag.putString(MixtureComponent.TAG_MODIFIER, modifier.getSerializedName());
 
         if (stack.getOrCreateTag().contains(PotionUtils.TAG_CUSTOM_POTION_COLOR)) {
             tag.putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, color);
@@ -55,7 +56,7 @@ class PotionProcess implements IMixingProcess {
                                    DrinkingRecipe.DEFAULT_AMOUNT,
                                    voidItem.getTag());
 
-        if (potion == Potions.WATER) {
+        if (potion == Potions.WATER && modifier == Mixture.Modifier.NORMAL) {
             fluid = new FluidStack(Fluids.WATER, DrinkingRecipe.DEFAULT_AMOUNT);
         }
         return fluid;
