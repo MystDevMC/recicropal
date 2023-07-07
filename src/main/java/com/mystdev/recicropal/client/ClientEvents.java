@@ -113,12 +113,11 @@ public class ClientEvents {
         if (fluid.isEmpty()) content = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
         var fluidColor = 0x00FFFF;
         if (Mixture.isMixture(fluid)) {
-            var mixture = Mixture.fromFluid(bottle.tank.getFluid());
+            var mixture = Mixture.fromFluid(fluid);
             fluidColor = mixture.getColor();
-            Recicropal.LOGGER.debug("Color " + fluidColor);
             content = Component
                     .translatable(fluid.getTranslationKey() + "." + mixture.getCategory().getSerializedName())
-                    .append(" " + bottle.tank.getFluid().getAmount() + " mB");
+                    .append(" " + fluid.getAmount() + " mB");
         }
         var width = Math.max(mc.font.width(title), mc.font.width(content));
         var height = mc.font.lineHeight;

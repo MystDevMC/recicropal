@@ -16,10 +16,12 @@ import java.util.function.Supplier;
 public class BottleGourdTank extends FluidTank {
     public static final int CAPACITY = 2000;
     private final Supplier<Level> lazyLevel;
+    private final Runnable bottleUpdater;
 
     public BottleGourdTank(BottleGourdBlockEntity bottle) {
         super(CAPACITY);
-        lazyLevel = Suppliers.memoize(bottle::getLevel);
+        this.lazyLevel = Suppliers.memoize(bottle::getLevel);
+        this.bottleUpdater = bottle::setChanged;
     }
 
     private Optional<MixingRecipe> getMixingRecipe(MixingContainer container) {
@@ -87,5 +89,10 @@ public class BottleGourdTank extends FluidTank {
         if (filled > 0)
             onContentsChanged();
         return filled;
+    }
+
+    @Override
+    protected void onContentsChanged() {
+        bottleUpdater.run();
     }
 }

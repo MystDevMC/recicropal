@@ -1,11 +1,7 @@
 package com.mystdev.recicropal.content.mixing;
 
-import com.mystdev.recicropal.ModFluids;
-import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
