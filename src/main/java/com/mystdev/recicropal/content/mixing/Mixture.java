@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
@@ -24,7 +26,6 @@ import java.util.Map;
 
 public class Mixture implements INBTSerializable<CompoundTag> {
     public static final String TAG_POTIONS = "Potions";
-    public static final String TAG_MODIFIERS = "Modifiers";
     public static final String TAG_COLOR = "Color";
     public static final String TAG_CATEGORY = "Category";
     @Nullable
@@ -62,7 +63,13 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             if (hasColor) {
                 color = potionTag.getInt(PotionUtils.TAG_CUSTOM_POTION_COLOR);
             }
-            var comp = new MixtureComponent(tag.getAsString(), 1, color);
+
+            var modifier = Modifier.NORMAL;
+            if (potionTag.contains(MixtureComponent.TAG_MODIFIER)) {
+                modifier = Modifier.from(potionTag.getString(MixtureComponent.TAG_MODIFIER));
+            }
+
+            var comp = new MixtureComponent(tag.getAsString(), 1, color, modifier);
             mixture.addMixtureComponent(comp, amount, 0);
         }
         return mixture;
@@ -212,17 +219,63 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         if (components.size() == 0) {
             return List.of();
         }
+        // Hardcoded potion types handling
+        var lingering = new Object(){ float value = 0; };
+        var splash = new Object(){ float value = 0; };
+        var totalDuration = new Object(){ int value = 0; };
+        var numberOfEffects = new Object(){ int value = 0; };
+
+        components.forEach((key, value) -> {
+            var list = extractEffectsFromPotionName(key);
+            for (var e : list) {
+                totalDuration.value += e.getDuration();
+                numberOfEffects.value++;
+            }
+            if (value.getModifier() == Modifier.SPLASH) splash.value += value.getMolarity();
+            if (value.getModifier() == Modifier.LINGERING) lingering.value += value.getMolarity();
+        });
         return components
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     var list = extractEffectsFromPotionName(entry.getKey());
+
+                    // Balance the length by shortening it based on its molarity
                     var ratio = (entry
                             .getValue()
                             .getMolarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
+
+                    // Splash potion averages the durations between sips. Before lingering potion's effects
+                    float splashRatio;
+                    float averageDuration;
+                    if (numberOfEffects.value != 0) {
+                        splashRatio = splash.value;
+                        averageDuration = (float) totalDuration.value / numberOfEffects.value;
+                    } else {
+                        splashRatio = 0;
+                        averageDuration = 0;
+                    }
+
+                    // Lingering potion extends the duration of sips by a percentage
+                    var lingeringRatio = lingering.value;
+
                     return list.stream().map(effectInstance -> {
                         var oldDuration = effectInstance.getDuration();
-                        return copyEffectWithDuration(effectInstance, Math.round(ratio * oldDuration));
+
+//                        Recicropal.LOGGER.debug("Splash ratio " + splashRatio);
+//                        Recicropal.LOGGER.debug("Average duration " + averageDuration);
+
+                        var splashedDuration = (oldDuration * (1-splashRatio)) + (averageDuration * splashRatio);
+
+//                        Recicropal.LOGGER.debug("Old duration " + oldDuration);
+//                        Recicropal.LOGGER.debug("Splashed duration " + splashedDuration);
+
+                        var lingeredDuration = splashedDuration * (1 + lingeringRatio);
+
+//                        Recicropal.LOGGER.debug("Lingering ratio " + lingeringRatio);
+//                        Recicropal.LOGGER.debug("Lingered duration " + lingeredDuration);
+
+                        return copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
                     }).toList();
                 }).flatMap(List::stream)
                 .toList();
@@ -318,6 +371,36 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                     return NEUTRAL;
                 }
             }
+        }
+    }
+
+    // Hardcoded for now
+    public enum Modifier implements StringRepresentable {
+        NORMAL("normal"),
+        LINGERING("lingering"),
+        SPLASH("splash");
+        private final String name;
+
+        Modifier(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
+
+        public static Modifier from(ItemStack potionItem) {
+            var item = potionItem.getItem();
+            if (item == Items.LINGERING_POTION) return LINGERING;
+            if (item == Items.SPLASH_POTION) return SPLASH;
+            return NORMAL;
+        }
+
+        public static Modifier from(String name) {
+            if (name.equals("lingering")) return LINGERING;
+            if (name.equals("splash")) return SPLASH;
+            return NORMAL;
         }
     }
 }

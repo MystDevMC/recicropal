@@ -12,17 +12,20 @@ public class MixtureComponent implements INBTSerializable<CompoundTag> {
     private float molarity;
     private final String id;
     private int color;
+    private Mixture.Modifier modifier;
 
-    public MixtureComponent(String id, float molarity, @Nullable Integer color) {
+    public MixtureComponent(String id, float molarity, @Nullable Integer color, Mixture.Modifier modifier) {
         this.id = id;
         this.molarity = molarity;
         this.color = Optional.ofNullable(color).orElse(PotionUtils.getColor(getPotion()));
+        this.modifier = modifier;
     }
 
     public MixtureComponent(MixtureComponent component) {
         this.id = component.getId();
         this.color = component.color;
         this.molarity = component.molarity;
+        this.modifier = component.modifier;
     }
 
     public MixtureComponent(String id) {
@@ -49,17 +52,27 @@ public class MixtureComponent implements INBTSerializable<CompoundTag> {
         this.molarity = molarity;
     }
 
+    public Mixture.Modifier getModifier() {
+        return modifier;
+    }
+
+    public static final String TAG_MOLARITY = "Molarity";
+    public static final String TAG_COLOR = "Color";
+    public static final String TAG_MODIFIER = "Modifier";
+
     @Override
     public CompoundTag serializeNBT() {
         var tag = new CompoundTag();
-        tag.putFloat("molarity", this.molarity);
-        tag.putInt("color", this.color);
+        tag.putFloat(TAG_MOLARITY, this.molarity);
+        tag.putInt(TAG_COLOR, this.color);
+        tag.putString(TAG_MODIFIER, this.modifier.getSerializedName());
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        this.molarity = nbt.getFloat("molarity");
-        this.color = nbt.getInt("color");
+        this.molarity = nbt.getFloat(TAG_MOLARITY);
+        this.color = nbt.getInt(TAG_COLOR);
+        this.modifier = Mixture.Modifier.from(nbt.getString(TAG_MODIFIER));
     }
 }
