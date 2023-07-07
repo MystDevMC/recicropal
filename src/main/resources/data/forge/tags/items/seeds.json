@@ -1,7 +1,5 @@
 {
   "values": [
-    "recicropal:bottle_gourd_seeds",
-    "recicropal:climbing_melon_seeds",
-    "recicropal:climbing_pumpkin_seeds"
+    "#forge:seeds/bottle_gourd"
   ]
 }
