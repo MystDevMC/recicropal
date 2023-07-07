@@ -106,6 +106,16 @@ class PotionProcess implements IMixingProcess {
         var tank = container.getBottle().tank;
         var fluidTag = tank.getFluid().getTag();
 
+        if (fluidTag.contains(MixtureComponent.TAG_MODIFIER)) {
+            var modifierTag = Mixture.Modifier.from(fluidTag.getString(MixtureComponent.TAG_MODIFIER));
+            if (modifierTag == Mixture.Modifier.LINGERING) {
+                stack =  new ItemStack(Items.LINGERING_POTION);
+            } else if (modifierTag == Mixture.Modifier.SPLASH) {
+                stack = new ItemStack(Items.SPLASH_POTION);
+            }
+            fluidTag.remove(MixtureComponent.TAG_MODIFIER);
+        }
+
         stack.setTag(fluidTag);
 
         tank.drain(DrinkingRecipe.DEFAULT_AMOUNT, IFluidHandler.FluidAction.EXECUTE);
