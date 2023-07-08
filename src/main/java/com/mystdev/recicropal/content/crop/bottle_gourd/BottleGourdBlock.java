@@ -223,4 +223,19 @@ public class BottleGourdBlock extends Block implements EntityBlock {
         });
         super.setPlacedBy(level, pos, state, entity, stack);
     }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        var be = level.getBlockEntity(pos);
+        if (be instanceof BottleGourdBlockEntity bottle) {
+            var tank =  bottle.tank;
+            return Math.round((float) tank.getFluidAmount() / BottleGourdTank.CAPACITY * 16);
+        }
+        return super.getAnalogOutputSignal(state, level, pos);
+    }
 }
