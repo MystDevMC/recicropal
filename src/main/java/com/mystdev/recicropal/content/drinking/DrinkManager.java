@@ -9,6 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 
@@ -79,5 +81,25 @@ public class DrinkManager {
     public static LazyOptional<IDrinkHandler> getDrinkHandler(Player player) {
         return player.getCapability(IDrinkHandler.CAPABILITY);
     }
+
+//    @SubscribeEvent
+//    static void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+//        var player = event.getEntity();
+//        if (!player.isLocalPlayer()) {
+//            getDrinkHandler()
+//            event.getEntity().getCapability().ifPresent(data -> {
+//                var manaHolder = (ManaHolderImpl) data;
+//                var player = event.getPlayer();
+//                if (!data.isInitialized()) {
+//                    manaHolder.regenTicks = (int) player.getAttribute(ModAttributes.MANA_REGENERATION_TICKS.get()).getValue();
+//                    manaHolder.setManaPool((int) player.getAttribute(ModAttributes.MANA_CAPACITY.get()).getValue());
+//                    manaHolder.canRegenMana = true;
+//                    manaHolder.canUseMana = true;
+//                    manaHolder.init();
+//                }
+//                CapUpdatePacket.updateCapFor(event.getPlayer(), ModCapabilities.MANA, manaHolder);
+//            });
+//        }
+//    }
 
 }

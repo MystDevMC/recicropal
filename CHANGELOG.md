@@ -16,7 +16,7 @@
     - The proportion of potions inside the mixture is based on actual real-world concept of
       molarity.
     - The length of potions is scaled based on their proportions. For example, mixing
-      a 3-minute strength and 3-minute invisibility potions would give a 1.5-min of both
+      a 3-minute strength and 3-minute invisibility potions would give a 1.5-minute of both
       when drunk.
     - Different types of potion also modifies the resulting length of each drink.
         - Splash potions averages the durations of all effects added. This averaging effect
@@ -28,7 +28,11 @@
               per drink.
             - The maximum length can be achieved here is twice the effect's length. This happens
               when 100% of the potions in the mix were all lingering.
-    - Instantaneous effects currently will be reapplied everytime the mixture is drunk.
+    - Instantaneous effects will wait until enough "moles" or amounts of serving has been drunk.
+      Like other amounts measured in drinks, this defaults to 250.
+        - For instance, the player needs to drink 1000 mBs worth of mixture that has 25%
+          instant healing to receive the healing.
+        - This stacks with other mixtures of the same effect and amplifier.
 - Grown bottle gourds now will rot and dry, turning into gourd bottles filled with seeds
   and surprise!
 
@@ -93,8 +97,8 @@
 - Gourd bottles now can be emptied in the crafting table.
 - Now, only savanna and desert villagers accept trading bottle gourds and water-filled gourd bottles.
 - Potions, honey bottles, and milk buckets now can be used to fill gourd bottles.
-- Gourd bottle blocks now show the fluid contained graphically
-- Gourd bottle blocks now emit comparator signal
+- Gourd bottle blocks now show the fluid contained graphically.
+- Gourd bottle blocks now emit comparator signal.
 
 ## Fixes
 
@@ -102,4 +106,5 @@
 - Empty gourd bottles now drop as clean items (without NBT).
 - Fix gourd bottles not saving when chunk is not updated.
 - Fix trellises not dropping the correct amount of items.
-- Fix vine crop base plants having wrong hitboxes when they start to attach to the sides
+- Fix vine crop base plants having wrong hitboxes when they start to attach to the sides.
+- Fix buckets disappearing when failed filling bottles.

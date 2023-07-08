@@ -1,5 +1,6 @@
 package com.mystdev.recicropal.content.mixing;
 
+import com.mojang.datafixers.util.Either;
 import com.mystdev.recicropal.ModFluids;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import it.unimi.dsi.fastutil.Pair;
@@ -275,7 +276,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         return map.values().stream().flatMap(Collection::stream);
     }
 
-    public List<MobEffectInstance> getRationedEffects(int drunkAmount) {
+    public List<Either<MixturePart.EffectEntry, MobEffectInstance>> getRationedEffects(int drunkAmount) {
         // This should not happen unless the mixture is empty
         if (components.size() == 0) {
             return List.of();
@@ -307,6 +308,10 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                    .map(component -> {
                        var effectInstance = component.getEffectInstance();
 
+                       if (effectInstance.getEffect().isInstantenous()) {
+                           return Either.<MixturePart.EffectEntry, MobEffectInstance>left(component);
+                       }
+
                        // Balance the length by shortening it based on its molarity
                        var ratio = (component.getMolarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
 
@@ -331,7 +336,8 @@ public class Mixture implements INBTSerializable<CompoundTag> {
 
                        var lingeredDuration = splashedDuration * (1 + lingeringRatio);
 
-                       return copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
+                       var effect = copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
+                       return Either.<MixturePart.EffectEntry, MobEffectInstance>right(effectInstance);
                    })
                    .toList();
     }
