@@ -5,6 +5,7 @@ import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Mixture implements INBTSerializable<CompoundTag> {
     public static final String TAG_POTIONS = "Potions";
@@ -214,23 +215,29 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         }
     }
 
-    private Collection<MixturePart.EffectEntry> collateSimilarEffects() {
-        return components
+    private Stream<MixturePart.EffectEntry> collateSimilarEffects() {
+        var map = new Object2ObjectOpenHashMap<String, List<MixturePart.EffectEntry>>();
+        components
                 .values()
                 .stream()
                 .map(MixturePart::toEffectEntries)
                 .flatMap(Collection::stream)
-                .collect(Collectors.groupingBy(
-                        MixturePart.EffectEntry::name,
-                        Collectors.reducing(
-                                null,
-                                (e1, e2) -> {
-                                    if (e1 == null) return e2;
-                                    var newMolarity = e1.molarity() + e2.molarity();
-                                    return new MixturePart.EffectEntry(e1.name(), newMolarity, e1.effectInstance());
-                                }
-                        )
-                )).values();
+                .forEach(effectEntry -> {
+                    if (!map.containsKey(effectEntry.id)) {
+                        var set = new ObjectArrayList<MixturePart.EffectEntry>();
+                        set.add(effectEntry);
+                        map.put(effectEntry.id, set);
+                    }
+                    else {
+                        var set = map.get(effectEntry.id);
+                        for (MixturePart.EffectEntry e : set) {
+                            e.setMolarity(e.getMolarity() + effectEntry.getMolarity());
+                        }
+                        effectEntry.setMolarity(set.get(0).getMolarity());
+                        set.add(effectEntry);
+                    }
+                });
+        return map.values().stream().flatMap(Collection::stream);
     }
 
     public static Pair<Integer, Category> getColorAndCategory(FluidStack mixtureFluid) {
@@ -267,12 +274,11 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             if (value.getModifier() == Modifier.LINGERING) lingering.value += value.getMolarity();
         });
         return this.collateSimilarEffects()
-                   .stream()
                    .map(component -> {
-                       var effectInstance = component.effectInstance();
+                       var effectInstance = component.getEffectInstance();
 
                        // Balance the length by shortening it based on its molarity
-                       var ratio = (component.molarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
+                       var ratio = (component.getMolarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
 
                        // Splash potion averages the durations between sips. Before lingering potion's effects
                        float splashRatio;

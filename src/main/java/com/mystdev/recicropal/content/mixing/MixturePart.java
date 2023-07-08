@@ -1,6 +1,5 @@
 package com.mystdev.recicropal.content.mixing;
 
-import com.mystdev.recicropal.Recicropal;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -93,9 +92,7 @@ public class MixturePart implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(CompoundTag nbt) {
         this.effects = new ObjectArrayList<>();
         var effectTag = nbt.getCompound(TAG_EFFECTS);
-        effectTag.getAllKeys().forEach(key -> {
-            effects.add(MobEffectInstance.load(effectTag.getCompound(key)));
-        });
+        effectTag.getAllKeys().forEach(key -> effects.add(MobEffectInstance.load(effectTag.getCompound(key))));
         this.molarity = nbt.getFloat(TAG_MOLARITY);
         this.color = nbt.getInt(TAG_COLOR);
         this.modifier = Mixture.Modifier.from(nbt.getString(TAG_MODIFIER));
@@ -103,9 +100,7 @@ public class MixturePart implements INBTSerializable<CompoundTag> {
 
     public Collection<EffectEntry> toEffectEntries() {
         var collection = new ObjectArrayList<EffectEntry>();
-        effects.forEach(effectInstance -> {
-            collection.add(new EffectEntry(effectKey(effectInstance), molarity, effectInstance));
-        });
+        effects.forEach(effectInstance -> collection.add(new EffectEntry(effectKey(effectInstance), molarity, effectInstance)));
         return collection;
     }
 
@@ -113,6 +108,27 @@ public class MixturePart implements INBTSerializable<CompoundTag> {
         return Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect())).toString();
     }
 
-    public record EffectEntry(String name, float molarity, MobEffectInstance effectInstance) {
+    public static class EffectEntry {
+        public final String id;
+        private float molarity;
+        private final MobEffectInstance effectInstance;
+
+        public EffectEntry(String id, float molarity, MobEffectInstance effectInstance) {
+            this.id = id;
+            this.molarity = molarity;
+            this.effectInstance = effectInstance;
+        }
+
+        public MobEffectInstance getEffectInstance() {
+            return effectInstance;
+        }
+
+        public float getMolarity() {
+            return molarity;
+        }
+
+        public void setMolarity(float molarity) {
+            this.molarity = molarity;
+        }
     }
 }
