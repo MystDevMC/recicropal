@@ -102,3 +102,4 @@
 - Empty gourd bottles now drop as clean items (without NBT).
 - Fix gourd bottles not saving when chunk is not updated.
 - Fix trellises not dropping the correct amount of items.
+- Fix vine crop base plants having wrong hitboxes when they start to attach to the sides

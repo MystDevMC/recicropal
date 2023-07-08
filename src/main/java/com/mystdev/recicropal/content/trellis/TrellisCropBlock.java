@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,9 @@ public abstract class TrellisCropBlock extends CropBlock {
                                BlockGetter blockGetter,
                                BlockPos pos,
                                CollisionContext ctx) {
-        return shapesCache.get(state);
+        var baseShape = Shapes.create(0.1, 0, 0.1, 0.9, 0.625, 0.9);
+        var attachedShape = shapesCache.get(state);
+        return attachedShape == Shapes.block() ? baseShape : Shapes.or(baseShape, attachedShape);
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder) {
