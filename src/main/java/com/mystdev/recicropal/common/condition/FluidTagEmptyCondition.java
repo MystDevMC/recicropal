@@ -13,18 +13,6 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 public class FluidTagEmptyCondition implements ICondition {
     public static final ResourceLocation FLUID_TAG_EMPTY_RL = new ResourceLocation(Recicropal.MOD_ID,
                                                                                    "fluid_tag_empty");
-    TagKey<Fluid> fluidTag;
-
-    @Override
-    public ResourceLocation getID() {
-        return FLUID_TAG_EMPTY_RL;
-    }
-
-    @Override
-    public boolean test(IContext context) {
-        return context.getTag(fluidTag).isEmpty();
-    }
-
     public static final IConditionSerializer<FluidTagEmptyCondition> SERIALIZER = new IConditionSerializer<>() {
         @Override
         public void write(JsonObject json, FluidTagEmptyCondition condition) {
@@ -43,4 +31,15 @@ public class FluidTagEmptyCondition implements ICondition {
             return FLUID_TAG_EMPTY_RL;
         }
     };
+    TagKey<Fluid> fluidTag;
+
+    @Override
+    public ResourceLocation getID() {
+        return FLUID_TAG_EMPTY_RL;
+    }
+
+    @Override
+    public boolean test(IContext context) {
+        return context.getTag(fluidTag).isEmpty();
+    }
 }

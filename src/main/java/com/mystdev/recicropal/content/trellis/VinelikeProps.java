@@ -38,6 +38,16 @@ public class VinelikeProps {
 
     private final Predicate<Map.Entry<Direction, BooleanProperty>> sideFilter;
 
+    public VinelikeProps(double modelThickness, Predicate<Map.Entry<Direction, BooleanProperty>> sideFilter) {
+        this.UP_AABB = Block.box(0.0D, 16.0D - modelThickness, 0.0D, 16.0D, 16.0D, 16.0D);
+        this.DOWN_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, modelThickness, 16.0D);
+        this.WEST_AABB = Block.box(0.0D, 0.0D, 0.0D, modelThickness, 16.0D, 16.0D);
+        this.EAST_AABB = Block.box(16.0D - modelThickness, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+        this.NORTH_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, modelThickness);
+        this.SOUTH_AABB = Block.box(0.0D, 0.0D, 16.0D - modelThickness, 16.0D, 16.0D, 16.0D);
+        this.sideFilter = sideFilter;
+    }
+
     private VoxelShape calculateShape(BlockState state) {
         VoxelShape voxelshape = Shapes.empty();
         if (state.hasProperty(UP) && state.getValue(UP)) {
@@ -95,17 +105,6 @@ public class VinelikeProps {
             case FRONT_BACK -> state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
             default -> superCall.apply(state, mirror);
         };
-    }
-
-
-    public VinelikeProps(double modelThickness, Predicate<Map.Entry<Direction, BooleanProperty>> sideFilter) {
-        this.UP_AABB = Block.box(0.0D, 16.0D - modelThickness, 0.0D, 16.0D, 16.0D, 16.0D);
-        this.DOWN_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, modelThickness, 16.0D);
-        this.WEST_AABB = Block.box(0.0D, 0.0D, 0.0D, modelThickness, 16.0D, 16.0D);
-        this.EAST_AABB = Block.box(16.0D - modelThickness, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-        this.NORTH_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, modelThickness);
-        this.SOUTH_AABB = Block.box(0.0D, 0.0D, 16.0D - modelThickness, 16.0D, 16.0D, 16.0D);
-        this.sideFilter = sideFilter;
     }
 
     public StateDefinition.Builder<Block, BlockState> generateStateDefinition(

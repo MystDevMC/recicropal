@@ -33,6 +33,11 @@ public class BottleGourdItem extends BlockItem {
         super(ModBlocks.BOTTLE_GOURD.get(), props);
     }
 
+    private static void playSound(Level level, BlockPos pos, SoundEvent soundEvent) {
+        level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(),
+                             soundEvent, SoundSource.BLOCKS, 1, 1, false);
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext p_40581_) {
         return InteractionResult.PASS;
@@ -87,11 +92,6 @@ public class BottleGourdItem extends BlockItem {
             if (!DrinkManager.tryDrinking(player, level, stack, hand)) return super.use(level, player, hand);
             return InteractionResultHolder.consume(stack);
         }
-    }
-
-    private static void playSound(Level level, BlockPos pos, SoundEvent soundEvent) {
-        level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(),
-                             soundEvent, SoundSource.BLOCKS, 1, 1, false);
     }
 
     @NotNull

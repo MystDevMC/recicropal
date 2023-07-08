@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PouringRecipe implements Recipe<BottleInteractionContainer> {
 
+    public static final Serializer SERIALIZER = new Serializer();
     public final ResourceLocation rl;
     public final Ingredient ingredient;
     public final FluidIngredient fluidIngredient;
@@ -60,7 +61,6 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
         }
     }
 
-
     @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipes.POURING_SERIALIZER.get();
@@ -71,7 +71,22 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
         return ModRecipes.POURING_RECIPE.get();
     }
 
-    public static final Serializer SERIALIZER = new Serializer();
+    @Override
+    public ItemStack getResultItem() {
+        return result.copy();
+    }
+
+    @Override
+    @Deprecated
+    public boolean canCraftInDimensions(int x, int y) {
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    public ResourceLocation getId() {
+        return rl;
+    }
 
     public static class Serializer implements RecipeSerializer<PouringRecipe> {
 
@@ -135,22 +150,5 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
             buf.writeItem(recipe.result);
         }
 
-    }
-
-    @Override
-    public ItemStack getResultItem() {
-        return result.copy();
-    }
-
-    @Override
-    @Deprecated
-    public boolean canCraftInDimensions(int x, int y) {
-        return false;
-    }
-
-    @Override
-    @Deprecated
-    public ResourceLocation getId() {
-        return rl;
     }
 }

@@ -154,12 +154,6 @@ public abstract class TrellisVineBlock extends CropBlock {
         }
     }
 
-    private enum CropSearchResult {
-        CANNOT_FRUIT,
-        CAN_FRUIT,
-        SHOULD_DIE
-    }
-
     private CropSearchResult isCropInReasonableDistance(ServerLevel level, BlockPos thisPos) {
         var innerSize = 2;
         var innerPoss = BlockPos.withinManhattan(thisPos, innerSize, innerSize, innerSize);
@@ -377,5 +371,11 @@ public abstract class TrellisVineBlock extends CropBlock {
 
     public BlockState mirror(BlockState state, Mirror mirror) {
         return PROPS.mirror(state, mirror, super::mirror);
+    }
+
+    private enum CropSearchResult {
+        CANNOT_FRUIT,
+        CAN_FRUIT,
+        SHOULD_DIE
     }
 }

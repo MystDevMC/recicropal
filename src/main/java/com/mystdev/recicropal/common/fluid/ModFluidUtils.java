@@ -3,7 +3,6 @@ package com.mystdev.recicropal.common.fluid;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -31,7 +30,6 @@ public class ModFluidUtils {
                 .requireNonNull(ForgeRegistries.FLUIDS.tags())
                 .getTag(tag)
                 .stream()
-                .filter(fluid -> fluid instanceof FlowingFluid flowingFluid && flowingFluid.getSource() == fluid)
                 .findFirst()
                 .orElse(Fluids.EMPTY);
     }

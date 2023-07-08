@@ -93,6 +93,7 @@
 - Gourd bottles now can be emptied in the crafting table.
 - Now, only savanna and desert villagers accept trading bottle gourds and water-filled gourd bottles.
 - Potions, honey bottles, and milk buckets now can be used to fill gourd bottles.
+- Gourd bottle blocks now show the fluid contained graphically
 
 ## Fixes
 

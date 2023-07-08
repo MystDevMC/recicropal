@@ -1,26 +1,29 @@
 package com.mystdev.recicropal.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Vector3f;
 import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.Recicropal;
-import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
-import com.mystdev.recicropal.content.mixing.Mixture;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = Recicropal.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEvents {
@@ -32,22 +35,16 @@ public class ClientEvents {
 
             cap.ifPresent(tank -> {
                 var fluid = tank.getFluidInTank(0);
-                var component = Component
-                        .translatable(fluid.getTranslationKey())
-                        .append(" " + fluid.getAmount() + " mB")
-                        .withStyle(ChatFormatting.AQUA);
-                if (fluid.isEmpty()) component = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
+                var component = fluid.getFluid().getFluidType().getDescription(fluid);
+                var volumeComponent = Component.empty()
+                                               .append(fluid.getAmount() + " mB")
+                                               .withStyle(ChatFormatting.GRAY);
+                if (fluid.isEmpty()) {
+                    component = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
+                }
                 event.getTooltipElements().add(1, Either.left(component));
-                if (fluid.getFluid().is(ModFluidUtils.tag("forge:potion"))) {
-                    var potionTag = fluid.getOrCreateTag().getString(PotionUtils.TAG_POTION);
-                    if (potionTag.equals("")) return;
-                    var potionComponent = Component
-                            // Wouldn't this create name collisions?
-                            .translatable(Potion
-                                                  .byName(potionTag)
-                                                  .getName("item.minecraft.potion.effect."))
-                            .withStyle(ChatFormatting.GRAY);
-                    event.getTooltipElements().add(2, Either.left(potionComponent));
+                if (!fluid.isEmpty()) {
+                    event.getTooltipElements().add(2, Either.left(volumeComponent));
                 }
             });
         }
@@ -96,29 +93,16 @@ public class ClientEvents {
         poseStack.mulPose(Vector3f.YP.rotation((float) angle));
         poseStack.mulPose(Vector3f.XP.rotationDegrees(10));
 
-
-//        mc.getItemRenderer().renderStatic(ModItems.BOTTLE_GOURD.asStack(), ItemTransforms.TransformType.GROUND,
-//                                          LightTexture.FULL_BLOCK,
-//                                          OverlayTexture.NO_OVERLAY, poseStack, event.getMultiBufferSource(), 123123);
-
-
         poseStack.pushPose();
         poseStack.scale(0.01F, 0.01F, 0.01F);
         poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
         var title = Component.translatable(state.getBlock().getDescriptionId());
         var fluid = bottle.tank.getFluid();
-        var content = Component.translatable(fluid.getTranslationKey()).append(" " + bottle.tank
-                .getFluid()
-                .getAmount() + " mB");
-        if (fluid.isEmpty()) content = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
-        var fluidColor = 0x00FFFF;
-        if (Mixture.isMixture(fluid)) {
-            var info = Mixture.getColorAndCategory(fluid);
-            fluidColor = info.left();
-            content = Component
-                    .translatable(fluid.getTranslationKey() + "." + info.right().getSerializedName())
-                    .append(" " + fluid.getAmount() + " mB");
+        var content = fluid.getFluid().getFluidType().getDescription(fluid);
+        if (fluid.isEmpty()) {
+            content = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
         }
+
         var width = Math.max(mc.font.width(title), mc.font.width(content));
         var height = mc.font.lineHeight;
         var offset = 4;
@@ -127,18 +111,81 @@ public class ClientEvents {
         var htot = 2 * offset + 2 * height + gap;
         RenderSystem.enableDepthTest();
         Gui.fill(poseStack, -(wtot / 2), -(htot / 2), wtot / 2, htot / 2, mc.options.getBackgroundColor(0.8F));
+        if (!fluid.isEmpty()) {
+            // FluidStack BG
+            var startH = -((wtot / 2) + gap + (2 * offset) + 16);
+            var startV = -(htot / 2);
+            Gui.fill(poseStack,
+                     startH,
+                     startV,
+                     startH + 16 + 2 * offset,
+                     startV + 16 + 2 * offset,
+                     mc.options.getBackgroundColor(0.8F));
+        }
+
         RenderSystem.disableDepthTest();
         poseStack.pushPose();
         poseStack.translate(0, 0, -.005);
         mc.font.draw(poseStack, title, (float) -(wtot / 2) + offset, -((float) htot / 2) + offset, 0xFFFFFF);
+        var fontColor = Optional
+                .ofNullable(content.getStyle().getColor())
+                .orElse(TextColor.fromRgb(0x00FFFF))
+                .getValue();
         mc.font.draw(poseStack,
                      content,
                      (float) -(wtot / 2) + offset,
-                     -((float) htot / 2) + height + offset + gap,
-                     fluidColor);
+                     -((float) htot / 2) + height + offset + gap, fontColor);
+
+        if (!fluid.isEmpty()) {
+            var clientFluid = IClientFluidTypeExtensions.of(fluid.getFluid());
+            var texture = clientFluid.getStillTexture();
+            var color = clientFluid.getTintColor(fluid);
+            var fluidSprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(texture);
+            RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+            RenderSystem.setShaderColor(((color >> 16) & 0xFF) / 255f,
+                                        ((color >> 8) & 0xFF) / 255f,
+                                        (color & 0xFF) / 255f,
+                                        ((color >> 24) & 0xFF) / 255f);
+            var startH = -((wtot / 2) + gap + 16 + offset);
+            var startV = -(htot / 2) + offset;
+            var ratio = (float) fluid.getAmount() / bottle.tank.getCapacity();
+            var fluidHeight = Math.round((ratio) * 16);
+
+            blit(poseStack,
+                 startH,
+                 startV + (16 - fluidHeight),
+                 fluidSprite.getWidth(),
+                 fluidHeight,
+                 fluidSprite,
+                 ratio);
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        }
+
         poseStack.popPose();
         poseStack.popPose();
         poseStack.popPose();
 
+    }
+
+    private static void blit(PoseStack poseStack,
+                             int x0,
+                             int y0,
+                             int w,
+                             int h,
+                             TextureAtlasSprite sprite,
+                             float cropY) {
+        var dv = sprite.getV0() - sprite.getV1();
+        var crop = dv - (cropY * dv);
+        Gui.innerBlit(poseStack.last().pose(),
+                      x0,
+                      x0 + w,
+                      y0,
+                      y0 + h,
+                      0,
+                      sprite.getU0(),
+                      sprite.getU1(),
+                      sprite.getV0(),
+                      sprite.getV1() + crop
+        );
     }
 }

@@ -19,17 +19,17 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class GatherTradesEvent extends Event {
 
-    private Int2ObjectMap<VillagerTrades.ItemListing[]> trades;
     private final Villager villager;
-
-    @Override
-    public boolean isCancelable() {
-        return false;
-    }
+    private Int2ObjectMap<VillagerTrades.ItemListing[]> trades;
 
     public GatherTradesEvent(Villager villager, Int2ObjectMap<VillagerTrades.ItemListing[]> trades) {
         this.trades = trades;
         this.villager = villager;
+    }
+
+    @Override
+    public boolean isCancelable() {
+        return false;
     }
 
     public Villager getVillager() {

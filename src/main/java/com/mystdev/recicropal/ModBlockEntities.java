@@ -5,12 +5,12 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
 public class ModBlockEntities {
 
-    public static void init() {
-    }
-
     public static final BlockEntityEntry<BottleGourdBlockEntity> BOTTLE_GOURD = Recicropal.REGISTRATE
             .get()
             .blockEntity("bottle_gourd", BottleGourdBlockEntity::new)
             .validBlock(ModBlocks.BOTTLE_GOURD)
             .register();
+
+    public static void init() {
+    }
 }

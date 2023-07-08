@@ -15,8 +15,12 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MixturePart implements INBTSerializable<CompoundTag> {
-    private float molarity;
+    public static final String TAG_EFFECTS = "Effects";
+    public static final String TAG_MOLARITY = "Molarity";
+    public static final String TAG_COLOR = "Color";
+    public static final String TAG_MODIFIER = "Modifier";
     private final String id;
+    private float molarity;
     private List<MobEffectInstance> effects;
     private int color;
     private Mixture.Modifier modifier;
@@ -45,8 +49,16 @@ public class MixturePart implements INBTSerializable<CompoundTag> {
         this.id = id;
     }
 
+    public static String effectKey(MobEffectInstance effectInstance) {
+        return Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect())).toString();
+    }
+
     public float getMolarity() {
         return molarity;
+    }
+
+    public void setMolarity(float molarity) {
+        this.molarity = molarity;
     }
 
     public List<MobEffectInstance> getEffects() {
@@ -61,18 +73,9 @@ public class MixturePart implements INBTSerializable<CompoundTag> {
         return id;
     }
 
-    public void setMolarity(float molarity) {
-        this.molarity = molarity;
-    }
-
     public Mixture.Modifier getModifier() {
         return modifier;
     }
-
-    public static final String TAG_EFFECTS = "Effects";
-    public static final String TAG_MOLARITY = "Molarity";
-    public static final String TAG_COLOR = "Color";
-    public static final String TAG_MODIFIER = "Modifier";
 
     @Override
     public CompoundTag serializeNBT() {
@@ -100,18 +103,16 @@ public class MixturePart implements INBTSerializable<CompoundTag> {
 
     public Collection<EffectEntry> toEffectEntries() {
         var collection = new ObjectArrayList<EffectEntry>();
-        effects.forEach(effectInstance -> collection.add(new EffectEntry(effectKey(effectInstance), molarity, effectInstance)));
+        effects.forEach(effectInstance -> collection.add(new EffectEntry(effectKey(effectInstance),
+                                                                         molarity,
+                                                                         effectInstance)));
         return collection;
-    }
-
-    public static String effectKey(MobEffectInstance effectInstance) {
-        return Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect())).toString();
     }
 
     public static class EffectEntry {
         public final String id;
-        private float molarity;
         private final MobEffectInstance effectInstance;
+        private float molarity;
 
         public EffectEntry(String id, float molarity, MobEffectInstance effectInstance) {
             this.id = id;

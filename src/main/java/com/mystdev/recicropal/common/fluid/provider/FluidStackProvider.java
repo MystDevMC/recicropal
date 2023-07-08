@@ -12,19 +12,14 @@ import java.util.function.Predicate;
 
 public abstract class FluidStackProvider {
     IntSupplier amountIfNotSpecified = () -> 0;
-    private Integer amount;
     CompoundTag nbt;
+    private Integer amount;
 
     public static FluidStackProvider fromJson(JsonObject obj) {
         var prov = createFromKey(obj::has);
         prov.readJson(obj);
         parseAmountAndTag(prov, obj);
         return prov;
-    }
-
-    public FluidStackProvider ifNoAmountSpecified(IntSupplier amountIfNotSpecified) {
-        this.amountIfNotSpecified = amountIfNotSpecified;
-        return this;
     }
 
     private static void parseAmountAndTag(FluidStackProvider provider, JsonObject object) {
@@ -62,8 +57,6 @@ public abstract class FluidStackProvider {
         else throw new IllegalArgumentException("Failed to parse FluidStackProvider");
     }
 
-    protected abstract void readJson(JsonObject obj);
-
     public static FluidStackProvider fromNetwork(FriendlyByteBuf buf) {
         var key = buf.readUtf();
         var prov = createFromKey(key::equals);
@@ -71,6 +64,13 @@ public abstract class FluidStackProvider {
         prov.read(buf);
         return prov;
     }
+
+    public FluidStackProvider ifNoAmountSpecified(IntSupplier amountIfNotSpecified) {
+        this.amountIfNotSpecified = amountIfNotSpecified;
+        return this;
+    }
+
+    protected abstract void readJson(JsonObject obj);
 
     public void toNetwork(FriendlyByteBuf buf) {
         buf.writeUtf(this.getKey());

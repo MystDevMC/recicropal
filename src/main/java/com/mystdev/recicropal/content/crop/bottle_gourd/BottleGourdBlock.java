@@ -36,54 +36,11 @@ import org.jetbrains.annotations.Nullable;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BottleGourdBlock extends Block implements EntityBlock {
     public static final BooleanProperty DROP_SEEDS = BooleanProperty.create("drop_seeds");
+
     public BottleGourdBlock(Properties props) {
         super(props);
         this.registerDefaultState(this.stateDefinition.any().setValue(DROP_SEEDS, Boolean.FALSE));
     }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder) {
-        stateBuilder.add(DROP_SEEDS);
-    }
-
-    public VoxelShape makeShape() {
-        VoxelShape shape = Shapes.empty();
-        shape = Shapes.join(shape, Shapes.box(0.125, 0, 0.125, 0.875, 0.5625, 0.875), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.28125, 0.5625, 0.28125, 0.71875, 0.9375, 0.71875), BooleanOp.OR);
-
-        return shape;
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state,
-                               BlockGetter blockGetter,
-                               BlockPos pos,
-                               CollisionContext collisionContext) {
-        return makeShape();
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return ModBlockEntities.BOTTLE_GOURD.create(pos, state);
-    }
-
-    @Override
-    public void setPlacedBy(Level level,
-                            BlockPos pos,
-                            BlockState state,
-                            @Nullable LivingEntity entity,
-                            ItemStack stack) {
-        var tank = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
-        tank.ifPresent(cap -> {
-            var be = level.getBlockEntity(pos);
-            if (be instanceof BottleGourdBlockEntity bottle) {
-                bottle.updateTank(cap);
-            }
-        });
-        super.setPlacedBy(level, pos, state, entity, stack);
-    }
-
 
     /**
      * By default, the way things happen are like so:
@@ -222,5 +179,48 @@ public class BottleGourdBlock extends Block implements EntityBlock {
         event
                 .getLevel()
                 .playLocalSound(pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.BLOCKS, 1, 1, false);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder) {
+        stateBuilder.add(DROP_SEEDS);
+    }
+
+    public VoxelShape makeShape() {
+        VoxelShape shape = Shapes.empty();
+        shape = Shapes.join(shape, Shapes.box(0.125, 0, 0.125, 0.875, 0.5625, 0.875), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.28125, 0.5625, 0.28125, 0.71875, 0.9375, 0.71875), BooleanOp.OR);
+
+        return shape;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state,
+                               BlockGetter blockGetter,
+                               BlockPos pos,
+                               CollisionContext collisionContext) {
+        return makeShape();
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return ModBlockEntities.BOTTLE_GOURD.create(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(Level level,
+                            BlockPos pos,
+                            BlockState state,
+                            @Nullable LivingEntity entity,
+                            ItemStack stack) {
+        var tank = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
+        tank.ifPresent(cap -> {
+            var be = level.getBlockEntity(pos);
+            if (be instanceof BottleGourdBlockEntity bottle) {
+                bottle.updateTank(cap);
+            }
+        });
+        super.setPlacedBy(level, pos, state, entity, stack);
     }
 }

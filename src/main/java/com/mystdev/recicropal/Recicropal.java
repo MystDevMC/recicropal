@@ -26,7 +26,6 @@ public class Recicropal {
 
     public static final String MOD_ID = "recicropal";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static boolean debug = true;
     public static final NonNullSupplier<Registrate> REGISTRATE = NonNullSupplier.lazy(() -> Registrate
             .create(MOD_ID)
             .creativeModeTab(() -> new CreativeModeTab("recicropal") {
@@ -35,17 +34,13 @@ public class Recicropal {
                     return ModItems.BOTTLE_GOURD.asStack();
                 }
             }));
-
-    public static ResourceLocation rl(String name) {
-        return new ResourceLocation(MOD_ID, name);
-    }
+    public static boolean debug = true;
 
     public Recicropal() {
         ModBlocks.init();
         ModItems.init();
         ModBlockEntities.init();
         ModPotions.init();
-        ModFluids.init();
 
         var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addGenericListener(Entity.class, DrinkHandler::attachPlayerCaps);
@@ -53,6 +48,7 @@ public class Recicropal {
         forgeBus.addListener(ModWorldGen::addVillageBuildings);
 
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModFluids.init(modBus);
         ModLootAPI.init(modBus);
         ModWorldGen.init(modBus);
         ModRecipes.init(modBus);
@@ -63,6 +59,10 @@ public class Recicropal {
         DrinkResults.init(modBus);
 
         modBus.addListener(Recicropal::onCommonSetup);
+    }
+
+    public static ResourceLocation rl(String name) {
+        return new ResourceLocation(MOD_ID, name);
     }
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {

@@ -1,7 +1,6 @@
 package com.mystdev.recicropal.content.mixing;
 
 import com.mystdev.recicropal.ModFluids;
-import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -28,9 +27,9 @@ public class Mixture implements INBTSerializable<CompoundTag> {
     public static final String TAG_POTIONS = "Potions";
     public static final String TAG_COLOR = "Color";
     public static final String TAG_CATEGORY = "Category";
+    private final Map<String, MixturePart> components = new Object2ObjectOpenHashMap<>();
     @Nullable
     private Category category;
-    private final Map<String, MixturePart> components = new Object2ObjectOpenHashMap<>();
     @Nullable
     private Integer color;
 
@@ -47,7 +46,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
     }
 
     public static Fluid getMixtureFluid() {
-        return ModFluids.MIXTURE.get().getSource();
+        return ModFluids.MIXTURE.get();
     }
 
     public static Mixture mixtureFromPotion(FluidStack potionFluid) {
@@ -76,7 +75,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
     }
 
     public static Mixture getMixtureFromMixable(FluidStack mixable) {
-        if (mixable.getFluid().is(ModFluidUtils.tag("forge:potion"))) {
+        if (PotionFluid.isPotion(mixable)) {
             return Mixture.mixtureFromPotion(mixable);
         }
         else if (isMixture(mixable)) {
@@ -89,6 +88,77 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         var mixtureFluid = new FluidStack(getMixtureFluid(), amount);
         mixtureFluid.setTag(mixture.serializeNBT());
         return mixtureFluid;
+    }
+
+    public static Mixture mix(Mixture mixture1, int mixture1Amount, Mixture mixture2, int mixture2Amount) {
+        var newMixture = new Mixture();
+        var resultingVolume = mixture1Amount + mixture2Amount;
+        mixture1.components
+                .values()
+                .forEach(component -> {
+                    var newComponent = new MixturePart(component);
+                    var moles = component.getMolarity() * mixture1Amount;
+                    newComponent.setMolarity(moles / resultingVolume);
+                    newMixture.components.put(component.getId(), newComponent);
+                });
+        newMixture.updateCategory(mixture1.category);
+        newMixture.updateColor(mixture1.getColor(), (float) mixture1Amount / resultingVolume);
+        mixture2.components
+                .values()
+                .forEach(component -> {
+                    var newComponent = new MixturePart(component);
+                    var m1 = component.getMolarity() * mixture2Amount;
+                    var moles = m1;
+                    newComponent.setMolarity(m1 / resultingVolume);
+
+                    var oldEntry = newMixture.components.get(component.getId());
+                    if (oldEntry != null) {
+                        var m2 = oldEntry.getMolarity() * resultingVolume;
+                        moles = m1 + m2;
+                        newComponent.setMolarity(moles / resultingVolume);
+                    }
+
+                    newMixture.components.put(component.getId(), newComponent);
+                });
+        newMixture.updateCategory(mixture2.category);
+        newMixture.updateColor(mixture2.getColor(), (float) mixture2Amount / resultingVolume);
+        return newMixture;
+    }
+
+    public static Pair<Integer, Category> getColorAndCategory(FluidStack mixtureFluid) {
+        var tag = mixtureFluid.getOrCreateTag();
+        return Pair.of(tag.getInt(TAG_COLOR), Category.from(tag.getString(TAG_CATEGORY)));
+    }
+
+    private static MobEffectInstance copyEffectWithDuration(MobEffectInstance instance,
+                                                            int duration) {
+        return new MobEffectInstance(instance.getEffect(),
+                                     duration,
+                                     instance.getAmplifier(),
+                                     instance.isAmbient(),
+                                     instance.isVisible(),
+                                     instance.showIcon(),
+                                     instance.hiddenEffect,
+                                     instance.getFactorData());
+    }
+
+    private static Category inferCategory(List<MobEffectInstance> effects) {
+        Category start = null;
+        for (var effectInstance : effects) {
+            var category = effectInstance.getEffect().getCategory();
+            if (start == null) {
+                start = Category.from(category);
+            }
+
+            else if (start != Category.from(category)) {
+                return Category.NEUTRAL;
+            }
+
+            if (start == Category.NEUTRAL) {
+                return Category.NEUTRAL;
+            }
+        }
+        return start;
     }
 
     public Category getCategory() {
@@ -133,41 +203,6 @@ public class Mixture implements INBTSerializable<CompoundTag> {
 
             this.color = (r << 16) | (g << 8) | b;
         }
-    }
-
-    public static Mixture mix(Mixture mixture1, int mixture1Amount, Mixture mixture2, int mixture2Amount) {
-        var newMixture = new Mixture();
-        var resultingVolume = mixture1Amount + mixture2Amount;
-        mixture1.components
-                .values()
-                .forEach(component -> {
-                    var newComponent = new MixturePart(component);
-                    var moles = component.getMolarity() * mixture1Amount;
-                    newComponent.setMolarity(moles / resultingVolume);
-                    newMixture.components.put(component.getId(), newComponent);
-                });
-        newMixture.updateCategory(mixture1.category);
-        newMixture.updateColor(mixture1.getColor(), (float) mixture1Amount / resultingVolume);
-        mixture2.components
-                .values()
-                .forEach(component -> {
-                    var newComponent = new MixturePart(component);
-                    var m1 = component.getMolarity() * mixture2Amount;
-                    var moles = m1;
-                    newComponent.setMolarity(m1 / resultingVolume);
-
-                    var oldEntry = newMixture.components.get(component.getId());
-                    if (oldEntry != null) {
-                        var m2 = oldEntry.getMolarity() * resultingVolume;
-                        moles = m1 + m2;
-                        newComponent.setMolarity(moles / resultingVolume);
-                    }
-
-                    newMixture.components.put(component.getId(), newComponent);
-                });
-        newMixture.updateCategory(mixture2.category);
-        newMixture.updateColor(mixture2.getColor(), (float) mixture2Amount / resultingVolume);
-        return newMixture;
     }
 
     @Override
@@ -240,11 +275,6 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         return map.values().stream().flatMap(Collection::stream);
     }
 
-    public static Pair<Integer, Category> getColorAndCategory(FluidStack mixtureFluid) {
-        var tag = mixtureFluid.getOrCreateTag();
-        return Pair.of(tag.getInt(TAG_COLOR), Category.from(tag.getString(TAG_CATEGORY)));
-    }
-
     public List<MobEffectInstance> getRationedEffects(int drunkAmount) {
         // This should not happen unless the mixture is empty
         if (components.size() == 0) {
@@ -306,18 +336,6 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                    .toList();
     }
 
-    private static MobEffectInstance copyEffectWithDuration(MobEffectInstance instance,
-                                                            int duration) {
-        return new MobEffectInstance(instance.getEffect(),
-                                     duration,
-                                     instance.getAmplifier(),
-                                     instance.isAmbient(),
-                                     instance.isVisible(),
-                                     instance.showIcon(),
-                                     instance.hiddenEffect,
-                                     instance.getFactorData());
-    }
-
     private void updateCategory(Category incomingCategory) {
         if (this.category == null) {
             this.category = incomingCategory;
@@ -325,25 +343,6 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         else if (incomingCategory != this.category) {
             this.category = Category.NEUTRAL;
         }
-    }
-
-    private static Category inferCategory(List<MobEffectInstance> effects) {
-        Category start = null;
-        for (var effectInstance : effects) {
-            var category = effectInstance.getEffect().getCategory();
-            if (start == null) {
-                start = Category.from(category);
-            }
-
-            else if (start != Category.from(category)) {
-                return Category.NEUTRAL;
-            }
-
-            if (start == Category.NEUTRAL) {
-                return Category.NEUTRAL;
-            }
-        }
-        return start;
     }
 
     public enum Category implements StringRepresentable {
@@ -354,11 +353,6 @@ public class Mixture implements INBTSerializable<CompoundTag> {
 
         Category(String name) {
             this.name = name;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return name;
         }
 
         public static Category from(MobEffectCategory category) {
@@ -388,6 +382,11 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                 }
             }
         }
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
     }
 
     // Hardcoded for now
@@ -401,11 +400,6 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             this.name = name;
         }
 
-        @Override
-        public String getSerializedName() {
-            return name;
-        }
-
         public static Modifier from(ItemStack potionItem) {
             var item = potionItem.getItem();
             if (item == Items.LINGERING_POTION) return LINGERING;
@@ -417,6 +411,11 @@ public class Mixture implements INBTSerializable<CompoundTag> {
             if (name.equals("lingering")) return LINGERING;
             if (name.equals("splash")) return SPLASH;
             return NORMAL;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
         }
     }
 }

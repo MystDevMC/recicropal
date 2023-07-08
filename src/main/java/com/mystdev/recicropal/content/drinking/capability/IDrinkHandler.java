@@ -15,7 +15,7 @@ public interface IDrinkHandler {
     });
     ResourceLocation ID = new ResourceLocation(Recicropal.MOD_ID, "drink_handler");
 
-    void setContext(@Nullable DrinkContext ctx);
-
     DrinkContext getContext();
+
+    void setContext(@Nullable DrinkContext ctx);
 }

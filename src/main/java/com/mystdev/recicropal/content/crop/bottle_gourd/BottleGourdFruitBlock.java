@@ -29,6 +29,14 @@ import java.util.List;
 
 public class BottleGourdFruitBlock extends Block {
     public static final BooleanProperty PERSISTENT = LeavesBlock.PERSISTENT;
+    public static final MixturePool ROTTING_POOL = new MixturePool()
+            .withEntry(new EffectProvider().of(() -> Potions.STRONG_POISON), 2)
+            .withEntry(new EffectProvider().of(ModPotions.STRONG_REVITALIZATION), 1)
+            .withEntry(new EffectProvider().of(List.of(new MobEffectInstance(MobEffects.CONFUSION, 3600, 0),
+                                                       new MobEffectInstance(MobEffects.WEAKNESS, 1800, 2))), 2)
+            .withEntry(new EffectProvider().of(List.of(new MobEffectInstance(MobEffects.WITHER, 1800, 0))), 1)
+            .withEntry(new EffectProvider().of(List.of(new MobEffectInstance(MobEffects.SATURATION, 1800, 1),
+                                                       new MobEffectInstance(MobEffects.ABSORPTION, 1800))), 1);
 
     public BottleGourdFruitBlock(Properties props) {
         super(props);
@@ -70,7 +78,9 @@ public class BottleGourdFruitBlock extends Block {
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource randomSource) {
         if (randomSource.nextInt(10) == 0) {
-            var state2Place = ModBlocks.BOTTLE_GOURD.getDefaultState().setValue(BottleGourdBlock.DROP_SEEDS, Boolean.TRUE);
+            var state2Place = ModBlocks.BOTTLE_GOURD
+                    .getDefaultState()
+                    .setValue(BottleGourdBlock.DROP_SEEDS, Boolean.TRUE);
             level.setBlock(pos, state2Place, 2);
             var be = level.getBlockEntity(pos);
             if (be instanceof BottleGourdBlockEntity bottle) {
@@ -97,13 +107,4 @@ public class BottleGourdFruitBlock extends Block {
             }
         }
     }
-
-    public static final MixturePool ROTTING_POOL = new MixturePool()
-            .withEntry(new EffectProvider().of(() -> Potions.STRONG_POISON), 2)
-            .withEntry(new EffectProvider().of(ModPotions.STRONG_REVITALIZATION), 1)
-            .withEntry(new EffectProvider().of(List.of(new MobEffectInstance(MobEffects.CONFUSION, 3600, 0),
-                                                       new MobEffectInstance(MobEffects.WEAKNESS, 1800, 2))), 2)
-            .withEntry(new EffectProvider().of(List.of(new MobEffectInstance(MobEffects.WITHER, 1800, 0))), 1)
-            .withEntry(new EffectProvider().of(List.of(new MobEffectInstance(MobEffects.SATURATION, 1800, 1),
-                                                       new MobEffectInstance(MobEffects.ABSORPTION, 1800))), 1);
 }

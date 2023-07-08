@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * For now, this only checks the fluid type and nbt if they are able to mix
  */
 public class MixingRecipe implements Recipe<MixingContainer> {
+    public static final Serializer SERIALIZER = new Serializer();
     private final ResourceLocation rl;
     private final FluidIngredient ingressFluid;
     private final FluidIngredient insideFluid;
@@ -76,7 +77,23 @@ public class MixingRecipe implements Recipe<MixingContainer> {
         return ModRecipes.MIXING_RECIPE.get();
     }
 
-    public static final Serializer SERIALIZER = new Serializer();
+    @Override
+    @Deprecated
+    public boolean canCraftInDimensions(int x, int y) {
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    public ItemStack getResultItem() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    @Deprecated
+    public ItemStack assemble(MixingContainer container) {
+        return ItemStack.EMPTY;
+    }
 
     public static class Serializer implements RecipeSerializer<MixingRecipe> {
 
@@ -120,24 +137,6 @@ public class MixingRecipe implements Recipe<MixingContainer> {
             recipe.insideFluid.write(buf);
             recipe.resultFluid.toNetwork(buf);
         }
-    }
-
-    @Override
-    @Deprecated
-    public boolean canCraftInDimensions(int x, int y) {
-        return false;
-    }
-
-    @Override
-    @Deprecated
-    public ItemStack getResultItem() {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    @Deprecated
-    public ItemStack assemble(MixingContainer container) {
-        return ItemStack.EMPTY;
     }
 
 }

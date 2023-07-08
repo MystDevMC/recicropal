@@ -1,25 +1,33 @@
 package com.mystdev.recicropal;
 
-import com.tterrag.registrate.util.entry.FluidEntry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
+import com.mystdev.recicropal.common.fluid.VirtualFluid;
+import com.mystdev.recicropal.content.mixing.MixtureFluid;
+import com.mystdev.recicropal.content.mixing.PotionFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+import java.util.function.Supplier;
 
 public class ModFluids {
 
-    public static void init() {
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS,
+                                                                                 Recicropal.MOD_ID);
+    public static final RegistryObject<VirtualFluid> MILK = virtualFluid("milk");
+    public static final RegistryObject<VirtualFluid> HONEY = virtualFluid("honey");    public static final RegistryObject<VirtualFluid> MIXTURE = FLUIDS.register(MixtureFluid.NAME, MixtureFluid::new);
+
+    public static void init(IEventBus modBus) {
+        FLUIDS.register(modBus);
+    }    public static final RegistryObject<VirtualFluid> POTION = FLUIDS.register(PotionFluid.NAME, PotionFluid::new);
+
+    private static RegistryObject<VirtualFluid> virtualFluid(String name) {
+        Supplier<? extends VirtualFluid> lazyFluid = () -> (VirtualFluid) ForgeRegistries.FLUIDS.getValue(Recicropal.rl(
+                name));
+        return FLUIDS.register(name, () -> new VirtualFluid(new VirtualFluid.VirtualFluidType(name), lazyFluid));
     }
 
-    public static final FluidEntry<? extends ForgeFlowingFluid> MIXTURE = fluid("mixture");
-    public static final FluidEntry<? extends ForgeFlowingFluid> POTION = fluid("potion");
-    public static final FluidEntry<? extends ForgeFlowingFluid> MILK = fluid("milk");
-    public static final FluidEntry<? extends ForgeFlowingFluid> HONEY = fluid("honey");
 
-    private static FluidEntry<? extends ForgeFlowingFluid> fluid(String name) {
-        return Recicropal.REGISTRATE
-                .get()
-                .fluid(name,
-                       new ResourceLocation("block/fluid/" + name + "_still"),
-                       new ResourceLocation("block/fluid/" + name + "_flowing"))
-                .register();
-    }
+
 }

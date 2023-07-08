@@ -22,9 +22,16 @@ public class MixturePool {
         return pool.get(randomSource.nextInt(pool.size()));
     }
 
-    public Mixture pullMixture(String name, @Nullable Mixture.Modifier modifier, int amount, RandomSource randomSource) {
+    public Mixture pullMixture(String name,
+                               @Nullable Mixture.Modifier modifier,
+                               int amount,
+                               RandomSource randomSource) {
         var prov = this.pull(randomSource);
-        var part = new MixturePart(name, 1, prov.getEffects(), null, modifier == null ? Mixture.Modifier.NORMAL : modifier);
+        var part = new MixturePart(name,
+                                   1,
+                                   prov.getEffects(),
+                                   null,
+                                   modifier == null ? Mixture.Modifier.NORMAL : modifier);
         var mixture = new Mixture();
         mixture.addMixturePart(part, amount, 0);
         return mixture;

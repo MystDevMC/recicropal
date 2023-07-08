@@ -22,7 +22,7 @@ public class EffectProvider {
         return this;
     }
 
-    public EffectProvider of (Collection<MobEffectInstance> effects) {
+    public EffectProvider of(Collection<MobEffectInstance> effects) {
         this.effects.addAll(effects);
         return this;
     }

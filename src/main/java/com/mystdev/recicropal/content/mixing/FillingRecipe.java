@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class FillingRecipe implements Recipe<BottleInteractionContainer> {
+    public static final FillingRecipe.Serializer SERIALIZER = new FillingRecipe.Serializer();
     private final ResourceLocation rl;
     private final Ingredient ingredient;
     private final FluidStackProvider resultProvider;
@@ -76,7 +77,16 @@ public class FillingRecipe implements Recipe<BottleInteractionContainer> {
         return ModRecipes.FILLING_SERIALIZER.get();
     }
 
-    public static final FillingRecipe.Serializer SERIALIZER = new FillingRecipe.Serializer();
+    @Override
+    @Deprecated
+    public boolean canCraftInDimensions(int x, int y) {
+        return false;
+    }
+
+    @Override
+    public ItemStack getResultItem() {
+        return result.copy();
+    }
 
     public static class Serializer implements RecipeSerializer<FillingRecipe> {
 
@@ -122,17 +132,6 @@ public class FillingRecipe implements Recipe<BottleInteractionContainer> {
             buf.writeItem(recipe.result);
         }
 
-    }
-
-    @Override
-    @Deprecated
-    public boolean canCraftInDimensions(int x, int y) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem() {
-        return result.copy();
     }
 
 }

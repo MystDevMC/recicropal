@@ -27,6 +27,10 @@ public class TrellisBlock extends Block {
         this.shapesCache = PROPS.generateShapesCache(this.stateDefinition);
     }
 
+    public static BooleanProperty getPropertyForFace(Direction direction) {
+        return VinelikeProps.PROPERTY_BY_DIRECTION.get(direction);
+    }
+
     public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext ctx) {
         return this.shapesCache.get(state);
     }
@@ -93,10 +97,6 @@ public class TrellisBlock extends Block {
 
     public BlockState mirror(BlockState state, Mirror mirror) {
         return PROPS.mirror(state, mirror, super::mirror);
-    }
-
-    public static BooleanProperty getPropertyForFace(Direction direction) {
-        return VinelikeProps.PROPERTY_BY_DIRECTION.get(direction);
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder) {

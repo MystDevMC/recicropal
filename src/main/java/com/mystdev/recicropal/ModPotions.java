@@ -18,9 +18,6 @@ import static com.mystdev.recicropal.Recicropal.REGISTRATE;
 
 public class ModPotions {
 
-    public static void init() {
-    }
-
     public static final RegistryEntry<Potion> REVITALIZATION = REGISTRATE.get().simple(
             "revitalization",
             ForgeRegistries.POTIONS.getRegistryKey(), () -> new Potion(
@@ -28,7 +25,6 @@ public class ModPotions {
                     new MobEffectInstance(MobEffects.HEALTH_BOOST, 3600),
                     new MobEffectInstance(MobEffects.HEAL)
             ));
-
     public static final RegistryEntry<Potion> LONG_REVITALIZATION = REGISTRATE.get().simple(
             "long_revitalization",
             ForgeRegistries.POTIONS.getRegistryKey(), () -> new Potion(
@@ -37,7 +33,6 @@ public class ModPotions {
                     new MobEffectInstance(MobEffects.HEALTH_BOOST, 7200),
                     new MobEffectInstance(MobEffects.HEAL)
             ));
-
     public static final RegistryEntry<Potion> STRONG_REVITALIZATION = REGISTRATE.get().simple(
             "strong_revitalization",
             ForgeRegistries.POTIONS.getRegistryKey(), () -> new Potion(
@@ -47,6 +42,8 @@ public class ModPotions {
                     new MobEffectInstance(MobEffects.HEAL, 1)
             ));
 
+    public static void init() {
+    }
 
     public static void addRecipes() {
         BrewingRecipeRegistry.addRecipe(

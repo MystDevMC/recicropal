@@ -32,6 +32,18 @@ public class FluidIngredient implements Predicate<FluidStack> {
         this.value = value;
     }
 
+    public static FluidIngredient fromJson(JsonObject jsonObject) {
+        var either = Either.<JsonObject, FriendlyByteBuf>left(jsonObject);
+        var val = Value.getAppropriateFactory(either).apply(either);
+        return new FluidIngredient(val);
+    }
+
+    public static FluidIngredient read(FriendlyByteBuf buf) {
+        var either = Either.<JsonObject, FriendlyByteBuf>right(buf);
+        var val = Value.getAppropriateFactory(either).apply(either);
+        return new FluidIngredient(val);
+    }
+
     private void dissolve() {
         dissolved.addAll(value.getFluids());
     }
@@ -86,20 +98,54 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return ret;
     }
 
-    public static FluidIngredient fromJson(JsonObject jsonObject) {
-        var either = Either.<JsonObject, FriendlyByteBuf>left(jsonObject);
-        var val = Value.getAppropriateFactory(either).apply(either);
-        return new FluidIngredient(val);
-    }
-
     public void write(FriendlyByteBuf buf) {
         this.value.write(buf);
     }
 
-    public static FluidIngredient read(FriendlyByteBuf buf) {
-        var either = Either.<JsonObject, FriendlyByteBuf>right(buf);
-        var val = Value.getAppropriateFactory(either).apply(either);
-        return new FluidIngredient(val);
+    interface Value {
+        static <V extends Value> V fromJson(V toModify, JsonObject object) {
+            toModify.readJson(object);
+            return toModify;
+        }
+
+        static <V extends Value> V fromNetwork(V toModify, FriendlyByteBuf buf) {
+            toModify.read(buf);
+            return toModify;
+        }
+
+        static Function<Either<JsonObject, FriendlyByteBuf>, Value> getAppropriateFactory(Either<JsonObject, FriendlyByteBuf> data) {
+            var jsonOpt = data.left();
+            var bufOpt = data.right();
+            if (jsonOpt.isPresent()) {
+                var json = jsonOpt.get();
+                var hasTag = json.has("tag");
+                var hasFluid = json.has("fluid");
+                if (hasTag && hasFluid)
+                    throw new IllegalArgumentException("Fluid ingredient cannot have both tag and fluid property!");
+                else if (hasTag) return either -> fromJson(new FluidTagValue(), either.orThrow());
+                else if (hasFluid) return either -> fromJson(new FluidValue(), either.orThrow());
+                else throw new IllegalArgumentException("Failed to read JSON");
+            }
+            else if (bufOpt.isPresent()) {
+                var buf = bufOpt.get();
+                var isTag = buf.readBoolean();
+                if (isTag) return either -> fromNetwork(new FluidTagValue(), either.right().orElseThrow());
+                else return either -> fromNetwork(new FluidValue(), either.right().orElseThrow());
+            }
+            else {
+                throw new IllegalArgumentException("Failed to read JSON");
+            }
+        }
+
+        Collection<Fluid> getFluids();
+
+        void readJson(JsonObject object);
+
+        void writeJson(JsonObject object);
+
+        void write(FriendlyByteBuf buf);
+
+        void read(FriendlyByteBuf buf);
     }
 
     private static class EmptyValue implements Value {
@@ -187,52 +233,6 @@ public class FluidIngredient implements Predicate<FluidStack> {
         @Override
         public void read(FriendlyByteBuf buf) {
             this.fluidTag = ModFluidUtils.tag(buf.readUtf());
-        }
-    }
-
-    interface Value {
-        Collection<Fluid> getFluids();
-
-        void readJson(JsonObject object);
-
-        void writeJson(JsonObject object);
-
-        void write(FriendlyByteBuf buf);
-
-        void read(FriendlyByteBuf buf);
-
-        static <V extends Value> V fromJson(V toModify, JsonObject object) {
-            toModify.readJson(object);
-            return toModify;
-        }
-
-        static <V extends Value> V fromNetwork(V toModify, FriendlyByteBuf buf) {
-            toModify.read(buf);
-            return toModify;
-        }
-
-        static Function<Either<JsonObject, FriendlyByteBuf>, Value> getAppropriateFactory(Either<JsonObject, FriendlyByteBuf> data) {
-            var jsonOpt = data.left();
-            var bufOpt = data.right();
-            if (jsonOpt.isPresent()) {
-                var json = jsonOpt.get();
-                var hasTag = json.has("tag");
-                var hasFluid = json.has("fluid");
-                if (hasTag && hasFluid)
-                    throw new IllegalArgumentException("Fluid ingredient cannot have both tag and fluid property!");
-                else if (hasTag) return either -> fromJson(new FluidTagValue(), either.orThrow());
-                else if (hasFluid) return either -> fromJson(new FluidValue(), either.orThrow());
-                else throw new IllegalArgumentException("Failed to read JSON");
-            }
-            else if (bufOpt.isPresent()) {
-                var buf = bufOpt.get();
-                var isTag = buf.readBoolean();
-                if (isTag) return either -> fromNetwork(new FluidTagValue(), either.right().orElseThrow());
-                else return either -> fromNetwork(new FluidValue(), either.right().orElseThrow());
-            }
-            else {
-                throw new IllegalArgumentException("Failed to read JSON");
-            }
         }
     }
 }

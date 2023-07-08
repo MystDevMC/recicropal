@@ -8,17 +8,6 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
 public class DebugCondition implements ICondition {
     public static final ResourceLocation DEBUG_RL = new ResourceLocation(Recicropal.MOD_ID, "debug");
-
-    @Override
-    public ResourceLocation getID() {
-        return DEBUG_RL;
-    }
-
-    @Override
-    public boolean test(IContext context) {
-        return Recicropal.debug;
-    }
-
     public static final IConditionSerializer<DebugCondition> SERIALIZER = new IConditionSerializer<>() {
         @Override
         public void write(JsonObject json, DebugCondition value) {
@@ -34,4 +23,14 @@ public class DebugCondition implements ICondition {
             return DEBUG_RL;
         }
     };
+
+    @Override
+    public ResourceLocation getID() {
+        return DEBUG_RL;
+    }
+
+    @Override
+    public boolean test(IContext context) {
+        return Recicropal.debug;
+    }
 }

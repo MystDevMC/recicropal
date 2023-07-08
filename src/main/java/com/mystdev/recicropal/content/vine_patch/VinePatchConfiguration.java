@@ -17,9 +17,9 @@ public class VinePatchConfiguration implements FeatureConfiguration {
             Codec.INT.fieldOf("spreadRadius").forGetter(VinePatchConfiguration::getSpreadRadius),
             Codec.INT.fieldOf("heightRange").forGetter(VinePatchConfiguration::getHeightRange)
     ).apply(cfg, VinePatchConfiguration::new));
-    private String blockToPlaceRL;
     private final int spreadRadius;
     private final int heightRange;
+    private String blockToPlaceRL;
     private final Supplier<Optional<TrellisCropBlock>> blockToPlace = Suppliers.memoize(
             () -> Optional.ofNullable((TrellisCropBlock) ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.blockToPlaceRL))));
 

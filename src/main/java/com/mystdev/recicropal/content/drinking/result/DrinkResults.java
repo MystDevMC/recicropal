@@ -38,7 +38,12 @@ public class DrinkResults {
     public static final RegistryObject<DrinkResultType<?>> HEAL =
             DRINK_RESULTS.register("heal", type(HealDrinkResult::new));
 
-    public static final RegistryObject<DrinkResultType<IDrinkResult>> SET_FIRE =
+    public static Optional<IDrinkResult> get(String s) {
+        var type =
+                RegistryManager.ACTIVE.getRegistry(DRINK_RESULT_TYPE_KEY).getValue(new ResourceLocation(s));
+        if (type == null) return Optional.empty();
+        return Optional.of(type.drinkResultFactory().get());
+    }    public static final RegistryObject<DrinkResultType<IDrinkResult>> SET_FIRE =
             DRINK_RESULTS.register("set_fire", type(() -> new IDrinkResult() {
                 @Override
                 public void apply(Player player, Level level, FluidStack drunkStack) {
@@ -51,7 +56,12 @@ public class DrinkResults {
                 }
             }));
 
-    public static final RegistryObject<DrinkResultType<IDrinkResult>> ZAP =
+    public static Optional<String> getKey(IDrinkResult drinkResult) {
+        var resourceLocation =
+                RegistryManager.ACTIVE.getRegistry(DRINK_RESULT_TYPE_KEY).getKey(drinkResult.getType());
+        if (resourceLocation == null) return Optional.empty();
+        return Optional.of(resourceLocation.toString());
+    }    public static final RegistryObject<DrinkResultType<IDrinkResult>> ZAP =
             DRINK_RESULTS.register("zap", type(() -> new IDrinkResult() {
                 @Override
                 public void apply(Player player, Level level, FluidStack drunkStack) {
@@ -67,20 +77,6 @@ public class DrinkResults {
                 }
             }));
 
-    public static Optional<IDrinkResult> get(String s) {
-        var type =
-                RegistryManager.ACTIVE.getRegistry(DRINK_RESULT_TYPE_KEY).getValue(new ResourceLocation(s));
-        if (type == null) return Optional.empty();
-        return Optional.of(type.drinkResultFactory().get());
-    }
-
-    public static Optional<String> getKey(IDrinkResult drinkResult) {
-        var resourceLocation =
-                RegistryManager.ACTIVE.getRegistry(DRINK_RESULT_TYPE_KEY).getKey(drinkResult.getType());
-        if (resourceLocation == null) return Optional.empty();
-        return Optional.of(resourceLocation.toString());
-    }
-
     public static void init(IEventBus modBus) {
         DRINK_RESULTS.register(modBus);
     }
@@ -88,5 +84,9 @@ public class DrinkResults {
     private static <T extends IDrinkResult> Supplier<DrinkResultType<T>> type(Supplier<T> factory) {
         return () -> new DrinkResultType<>(factory);
     }
+
+
+
+
 
 }

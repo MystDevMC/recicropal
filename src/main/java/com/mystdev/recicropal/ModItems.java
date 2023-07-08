@@ -16,9 +16,6 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 import static com.mystdev.recicropal.Recicropal.REGISTRATE;
 
 public class ModItems {
-    public static void init() {
-    }
-
     public static final ItemEntry<ItemNameBlockItem> BOTTLE_GOURD_SEEDS =
             REGISTRATE.get()
                       .item("bottle_gourd_seeds", p -> new ItemNameBlockItem(ModBlocks.BOTTLE_GOURD_CROP.get(), p))
@@ -26,19 +23,16 @@ public class ModItems {
                       .tag(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("forge:seeds/bottle_gourd")))
                       .defaultModel()
                       .register();
-
     public static final ItemEntry<ItemNameBlockItem> CLIMBING_MELON_SEEDS =
             REGISTRATE.get()
                       .item("climbing_melon_seeds", p -> new ItemNameBlockItem(ModBlocks.MELON_CROP.get(), p))
                       .tag(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("forge:seeds/melon")))
                       .register();
-
     public static final ItemEntry<ItemNameBlockItem> CLIMBING_PUMPKIN_SEEDS =
             REGISTRATE.get()
                       .item("climbing_pumpkin_seeds", p -> new ItemNameBlockItem(ModBlocks.PUMPKIN_CROP.get(), p))
                       .tag(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("forge:seeds/pumpkin")))
                       .register();
-
     public static final ItemEntry<BottleGourdItem> BOTTLE_GOURD =
             REGISTRATE.get()
                       .item("bottle_gourd", BottleGourdItem::new)
@@ -46,13 +40,14 @@ public class ModItems {
                       .lang("Gourd Bottle")
                       .defaultModel()
                       .register();
-
     public static final ItemEntry<Item> GLAMOROUS_GOURD =
             REGISTRATE.get()
                       .item("glamorous_gourd", Item::new)
                       .properties((p) -> p.rarity(Rarity.RARE))
                       .register();
 
+    public static void init() {
+    }
 
     public static void registerCompostables() {
         ComposterBlock.COMPOSTABLES.put(BOTTLE_GOURD_SEEDS.get(), 0.3F);

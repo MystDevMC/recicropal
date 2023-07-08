@@ -44,6 +44,7 @@ import java.util.List;
  */
 public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
     public static final int DEFAULT_AMOUNT = 250;  // TODO: Make this configurable
+    public static final Serializer SERIALIZER = new Serializer();
     private final ResourceLocation id;
     private final List<IDrinkResult> results;
     private final FluidIngredient ingredient;
@@ -89,7 +90,23 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
         return ModRecipes.DRINKING_SERIALIZER.get();
     }
 
-    public static final Serializer SERIALIZER = new Serializer();
+    @Override
+    @Deprecated
+    public ItemStack assemble(FluidHandlerItemContainer container) {
+        return container.getFluidHandlerItem();
+    }
+
+    @Override
+    @Deprecated
+    public boolean canCraftInDimensions(int x, int y) {
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    public ItemStack getResultItem() {
+        return ItemStack.EMPTY;
+    }
 
     static class Serializer implements RecipeSerializer<DrinkingRecipe> {
 
@@ -157,23 +174,5 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
                 }
             });
         }
-    }
-
-    @Override
-    @Deprecated
-    public ItemStack assemble(FluidHandlerItemContainer container) {
-        return container.getFluidHandlerItem();
-    }
-
-    @Override
-    @Deprecated
-    public boolean canCraftInDimensions(int x, int y) {
-        return false;
-    }
-
-    @Override
-    @Deprecated
-    public ItemStack getResultItem() {
-        return ItemStack.EMPTY;
     }
 }

@@ -15,9 +15,9 @@ public class DrinkHandler implements IDrinkHandler, ICapabilityProvider {
 
     private DrinkContext ctx;
 
-    @Override
-    public void setContext(DrinkContext ctx) {
-        this.ctx = ctx;
+    public static void attachPlayerCaps(AttachCapabilitiesEvent<Entity> event) {
+        if (!(event.getObject() instanceof Player)) return;
+        event.addCapability(IDrinkHandler.ID, new DrinkHandler());
     }
 
     @Override
@@ -26,15 +26,15 @@ public class DrinkHandler implements IDrinkHandler, ICapabilityProvider {
     }
 
     @Override
+    public void setContext(DrinkContext ctx) {
+        this.ctx = ctx;
+    }
+
+    @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == IDrinkHandler.CAPABILITY) {
             return this.lazyBackend.cast();
         }
         return LazyOptional.empty();
-    }
-
-    public static void attachPlayerCaps(AttachCapabilitiesEvent<Entity> event) {
-        if (!(event.getObject() instanceof Player)) return;
-        event.addCapability(IDrinkHandler.ID, new DrinkHandler());
     }
 }
