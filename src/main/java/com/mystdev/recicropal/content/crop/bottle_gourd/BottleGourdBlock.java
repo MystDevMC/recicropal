@@ -92,10 +92,11 @@ public class BottleGourdBlock extends Block implements EntityBlock {
         var fluidTankItem = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
         fluidTankItem.ifPresent((tank) -> {
             if (isSneaking) {
+                var drainable = Math.min(BottleGourdTank.TRANSFER_AMOUNT, bottle.tank.getSpace());
                 var result = FluidUtil.tryFillContainerAndStow(stack,
                                                                bottle.tank,
                                                                new PlayerArmorInvWrapper(player.getInventory()),
-                                                               1000,
+                                                               drainable,
                                                                player,
                                                                false);
                 if (!result.isSuccess()) {
@@ -105,7 +106,7 @@ public class BottleGourdBlock extends Block implements EntityBlock {
                 result = FluidUtil.tryFillContainerAndStow(stack,
                                                            bottle.tank,
                                                            new PlayerArmorInvWrapper(player.getInventory()),
-                                                           1000,
+                                                           drainable,
                                                            player,
                                                            true);
                 playSound(event, pos, SoundEvents.BOTTLE_EMPTY);
@@ -114,10 +115,12 @@ public class BottleGourdBlock extends Block implements EntityBlock {
                 event.setCanceled(true);
             }
             else {
+                // This must try to get the amounts first
+                var drainable = Math.min(BottleGourdTank.TRANSFER_AMOUNT, bottle.tank.getSpace());
                 var result = FluidUtil.tryEmptyContainerAndStow(stack,
                                                                 bottle.tank,
                                                                 new PlayerArmorInvWrapper(player.getInventory()),
-                                                                1000,
+                                                                drainable,
                                                                 player,
                                                                 false);
                 if (!result.isSuccess()) {
@@ -127,7 +130,7 @@ public class BottleGourdBlock extends Block implements EntityBlock {
                 result = FluidUtil.tryEmptyContainerAndStow(stack,
                                                             bottle.tank,
                                                             new PlayerArmorInvWrapper(player.getInventory()),
-                                                            1000,
+                                                            drainable,
                                                             player,
                                                             true);
                 playSound(event, pos, SoundEvents.BOTTLE_FILL);

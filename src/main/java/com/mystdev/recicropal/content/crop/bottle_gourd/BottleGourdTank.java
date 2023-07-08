@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 // But where else I would use this thing anyway
 public class BottleGourdTank extends FluidTank {
     public static final int CAPACITY = 2000;
+    public static final int TRANSFER_AMOUNT = 1000;
     private final Supplier<Level> lazyLevel;
     private final Runnable bottleUpdater;
 

@@ -36,12 +36,16 @@ public class ClientEvents {
             cap.ifPresent(tank -> {
                 var fluid = tank.getFluidInTank(0);
                 var component = fluid.getFluid().getFluidType().getDescription(fluid);
+                if (component.getStyle().isEmpty()) {
+                    component = component.copy().withStyle(ChatFormatting.AQUA);
+                }
                 var volumeComponent = Component.empty()
                                                .append(fluid.getAmount() + " mB")
                                                .withStyle(ChatFormatting.GRAY);
                 if (fluid.isEmpty()) {
                     component = Component.empty().append("Empty").withStyle(ChatFormatting.GRAY);
                 }
+
                 event.getTooltipElements().add(1, Either.left(component));
                 if (!fluid.isEmpty()) {
                     event.getTooltipElements().add(2, Either.left(volumeComponent));
