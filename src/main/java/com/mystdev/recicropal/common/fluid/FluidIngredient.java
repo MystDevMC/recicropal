@@ -9,6 +9,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -68,14 +69,19 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return tag == null ? stack.getTag() == null : stack.getTag() != null && tag.equals(stack.getTag());
     }
 
-    public int getAmount() {
-        return amount == null ? 0 : amount;
+    public boolean hasAmount() {
+        return amount != null;
+    }
+    @Nullable
+    public Integer getAmount() {
+        return amount;
     }
 
     public boolean hasTag() {
         return isTagSet && tag != null;
     }
 
+    @Nullable
     public CompoundTag getTag() {
         return tag;
     }

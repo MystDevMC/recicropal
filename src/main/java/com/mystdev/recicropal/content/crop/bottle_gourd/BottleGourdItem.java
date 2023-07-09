@@ -132,7 +132,7 @@ public class BottleGourdItem extends BlockItem {
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         if (livingEntity instanceof Player player && DrinkManager.wasDrinking(player)) {
-            DrinkManager.finishDrinking(player, player.getUsedItemHand());
+            DrinkManager.finishDrinking(player);
         }
         return super.finishUsingItem(stack, level, livingEntity);
     }

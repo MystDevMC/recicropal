@@ -313,7 +313,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                        }
 
                        // Balance the length by shortening it based on its molarity
-                       var ratio = (component.getMolarity() * (drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
+                       var ratio = (component.getMolarity() * ((float) drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
 
                        // Splash potion averages the durations between sips. Before lingering potion's effects
                        float splashRatio;
@@ -337,7 +337,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                        var lingeredDuration = splashedDuration * (1 + lingeringRatio);
 
                        var effect = copyEffectWithDuration(effectInstance, Math.round(ratio * lingeredDuration));
-                       return Either.<MixturePart.EffectEntry, MobEffectInstance>right(effectInstance);
+                       return Either.<MixturePart.EffectEntry, MobEffectInstance>right(effect);
                    })
                    .toList();
     }

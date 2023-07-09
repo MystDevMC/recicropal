@@ -1,7 +1,6 @@
 package com.mystdev.recicropal.content.drinking;
 
 import com.mystdev.recicropal.ModRecipes;
-import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.capability.DrinkContext;
 import com.mystdev.recicropal.content.drinking.capability.IDrinkHandler;
 import net.minecraft.world.InteractionHand;
@@ -9,8 +8,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 
 import java.util.Optional;
 
@@ -45,28 +42,11 @@ public class DrinkManager {
         return true;
     }
 
-    public static void finishDrinking(Player player, InteractionHand hand) {
+    public static void finishDrinking(Player player) {
         getDrinkHandler(player).ifPresent(handler -> {
             var ctx = handler.getContext();
             var recipe = ctx.recipe();
-
-            // Assuming that it has already matched
-            // This replaces the `assemble` call
-            // Drink the liquid
-            var wrappedInventory = new PlayerInvWrapper(player.getInventory());
-
-            var fluidRes =
-                    FluidUtil.tryEmptyContainerAndStow(
-                            ctx.stack(), ModFluidUtils.voidTank(),
-                            wrappedInventory, recipe.getAmount(), player, true
-                    );
-
-            // Return the new stack to player
-            player.setItemInHand(hand, fluidRes.result);
-
-            // Apply post-drinking effects
-            recipe.getResults().forEach(res -> res.apply(player, ctx.level(), recipe.getDrunk(ctx)));
-
+            recipe.assemble(ctx);
             // Reset
             handler.setContext(null);
         });

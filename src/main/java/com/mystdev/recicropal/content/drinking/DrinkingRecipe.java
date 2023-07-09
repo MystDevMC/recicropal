@@ -3,7 +3,9 @@ package com.mystdev.recicropal.content.drinking;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mystdev.recicropal.ModRecipes;
+import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.common.fluid.FluidIngredient;
+import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.capability.DrinkContext;
 import com.mystdev.recicropal.content.drinking.result.DrinkResults;
 import com.mystdev.recicropal.content.drinking.result.IDrinkResult;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -30,12 +33,14 @@ import java.util.List;
  * Here, fluids are handled a little bit different.
  * <ul>
  *     <li>
- *         {@link DrinkingRecipe#getDrunk} will return a contextual stack depending on what type of fluid was consumed
+ *         {@link DrinkingRecipe#getDrinkable} will return a contextual stack depending on what type of fluid was consumed
  *         and not what was used for recipe matching.
  *     </li>
  *     <li>
- *         If there's a {@code tag} property (FluidTag), the recipe will match using the appropriate tag. The returned stack
- *         from {@link DrinkingRecipe#getDrunk} should still follow its context.
+ *         If there's a {@code tag} property (FluidTag), the recipe will match using the appropriate tag.
+ *     </li>
+ *     <li>
+ *        If there's a {@code amount} property, the recipe will match using the amount, if not specified anything could be drunk.
  *     </li>
  * </ul>
  * <p>
@@ -55,18 +60,38 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
         this.ingredient = ingredient;
     }
 
-    public FluidStack getDrunk(DrinkContext context) {
-        var fluidOpt = FluidUtil.getFluidContained(context.stack());
-        if (fluidOpt.isEmpty()) return FluidStack.EMPTY;
-        var fluid = fluidOpt.get();
-        return new FluidStack(fluid.getFluid(), ingredient.getAmount(), fluid.getTag());
+    public FluidStack getDrinkable(DrinkContext context) {
+        var fluid = FluidUtil.getFluidContained(context.stack()).orElse(FluidStack.EMPTY);
+        Recicropal.LOGGER.debug(String.valueOf(Math.min(fluid.getAmount(), DEFAULT_AMOUNT)));
+        return new FluidStack(fluid.getFluid(), Math.min(fluid.getAmount(), DEFAULT_AMOUNT), fluid.getTag());
     }
 
-    public List<IDrinkResult> getResults() {
-        return results;
+    public void assemble(DrinkContext ctx) {
+        var player = ctx.player();
+
+        // Assuming that it has already matched
+        // Drink the liquid
+        var wrappedInventory = new PlayerInvWrapper(player.getInventory());
+
+        var drinkable = this.getDrinkable(ctx);
+
+        var fluidRes = FluidUtil
+                .tryEmptyContainerAndStow(ctx.stack(),
+                                          ModFluidUtils.voidTank(),
+                                          wrappedInventory,
+                                          drinkable.getAmount(),
+                                          player,
+                                          true);
+
+        // Return the new stack to player
+        player.setItemInHand(player.getUsedItemHand(), fluidRes.result);
+
+        // Apply post-drinking effects
+        results.forEach(res -> res.apply(player, ctx.level(), drinkable));
     }
 
-    public int getAmount() {
+    @Nullable
+    public Integer getAmount() {
         return ingredient.getAmount();
     }
 
@@ -125,14 +150,20 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
                 });
             }
 
-            var amount = GsonHelper.getAsInt(jsonObject, "amount", DEFAULT_AMOUNT);
             var fluidJsonObject = jsonObject.getAsJsonObject("fluid");
-            var ingredient = FluidIngredient.fromJson(fluidJsonObject).withAmount(amount);
+            var ingredient = FluidIngredient.fromJson(fluidJsonObject);
+
+            if (jsonObject.has("amount")) {
+                var amount = GsonHelper.getAsInt(jsonObject, "amount", DEFAULT_AMOUNT);
+                ingredient.withAmount(amount);
+            }
 
             if (fluidJsonObject.has("nbt")) {
-                var nbt = CompoundTag.CODEC.parse(JsonOps.INSTANCE, fluidJsonObject.getAsJsonObject("nbt"))
-                                           .result().orElseThrow();
-                ingredient = ingredient.withNbt(nbt);
+                var nbt = CompoundTag.CODEC
+                        .parse(JsonOps.INSTANCE, fluidJsonObject.getAsJsonObject("nbt"))
+                        .result()
+                        .orElseThrow();
+                ingredient.withNbt(nbt);
             }
 
             return new DrinkingRecipe(rl, drinkResults, ingredient);
@@ -141,19 +172,18 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
         @Override
         public @Nullable DrinkingRecipe fromNetwork(ResourceLocation rl, FriendlyByteBuf buf) {
             var ingredient = FluidIngredient.read(buf);
-            ingredient = ingredient.withAmount(buf.readInt());
-            if (buf.readBoolean()) ingredient = ingredient.withNbt(buf.readNbt());
 
-            var drinkResults = buf
-                    .readCollection(ArrayList::new,
-                                    (bufIn) -> {
-                                        var key = bufIn.readUtf();
-                                        var drinkResult = DrinkResults.get(key).orElseThrow();
-                                        if (drinkResult instanceof ISerializableDrinkResult<?> serializableDrinkResult) {
-                                            drinkResult = serializableDrinkResult.readNetwork(bufIn);
-                                        }
-                                        return drinkResult;
-                                    });
+            buf.readNullable((byteBuf) -> ingredient.withAmount(byteBuf.readInt()));
+            buf.readNullable((byteBuf) -> ingredient.withNbt(byteBuf.readNbt()));
+
+            var drinkResults = buf.readCollection(ArrayList::new, (bufIn) -> {
+                var key = bufIn.readUtf();
+                var drinkResult = DrinkResults.get(key).orElseThrow();
+                if (drinkResult instanceof ISerializableDrinkResult<?> serializableDrinkResult) {
+                    drinkResult = serializableDrinkResult.readNetwork(bufIn);
+                }
+                return drinkResult;
+            });
 
             return new DrinkingRecipe(rl, drinkResults, ingredient);
         }
@@ -161,12 +191,10 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
         @Override
         public void toNetwork(FriendlyByteBuf buf, DrinkingRecipe recipe) {
             recipe.ingredient.write(buf);
-            buf.writeInt(recipe.ingredient.getAmount());
-            var hasTag = recipe.ingredient.hasTag();
-            buf.writeBoolean(hasTag);
-            if (hasTag) {
-                buf.writeNbt(recipe.ingredient.getTag());
-            }
+
+            buf.writeNullable(recipe.ingredient.getAmount(), FriendlyByteBuf::writeInt);
+            buf.writeNullable(recipe.ingredient.getTag(), FriendlyByteBuf::writeNbt);
+
             buf.writeCollection(recipe.results, (bufIn, drinkResult) -> {
                 bufIn.writeUtf(DrinkResults.getKey(drinkResult).orElseThrow());
                 if (drinkResult instanceof ISerializableDrinkResult<?> serializableDrinkResult) {

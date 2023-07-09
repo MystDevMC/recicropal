@@ -49,7 +49,8 @@
             - If `nbt` is provided, it will match for the NBT structured as-is since
               this uses vanilla's `Codec` API.
         - `amount` specifies the amount of drunk fluid.
-            - Defaults to 250 mB if not specified.
+            - Defaults to allow drinking below the configured drinking amount
+              (250 mB by default) if not specified.
         - `results` accepts an array of `drink_result_types` specified below.
     - By default, this mod comes with honey, milk, and potion fluids and by default
       they already have recipes.
@@ -67,14 +68,14 @@
     - `ingredient` accepts items like how vanilla does.
     - A `fluid` property.
         - If `tag` is specified. It will harshly pick any fluid that's available in the game
-          with that tag. `fluid` can be used for referring a specific fluid ID. Do not
+          with that tag. `fluid` can be used for referring a specific fluid ID instead. Do not
           specify both as it won't make any sense.
         - `amount` which accepts number of amount it should fill.
         - `nbt` which accepts an NBT structured as-is to apply to the fluid.
     - `result` accepts a serialized ItemStack. Specifying its `Count` and `id` is obligatory. Add
       `tag` for NBTs.
     - A special property named `process`. If this exists, it'll use a hardcoded function
-      with the ID specified. Only `potion` exists currently and should only be used for
+      with the ID specified. Only `recicropal:potion` exists currently and should only be used for
       potions.
 - Data-driven pouring system for gourd bottles. Similar to filling but in reverse with
   a few additions.

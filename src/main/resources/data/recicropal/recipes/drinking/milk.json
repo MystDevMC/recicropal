@@ -12,6 +12,7 @@
   "fluid": {
     "tag": "forge:milk"
   },
+  "amount": 250,
   "results": [
     {
       "type": "recicropal:finish_item",
