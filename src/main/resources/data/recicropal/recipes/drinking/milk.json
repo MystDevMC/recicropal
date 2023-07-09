@@ -16,9 +16,6 @@
     {
       "type": "recicropal:finish_item",
       "item": "minecraft:milk_bucket"
-    },
-    {
-      "type": "recicropal:heal"
     }
   ]
 }

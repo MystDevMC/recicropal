@@ -53,7 +53,7 @@
         - `results` accepts an array of `drink_result_types` specified below.
     - By default, this mod comes with honey, milk, and potion fluids and by default
       they already have recipes.
-    - Currently there's only a few `drink_result_type`s:
+    - Currently, there's only a few `drink_result_type`s:
         - `recicropal:finish_item` would trigger the effects of given property `item`
           when it finished being used.
         - `recicropal:finish_item_transfer_nbt`. Similar to above but transfers the NBT from
@@ -108,3 +108,4 @@
 - Fix trellises not dropping the correct amount of items.
 - Fix vine crop base plants having wrong hitboxes when they start to attach to the sides.
 - Fix buckets disappearing when failed filling bottles.
+- Fix gourd bottles becoming unusable when swapping to a different bottle mid-drinking.

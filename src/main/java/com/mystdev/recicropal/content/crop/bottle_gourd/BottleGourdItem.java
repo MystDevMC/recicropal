@@ -58,6 +58,10 @@ public class BottleGourdItem extends BlockItem {
         var blockPos = blockRay.getBlockPos();
         var blockState = level.getBlockState(blockPos);
 
+        if (DrinkManager.wasDrinking(player)) {
+            DrinkManager.resetDrinking(player);
+        }
+
         if (!isSneaking) {
             if (!sourceFluid.isEmpty()) {
                 var result =
@@ -84,7 +88,8 @@ public class BottleGourdItem extends BlockItem {
             }
         }
 
-        if (!blockState.isAir()) {
+        var clickedAir = blockState.isAir();
+        if (isSneaking && !clickedAir) {
             InteractionResult interactionresult = super.useOn(new UseOnContext(player, hand, blockRay));
             return new InteractionResultHolder<>(interactionresult, player.getItemInHand(hand));
         }
