@@ -3,7 +3,6 @@ package com.mystdev.recicropal.content.drinking;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mystdev.recicropal.ModRecipes;
-import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.common.fluid.FluidIngredient;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.capability.DrinkContext;
@@ -62,7 +61,6 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
 
     public FluidStack getDrinkable(DrinkContext context) {
         var fluid = FluidUtil.getFluidContained(context.stack()).orElse(FluidStack.EMPTY);
-        Recicropal.LOGGER.debug(String.valueOf(Math.min(fluid.getAmount(), DEFAULT_AMOUNT)));
         return new FluidStack(fluid.getFluid(), Math.min(fluid.getAmount(), DEFAULT_AMOUNT), fluid.getTag());
     }
 
