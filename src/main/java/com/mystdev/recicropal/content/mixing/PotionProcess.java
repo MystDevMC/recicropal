@@ -1,5 +1,6 @@
 package com.mystdev.recicropal.content.mixing;
 
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,6 +30,7 @@ class PotionProcess implements IMixingProcess {
 
     @Override
     public boolean matchForMixing(MixingContainer container, Level level) {
+        if (!Config.ENABLE_POTION_MIXING.get()) return false;
         var fluidIn = container.getIncomingFluid();
         var fluidInside = container.getBottle().getFluid();
         if (!PotionFluid.isPotion(fluidIn) && !Mixture.isMixture(fluidIn)) return false;
@@ -61,14 +63,14 @@ class PotionProcess implements IMixingProcess {
         if (item != Items.GLASS_BOTTLE) return false;
 
         var tank = container.getBottle().tank;
-        return PotionFluid.isPotion(tank.getFluid()) && tank.getFluidAmount() >= DrinkingRecipe.DEFAULT_AMOUNT; // TODO: Change this with drain test
+        return PotionFluid.isPotion(tank.getFluid()) && tank.getFluidAmount() >= DrinkingRecipe.configuredMaxAmount(); // TODO: Change this with drain test
     }
 
     @Override
     public ItemStack assembleForPouring(BottleInteractionContainer container) {
         var tank = container.getBottle().tank;
         var stack = PotionFluid.extractPotionFrom(tank.getFluid());
-        tank.drain(DrinkingRecipe.DEFAULT_AMOUNT, IFluidHandler.FluidAction.EXECUTE);
+        tank.drain(DrinkingRecipe.configuredMaxAmount(), IFluidHandler.FluidAction.EXECUTE);
         return stack;
     }
 

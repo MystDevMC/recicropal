@@ -101,7 +101,7 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
 
             var ingredient = Ingredient.fromJson(jsonObject.get("ingredient"));
             var fluidJson = jsonObject.getAsJsonObject("fluid");
-            var amt = GsonHelper.getAsInt(fluidJson, "amount", DrinkingRecipe.DEFAULT_AMOUNT);
+            var amt = GsonHelper.getAsInt(fluidJson, "amount", DrinkingRecipe.configuredMaxAmount());
             var fluidIngredient = FluidIngredient.fromJson(fluidJson);
             if (fluidJson.has("nbt")) {
                 var nbt = CompoundTag.CODEC.parse(JsonOps.INSTANCE, fluidJson.get("nbt")).result().orElseThrow();

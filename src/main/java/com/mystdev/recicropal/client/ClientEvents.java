@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.math.Vector3f;
 import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.Recicropal;
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -56,6 +57,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void renderHover(RenderHighlightEvent.Block event) {
+        if (!Config.RENDER_BOTTLE_TOOLTIP.get()) return;
+
         var mc = Minecraft.getInstance();
         var ray = event.getTarget();
         var blockpos = ray.getBlockPos();

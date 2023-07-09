@@ -2,6 +2,7 @@ package com.mystdev.recicropal.content.crop.bottle_gourd;
 
 import com.mystdev.recicropal.ModBlocks;
 import com.mystdev.recicropal.ModPotions;
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.mixing.EffectProvider;
 import com.mystdev.recicropal.content.mixing.Mixture;
 import com.mystdev.recicropal.content.mixing.MixturePool;
@@ -72,7 +73,7 @@ public class BottleGourdFruitBlock extends Block {
 
     @Override
     public boolean isRandomlyTicking(BlockState state) {
-        return !state.getValue(PERSISTENT);
+        return Config.BOTTLE_GOURDS_ROT.get() && !state.getValue(PERSISTENT);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class BottleGourdFruitBlock extends Block {
             level.setBlock(pos, state2Place, 2);
             var be = level.getBlockEntity(pos);
             if (be instanceof BottleGourdBlockEntity bottle) {
-                var amount = randomSource.nextInt(BottleGourdTank.CAPACITY);
+                var amount = randomSource.nextInt(BottleGourdTank.configuredCapacity());
                 var splits = randomSource.nextInt(1, 4);
                 var cursor = 0;
                 Mixture mixture = null;

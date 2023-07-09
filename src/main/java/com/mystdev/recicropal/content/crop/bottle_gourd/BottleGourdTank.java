@@ -2,6 +2,7 @@ package com.mystdev.recicropal.content.crop.bottle_gourd;
 
 import com.google.common.base.Suppliers;
 import com.mystdev.recicropal.ModRecipes;
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.mixing.MixingContainer;
 import com.mystdev.recicropal.content.mixing.MixingRecipe;
 import net.minecraft.world.level.Level;
@@ -14,15 +15,21 @@ import java.util.function.Supplier;
 // This creates a rather high coupling.
 // But where else I would use this thing anyway
 public class BottleGourdTank extends FluidTank {
-    public static final int CAPACITY = 2000;
-    public static final int TRANSFER_AMOUNT = 1000;
     private final Supplier<Level> lazyLevel;
     private final Runnable bottleUpdater;
 
     public BottleGourdTank(BottleGourdBlockEntity bottle) {
-        super(CAPACITY);
+        super(configuredCapacity());
         this.lazyLevel = Suppliers.memoize(bottle::getLevel);
         this.bottleUpdater = bottle::setChanged;
+    }
+
+    public static int configuredCapacity() {
+        return Config.BOTTLE_CAPACITY.get();
+    }
+
+    public static int configuredTransferAmount() {
+        return Config.BOTTLE_TRANSFER_AMOUNT.get();
     }
 
     private Optional<MixingRecipe> getMixingRecipe(MixingContainer container) {

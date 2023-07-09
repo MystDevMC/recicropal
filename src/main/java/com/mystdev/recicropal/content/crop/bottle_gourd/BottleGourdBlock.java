@@ -92,7 +92,7 @@ public class BottleGourdBlock extends Block implements EntityBlock {
         var fluidTankItem = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
         fluidTankItem.ifPresent((tank) -> {
             if (isSneaking) {
-                var drainable = Math.min(BottleGourdTank.TRANSFER_AMOUNT, bottle.tank.getSpace());
+                var drainable = Math.min(BottleGourdTank.configuredTransferAmount(), bottle.tank.getSpace());
                 var result = FluidUtil.tryFillContainerAndStow(stack,
                                                                bottle.tank,
                                                                new PlayerArmorInvWrapper(player.getInventory()),
@@ -116,7 +116,7 @@ public class BottleGourdBlock extends Block implements EntityBlock {
             }
             else {
                 // This must try to get the amounts first
-                var drainable = Math.min(BottleGourdTank.TRANSFER_AMOUNT, bottle.tank.getSpace());
+                var drainable = Math.min(BottleGourdTank.configuredTransferAmount(), bottle.tank.getSpace());
                 var result = FluidUtil.tryEmptyContainerAndStow(stack,
                                                                 bottle.tank,
                                                                 new PlayerArmorInvWrapper(player.getInventory()),
@@ -237,7 +237,7 @@ public class BottleGourdBlock extends Block implements EntityBlock {
         var be = level.getBlockEntity(pos);
         if (be instanceof BottleGourdBlockEntity bottle) {
             var tank =  bottle.tank;
-            return Math.round((float) tank.getFluidAmount() / BottleGourdTank.CAPACITY * 16);
+            return Math.round((float) tank.getFluidAmount() / BottleGourdTank.configuredCapacity() * 16);
         }
         return super.getAnalogOutputSignal(state, level, pos);
     }

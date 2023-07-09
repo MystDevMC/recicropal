@@ -1,6 +1,7 @@
 package com.mystdev.recicropal.content.drinking;
 
 import com.mystdev.recicropal.ModRecipes;
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.drinking.capability.DrinkContext;
 import com.mystdev.recicropal.content.drinking.capability.IDrinkHandler;
 import net.minecraft.world.InteractionHand;
@@ -29,6 +30,7 @@ public class DrinkManager {
     }
 
     public static boolean tryDrinking(Player player, Level level, ItemStack stack, InteractionHand usedHand) {
+        if (!Config.ENABLE_DRINKING.get()) return false;
         if (!canDrink(player)) return false;
 
         var drinkRecipe = hasDrink(stack, level);

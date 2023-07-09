@@ -1,6 +1,7 @@
 package com.mystdev.recicropal;
 
 import com.mojang.datafixers.util.Pair;
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.vine_patch.VinePatchConfiguration;
 import com.mystdev.recicropal.content.vine_patch.VinePatchFeature;
 import net.minecraft.core.Holder;
@@ -67,6 +68,7 @@ public class ModWorldGen {
     }
 
     public static void addVillageBuildings(ServerAboutToStartEvent event) {
+        if (!Config.SPAWN_VILLAGER_STRUCTURES.get()) return;
         var tpReg = event.getServer().registryAccess().registry(Registry.TEMPLATE_POOL_REGISTRY).get();
 
         var pool = tpReg.get(new ResourceLocation("minecraft:village/desert/houses"));

@@ -69,11 +69,11 @@ public class PotionFluid extends VirtualFluid {
         }
 
         var fluid = new FluidStack(ModFluidUtils.forcedMember(POTION_TAG),
-                                   DrinkingRecipe.DEFAULT_AMOUNT,
+                                   DrinkingRecipe.configuredMaxAmount(),
                                    voidItem.getTag());
 
         if (potion == Potions.WATER && modifier == Mixture.Modifier.NORMAL) {
-            fluid = new FluidStack(Fluids.WATER, DrinkingRecipe.DEFAULT_AMOUNT);
+            fluid = new FluidStack(Fluids.WATER, DrinkingRecipe.configuredMaxAmount());
         }
         return fluid;
     }

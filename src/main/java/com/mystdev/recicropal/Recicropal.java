@@ -1,6 +1,7 @@
 package com.mystdev.recicropal;
 
 import com.mojang.logging.LogUtils;
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.common.condition.DebugCondition;
 import com.mystdev.recicropal.common.condition.FluidTagEmptyCondition;
 import com.mystdev.recicropal.content.drinking.capability.DrinkHandler;
@@ -13,7 +14,9 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -37,6 +40,9 @@ public class Recicropal {
     public static boolean debug = true;
 
     public Recicropal() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT);
+
         ModBlocks.init();
         ModItems.init();
         ModBlockEntities.init();

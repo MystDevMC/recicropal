@@ -1,5 +1,6 @@
 package com.mystdev.recicropal;
 
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdItem;
 import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdListing;
 import com.tterrag.registrate.util.entry.ItemEntry;
@@ -57,6 +58,7 @@ public class ModItems {
     }
 
     public static void registerTrades(VillagerTradesEvent event) {
+        if (!Config.ADD_TRADES.get()) return;
         if (event.getType() == VillagerProfession.FARMER) {
             event.getTrades().get(1).add(new BottleGourdListing());
         }

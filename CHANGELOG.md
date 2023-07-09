@@ -39,6 +39,7 @@
 ### API
 
 - A `CHANGELOG.md`. Yay! (This is technically release notes but oh well).
+- Configs. Common and client side.
 - Added a new recipe loading condition `recicropal:fluid_tag_empty`, accepting a
   property `tag`
 - Added a new recipe loading condition `recicropal:debug` for debug recipes.
@@ -100,6 +101,9 @@
 - Potions, honey bottles, and milk buckets now can be used to fill gourd bottles.
 - Gourd bottle blocks now show the fluid contained graphically.
 - Gourd bottle blocks now emit comparator signal.
+- Gourd bottles now can only be placed while sneaking.
+- Gourd bottles capacity can now be configured.
+- Gourd bottle blocks transfer amount can now be configured.
 
 ## Fixes
 

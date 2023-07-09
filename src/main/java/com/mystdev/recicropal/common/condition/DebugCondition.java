@@ -2,6 +2,7 @@ package com.mystdev.recicropal.common.condition;
 
 import com.google.gson.JsonObject;
 import com.mystdev.recicropal.Recicropal;
+import com.mystdev.recicropal.common.Config;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
@@ -31,6 +32,6 @@ public class DebugCondition implements ICondition {
 
     @Override
     public boolean test(IContext context) {
-        return Recicropal.debug;
+        return Config.ENABLE_DEBUG.get();
     }
 }

@@ -1,11 +1,9 @@
 package com.mystdev.recicropal.content.drinking.capability;
 
-import com.mystdev.recicropal.Recicropal;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
 import com.mystdev.recicropal.content.mixing.MixturePart;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -42,27 +40,27 @@ public class EffectWaiter implements INBTSerializable<CompoundTag> {
         var moles = Math.round(drunkAmount * entry.getMolarity());
 
         // Before we count the insides...
-        while (moles >= DrinkingRecipe.DEFAULT_AMOUNT) {
+        while (moles >= DrinkingRecipe.configuredMaxAmount()) {
             entry.getEffectInstance().applyEffect(player);
-            if (moles == DrinkingRecipe.DEFAULT_AMOUNT) {
+            if (moles == DrinkingRecipe.configuredMaxAmount()) {
                 break;
             }
             else {
-                moles -= DrinkingRecipe.DEFAULT_AMOUNT;
+                moles -= DrinkingRecipe.configuredMaxAmount();
             }
         }
 
         // Count the insides
         if (map.get(hash) != null) {
             var totalMoles = map.get(hash) + moles;
-            while (totalMoles >= DrinkingRecipe.DEFAULT_AMOUNT) {
+            while (totalMoles >= DrinkingRecipe.configuredMaxAmount()) {
                 entry.getEffectInstance().applyEffect(player);
-                if (totalMoles == DrinkingRecipe.DEFAULT_AMOUNT) {
+                if (totalMoles == DrinkingRecipe.configuredMaxAmount()) {
                     map.remove(hash);
                     break;
                 }
                 else {
-                    totalMoles -= DrinkingRecipe.DEFAULT_AMOUNT;
+                    totalMoles -= DrinkingRecipe.configuredMaxAmount();
                 }
             }
             map.put(hash, totalMoles);

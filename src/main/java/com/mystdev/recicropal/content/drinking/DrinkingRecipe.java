@@ -3,6 +3,7 @@ package com.mystdev.recicropal.content.drinking;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import com.mystdev.recicropal.ModRecipes;
+import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.common.fluid.FluidIngredient;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.content.drinking.capability.DrinkContext;
@@ -47,7 +48,6 @@ import java.util.List;
  * marked as {@link Deprecated}.
  */
 public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
-    public static final int DEFAULT_AMOUNT = 250;  // TODO: Make this configurable
     public static final Serializer SERIALIZER = new Serializer();
     private final ResourceLocation id;
     private final List<IDrinkResult> results;
@@ -59,9 +59,13 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
         this.ingredient = ingredient;
     }
 
+    public static int configuredMaxAmount() {
+        return Config.DRINKING_MAX_AMOUNT.get();
+    }
+
     public FluidStack getDrinkable(DrinkContext context) {
         var fluid = FluidUtil.getFluidContained(context.stack()).orElse(FluidStack.EMPTY);
-        return new FluidStack(fluid.getFluid(), Math.min(fluid.getAmount(), DEFAULT_AMOUNT), fluid.getTag());
+        return new FluidStack(fluid.getFluid(), Math.min(fluid.getAmount(), configuredMaxAmount()), fluid.getTag());
     }
 
     public void assemble(DrinkContext ctx) {
@@ -152,7 +156,7 @@ public class DrinkingRecipe implements Recipe<FluidHandlerItemContainer> {
             var ingredient = FluidIngredient.fromJson(fluidJsonObject);
 
             if (jsonObject.has("amount")) {
-                var amount = GsonHelper.getAsInt(jsonObject, "amount", DEFAULT_AMOUNT);
+                var amount = GsonHelper.getAsInt(jsonObject, "amount", configuredMaxAmount());
                 ingredient.withAmount(amount);
             }
 

@@ -313,7 +313,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
                        }
 
                        // Balance the length by shortening it based on its molarity
-                       var ratio = (component.getMolarity() * ((float) drunkAmount / DrinkingRecipe.DEFAULT_AMOUNT));
+                       var ratio = (component.getMolarity() * ((float) drunkAmount / DrinkingRecipe.configuredMaxAmount()));
 
                        // Splash potion averages the durations between sips. Before lingering potion's effects
                        float splashRatio;
