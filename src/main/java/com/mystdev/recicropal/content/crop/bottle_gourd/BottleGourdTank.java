@@ -6,6 +6,7 @@ import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.content.mixing.MixingContainer;
 import com.mystdev.recicropal.content.mixing.MixingRecipe;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
@@ -21,7 +22,13 @@ public class BottleGourdTank extends FluidTank {
     public BottleGourdTank(BottleGourdBlockEntity bottle) {
         super(configuredCapacity());
         this.lazyLevel = Suppliers.memoize(bottle::getLevel);
-        this.bottleUpdater = bottle::setChanged;
+        this.bottleUpdater = () -> {
+            bottle.setChanged();
+            lazyLevel.get().sendBlockUpdated(bottle.getBlockPos(),
+                                             bottle.getBlockState(),
+                                             bottle.getBlockState(),
+                                             Block.UPDATE_CLIENTS);
+        };
     }
 
     public static int configuredCapacity() {

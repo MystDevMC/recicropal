@@ -124,3 +124,4 @@
 - Fix vine crop base plants having wrong hitboxes when they start to attach to the sides.
 - Fix buckets disappearing when failed filling bottles.
 - Fix gourd bottles becoming unusable when swapping to a different bottle mid-drinking.
+- Fix gourd bottles tooltip not updating as expected.
