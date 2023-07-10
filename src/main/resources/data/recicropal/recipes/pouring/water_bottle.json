@@ -4,8 +4,7 @@
     "item": "minecraft:glass_bottle"
   },
   "fluid": {
-    "fluid": "minecraft:water",
-    "amount": 250
+    "fluid": "minecraft:water"
   },
   "result": {
     "id": "minecraft:potion",

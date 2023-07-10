@@ -46,7 +46,7 @@
 - A new data-driven drinking system. The player can now drink the contents of gourd
   bottles and trigger effects.
     - The recipe structure can be described as below.
-        - `fluid` either a fluid `tag` or `fluid` ID.
+        - `fluid`. Accepting either a fluid `tag` or `fluid` ID.
             - If `nbt` is provided, it will match for the NBT structured as-is since
               this uses vanilla's `Codec` API.
         - `amount` specifies the amount of drunk fluid.
@@ -79,20 +79,30 @@
       with the ID specified. Only `recicropal:potion` exists currently and should only be used for
       potions.
 - Data-driven pouring system for gourd bottles. Similar to filling but in reverse with
-  a few additions.
-    - `fluid` property behaves like the fluid property for drinking recipes.
-    - `amount`. Again, similar to drinking.
+  a few exceptions.
+    - `fluid` property behaves like the `fluid` property for drinking recipes but
+      with an additional `amount` property to specify how much fluid is going to be poured out.
+        - The `amount` property here defaults to the configured drinking max amount (250 mB by default)
+          if not specified.
 - Data-driven mixing system for gourd bottles.
     - Fluids can be mixed into the bottle when they differ. This triggers when the bottle
       itself is tried to be filled as a block and not an item.
     - The recipe structured is described as follows.
         - `fluidIn` and `fluidInside` accepts fluid ingredients similar to drinking recipes.
-        - There's no `amount` property as this checks only by fluid ID and NBT.
-        - `result` accepts a fluid similar to filling recipes' `fluid` tag except that if no
+            - The recipe would match reciprocally for both of these inputs. For example, specifying water for
+              `fluidIn` and milk for `fluidInside` is the same as specifying water in `fluidInside` and milk
+              in the other.
+        - There's no `amount` property as this checks only by fluid type and NBT.
+        - `result` accepts a fluid similar to filling recipes' `fluid` property except that if no
           `amount` property is specified, it resorts to just adding the `amounts` of both
           amounts of mixed fluids.
         - A special property named `process`. Similar to other aforementioned recipes.
 - Potion mixing currently uses built-in potion and mixture fluids.
+
+### Integrations
+
+- Added `crops` and `vegetables` tags to bottle gourds.
+- `sereneseasons`: Added season tags for seeds and blocks.
 
 ## Updates
 

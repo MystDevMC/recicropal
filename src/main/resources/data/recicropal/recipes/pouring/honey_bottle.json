@@ -13,8 +13,7 @@
     "item": "minecraft:glass_bottle"
   },
   "fluid": {
-    "tag": "forge:honey",
-    "amount": 250
+    "tag": "forge:honey"
   },
   "result": {
     "id": "minecraft:honey_bottle",

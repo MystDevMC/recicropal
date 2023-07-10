@@ -92,7 +92,7 @@ public class BottleGourdBlock extends Block implements EntityBlock {
         var fluidTankItem = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
         fluidTankItem.ifPresent((tank) -> {
             if (isSneaking) {
-                var drainable = Math.min(BottleGourdTank.configuredTransferAmount(), bottle.tank.getSpace());
+                var drainable = Math.min(BottleGourdTank.configuredTransferAmount(), bottle.tank.getFluidAmount());
                 var result = FluidUtil.tryFillContainerAndStow(stack,
                                                                bottle.tank,
                                                                new PlayerArmorInvWrapper(player.getInventory()),

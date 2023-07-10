@@ -53,7 +53,9 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
     @Override
     public ItemStack assemble(BottleInteractionContainer container) {
         if (process == null) {
-            container.getBottle().tank.drain(fluidIngredient.getAmount(), IFluidHandler.FluidAction.EXECUTE);
+            Integer amount = fluidIngredient.getAmount();
+            amount = amount == null ? DrinkingRecipe.configuredMaxAmount() : amount;
+            container.getBottle().tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
             return result.copy();
         }
         else {
@@ -126,10 +128,10 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
 
             var ingredient = Ingredient.fromNetwork(buf);
             var fluidIngredient = FluidIngredient.read(buf);
-            var amt = buf.readInt();
-            if (buf.readBoolean()) fluidIngredient.withNbt(buf.readNbt());
+            buf.readNullable(byteBuf -> fluidIngredient.withAmount(byteBuf.readInt()));
+            buf.readNullable(byteBuf -> fluidIngredient.withNbt(byteBuf.readNbt()));
             var result = buf.readItem();
-            return new PouringRecipe(rl, ingredient, fluidIngredient.withAmount(amt), null, result);
+            return new PouringRecipe(rl, ingredient, fluidIngredient, null, result);
         }
 
         @Override
@@ -141,12 +143,8 @@ public class PouringRecipe implements Recipe<BottleInteractionContainer> {
             }
             recipe.ingredient.toNetwork(buf);
             recipe.fluidIngredient.write(buf);
-            buf.writeInt(recipe.fluidIngredient.getAmount());
-            var hasTag = recipe.fluidIngredient.hasTag();
-            buf.writeBoolean(hasTag);
-            if (hasTag) {
-                buf.writeNbt(recipe.fluidIngredient.getTag());
-            }
+            buf.writeNullable(recipe.fluidIngredient.getAmount(), FriendlyByteBuf::writeInt);
+            buf.writeNullable(recipe.fluidIngredient.getTag(), FriendlyByteBuf::writeNbt);
             buf.writeItem(recipe.result);
         }
 
