@@ -1,0 +1,27 @@
+{
+  "type": "recicropal:filling",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "recicropal:fluid_tag_empty",
+        "tag": "forge:milk"
+      }
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "ingredient": {
+    "item": "minecraft:glass_bottle"
+  },
+  "fluid": {
+    "tag": "forge:milk",
+    "amount": 250
+  },
+  "result": {
+    "id": "farmersdelight:milk_bottle",
+    "Count": 1
+  }
+}

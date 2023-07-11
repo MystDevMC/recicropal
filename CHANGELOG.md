@@ -42,6 +42,8 @@
 - Configs. Common and client side.
 - Added a new recipe loading condition `recicropal:fluid_tag_empty`, accepting a
   property `tag`
+- Added a new recipe loading condition `recicropal:fluid_exists`, accepting a
+  property `fluid`
 - Added a new recipe loading condition `recicropal:debug` for debug recipes.
 - A new data-driven drinking system. The player can now drink the contents of gourd
   bottles and trigger effects.
@@ -108,12 +110,15 @@
 - `forge`: Added `crops` and `vegetables` tags to bottle gourds.
 - Milk fluid inserted into gourd bottles would be converted to `minecraft`'s milk.
     - This may make complications when there's other variants of milk.
+- `sereneseasons`: Added season tags for seeds and blocks.
 - `create`: `create`'s potion fluids now automatically convert to this mod's potions.
 - `create`: Honey fluid inserted to gourd bottles would be converted to `create`'s honey.
     - This may make complications when there's other variants of honey.
 - `create`: `create`'s potion fluids now automatically convert to this mod's potions.
 - `cofh_core`: Potion fluid inserted to gourd bottles would be converted to this mod's potions.
-- `sereneseasons`: Added season tags for seeds and blocks.
+- `thermal`: Gourd bottles now accept syrup bottles for interaction. Syrup can also be drunk.
+- `farmersdelight`: Gourd bottles now accept milk bottles for interaction.
+    - If this mod exists, milk drinking now follow the rules for milk bottle drinking.
 
 ## Updates
 

@@ -1,0 +1,19 @@
+{
+  "type": "recicropal:drinking",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "amount": 250,
+  "fluid": {
+    "fluid": "thermal:syrup"
+  },
+  "results": [
+    {
+      "type": "recicropal:finish_item",
+      "item": "thermal:syrup_bottle"
+    }
+  ]
+}

@@ -9,20 +9,18 @@
       }
     },
     {
-      "type": "forge:not",
-      "value": {
-        "type": "forge:mod_loaded",
-        "modid": "farmersdelight"
-      }
+      "type": "forge:mod_loaded",
+      "modid": "farmersdelight"
     }
   ],
+  "amount": 250,
   "fluid": {
     "tag": "forge:milk"
   },
   "results": [
     {
       "type": "recicropal:finish_item",
-      "item": "minecraft:milk_bucket"
+      "item": "farmersdelight:milk_bottle"
     }
   ]
 }

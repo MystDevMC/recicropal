@@ -1,0 +1,20 @@
+{
+  "type": "recicropal:filling",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "ingredient": {
+    "item": "minecraft:glass_bottle"
+  },
+  "fluid": {
+    "fluid": "thermal:syrup",
+    "amount": 250
+  },
+  "result": {
+    "id": "thermal:syrup_bottle",
+    "Count": 1
+  }
+}
