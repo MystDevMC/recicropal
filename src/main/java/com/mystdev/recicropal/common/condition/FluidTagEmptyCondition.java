@@ -31,6 +31,12 @@ public class FluidTagEmptyCondition implements ICondition {
             return FLUID_TAG_EMPTY_RL;
         }
     };
+
+    @Override
+    public String toString() {
+        return "fluid_exists(\"" + fluidTag.location() + "\")";
+    }
+
     TagKey<Fluid> fluidTag;
 
     @Override

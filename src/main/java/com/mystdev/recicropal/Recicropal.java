@@ -3,6 +3,7 @@ package com.mystdev.recicropal;
 import com.mojang.logging.LogUtils;
 import com.mystdev.recicropal.common.Config;
 import com.mystdev.recicropal.common.condition.DebugCondition;
+import com.mystdev.recicropal.common.condition.FluidExistsCondition;
 import com.mystdev.recicropal.common.condition.FluidTagEmptyCondition;
 import com.mystdev.recicropal.content.drinking.capability.DrinkHandler;
 import com.mystdev.recicropal.content.drinking.result.DrinkResults;
@@ -82,6 +83,7 @@ public class Recicropal {
     public static void registerConditions(RegisterEvent event) {
         event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
                        helper -> {
+                           CraftingHelper.register(FluidExistsCondition.SERIALIZER);
                            CraftingHelper.register(FluidTagEmptyCondition.SERIALIZER);
                            CraftingHelper.register(DebugCondition.SERIALIZER);
                        }

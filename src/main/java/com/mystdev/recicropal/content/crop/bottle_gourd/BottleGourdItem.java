@@ -71,7 +71,6 @@ public class BottleGourdItem extends BlockItem {
                     playSound(level, sourcePos, SoundEvents.BOTTLE_FILL);
                     return updatePlayerAndSucceed(player, hand, stack, result);
                 }
-                return InteractionResultHolder.fail(player.getItemInHand(hand));
             }
             if (!blockState.isAir()) {
                 var targetPos = sourcePos.relative(sourceRay.getDirection());
@@ -86,17 +85,16 @@ public class BottleGourdItem extends BlockItem {
                     return updatePlayerAndSucceed(player, hand, stack, result);
                 }
             }
+            if (DrinkManager.tryDrinking(player, level, stack, hand))
+                return InteractionResultHolder.consume(stack);
         }
 
         var clickedAir = blockState.isAir();
-        if (isSneaking && !clickedAir) {
+        if (!clickedAir) {
             InteractionResult interactionresult = super.useOn(new UseOnContext(player, hand, blockRay));
             return new InteractionResultHolder<>(interactionresult, player.getItemInHand(hand));
         }
-        else {
-            if (!DrinkManager.tryDrinking(player, level, stack, hand)) return super.use(level, player, hand);
-            return InteractionResultHolder.consume(stack);
-        }
+        return super.use(level, player, hand);
     }
 
     @NotNull

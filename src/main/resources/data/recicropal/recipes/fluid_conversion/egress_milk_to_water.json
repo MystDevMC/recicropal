@@ -1,0 +1,13 @@
+{
+  "type": "recicropal:fluid_conversion",
+  "conditions": [
+    {
+      "type": "recicropal:debug"
+    }
+  ],
+  "from": {
+    "fluid": "recicropal:milk"
+  },
+  "to": "minecraft:water",
+  "ingress": false
+}

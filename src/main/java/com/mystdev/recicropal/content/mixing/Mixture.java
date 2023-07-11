@@ -212,7 +212,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
         var potionsTag = new CompoundTag();
         this.components.forEach((key, value) -> potionsTag.put(key, value.serializeNBT()));
         tag.put(TAG_POTIONS, potionsTag);
-        if (this.category != null) tag.putString(TAG_CATEGORY, this.category.name);
+        if (this.category != null) tag.putString(TAG_CATEGORY, this.category.getSerializedName());
         if (this.color != null) tag.putInt(TAG_COLOR, this.color);
         return tag;
     }
@@ -352,14 +352,9 @@ public class Mixture implements INBTSerializable<CompoundTag> {
     }
 
     public enum Category implements StringRepresentable {
-        BENEFICIAL("beneficial"),
-        NEUTRAL("neutral"),
-        HARMFUL("harmful");
-        private final String name;
-
-        Category(String name) {
-            this.name = name;
-        }
+        BENEFICIAL,
+        NEUTRAL,
+        HARMFUL;
 
         public static Category from(MobEffectCategory category) {
             switch (category) {
@@ -391,20 +386,15 @@ public class Mixture implements INBTSerializable<CompoundTag> {
 
         @Override
         public String getSerializedName() {
-            return name;
+            return this.name().toLowerCase();
         }
     }
 
     // Hardcoded for now
     public enum Modifier implements StringRepresentable {
-        NORMAL("normal"),
-        LINGERING("lingering"),
-        SPLASH("splash");
-        private final String name;
-
-        Modifier(String name) {
-            this.name = name;
-        }
+        NORMAL,
+        LINGERING,
+        SPLASH;
 
         public static Modifier from(ItemStack potionItem) {
             var item = potionItem.getItem();
@@ -421,7 +411,7 @@ public class Mixture implements INBTSerializable<CompoundTag> {
 
         @Override
         public String getSerializedName() {
-            return name;
+            return this.name().toLowerCase();
         }
     }
 }

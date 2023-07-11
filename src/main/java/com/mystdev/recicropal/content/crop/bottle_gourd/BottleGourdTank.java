@@ -3,12 +3,15 @@ package com.mystdev.recicropal.content.crop.bottle_gourd;
 import com.google.common.base.Suppliers;
 import com.mystdev.recicropal.ModRecipes;
 import com.mystdev.recicropal.common.Config;
+import com.mystdev.recicropal.content.mixing.FluidConversionContainer;
+import com.mystdev.recicropal.content.mixing.FluidConversionRecipe;
 import com.mystdev.recicropal.content.mixing.MixingContainer;
 import com.mystdev.recicropal.content.mixing.MixingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -46,8 +49,53 @@ public class BottleGourdTank extends FluidTank {
                 .getRecipeFor(ModRecipes.MIXING_RECIPE.get(), container, lazyLevel.get());
     }
 
+    private Optional<FluidConversionRecipe> getConversionRecipe(FluidStack stack, boolean isIngress) {
+        return lazyLevel
+                .get()
+                .getRecipeManager()
+                .getRecipeFor(ModRecipes.FLUID_CONVERSION_RECIPE.get(),
+                              new FluidConversionContainer(stack, isIngress),
+                              lazyLevel.get());
+    }
+
+//    @Override
+//    public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
+//        // Conversion on drain
+//        var recipeOpt = getConversionRecipe(fluid, false);
+//        if (recipeOpt.isEmpty()) {
+//            return super.drain(resource, action);
+//        } else {
+//            var recipe = recipeOpt.get();
+//            if (resource.isEmpty() || !resource.isFluidEqual(recipe.convert(fluid))) {
+//                return FluidStack.EMPTY;
+//            }
+//            return recipe.convert(drain(resource.getAmount(), action));
+//        }
+//    }
+
+
+//    @Override
+//    public @NotNull FluidStack getFluid() {
+//        // Conversion on drain
+//        var recipeOpt = getConversionRecipe(fluid, false);
+//        var hiddenFluid = super.getFluid();
+//        if (recipeOpt.isEmpty()) return hiddenFluid;
+//        return recipeOpt.get().convert(hiddenFluid);
+//    }
+//
+//    @Override
+//    public @NotNull FluidStack getFluidInTank(int tank) {
+//        return this.getFluid();
+//    }
+
     @Override
     public int fill(FluidStack resource, FluidAction action) {
+        // Conversion on fill
+        var conversionRecipe = getConversionRecipe(resource, true);
+        if (conversionRecipe.isPresent()) {
+            resource = conversionRecipe.get().convert(resource);
+        }
+
         if (resource.isEmpty() || !isFluidValid(resource)) {
             return 0;
         }

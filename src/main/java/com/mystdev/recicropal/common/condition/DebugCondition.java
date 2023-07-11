@@ -26,6 +26,11 @@ public class DebugCondition implements ICondition {
     };
 
     @Override
+    public String toString() {
+        return DEBUG_RL.toString();
+    }
+
+    @Override
     public ResourceLocation getID() {
         return DEBUG_RL;
     }

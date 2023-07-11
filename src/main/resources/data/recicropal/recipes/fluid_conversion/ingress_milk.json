@@ -1,0 +1,13 @@
+{
+  "type": "recicropal:fluid_conversion",
+  "conditions": [
+    {
+      "type": "recicropal:fluid_exists",
+      "fluid": "minecraft:milk"
+    }
+  ],
+  "from": {
+    "tag": "forge:milk"
+  },
+  "to": "minecraft:milk"
+}

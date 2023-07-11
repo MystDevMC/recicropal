@@ -33,12 +33,12 @@ public class VirtualFluid extends ForgeFlowingFluid {
 
     @Override
     public Fluid getFlowing() {
-        return super.getFlowing();
+        return this;
     }
 
     @Override
     public Fluid getSource() {
-        return this;
+        return super.getSource();
     }
 
     @Override
@@ -57,8 +57,8 @@ public class VirtualFluid extends ForgeFlowingFluid {
     }
 
     public static class VirtualFluidProperties extends Properties {
-        public VirtualFluidProperties(VirtualFluidType type, Supplier<? extends VirtualFluid> still) {
-            super(() -> type, still, () -> Fluids.EMPTY); // Can this even be EMPTY? Better than null I guess.
+        public VirtualFluidProperties(VirtualFluidType type, Supplier<? extends VirtualFluid> fluid) {
+            super(() -> type, fluid, fluid); // Can this even be EMPTY? Better than null I guess.
         }
     }
 

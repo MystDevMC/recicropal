@@ -1,0 +1,15 @@
+{
+  "type": "recicropal:fluid_conversion",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "from": {
+    "fluid": "recicropal:potion"
+  },
+  "to": "create:potion",
+  "function": "create_potion_from_potion",
+  "ingress": false
+}

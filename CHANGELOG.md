@@ -98,10 +98,21 @@
           amounts of mixed fluids.
         - A special property named `process`. Similar to other aforementioned recipes.
 - Potion mixing currently uses built-in potion and mixture fluids.
+- Data-driven fluid conversion system for gourd bottle filling and mixing. This is made
+  mostly for integrations.
+    - Example recipes can be found within the mod's jar.
+    - Currently, the `ingress` property does not do anything special yet.
 
 ### Integrations
 
-- Added `crops` and `vegetables` tags to bottle gourds.
+- `forge`: Added `crops` and `vegetables` tags to bottle gourds.
+- Milk fluid inserted into gourd bottles would be converted to `minecraft`'s milk.
+    - This may make complications when there's other variants of milk.
+- `create`: `create`'s potion fluids now automatically convert to this mod's potions.
+- `create`: Honey fluid inserted to gourd bottles would be converted to `create`'s honey.
+    - This may make complications when there's other variants of honey.
+- `create`: `create`'s potion fluids now automatically convert to this mod's potions.
+- `cofh_core`: Potion fluid inserted to gourd bottles would be converted to this mod's potions.
 - `sereneseasons`: Added season tags for seeds and blocks.
 
 ## Updates
@@ -111,7 +122,6 @@
 - Potions, honey bottles, and milk buckets now can be used to fill gourd bottles.
 - Gourd bottle blocks now show the fluid contained graphically.
 - Gourd bottle blocks now emit comparator signal.
-- Gourd bottles now can only be placed while sneaking.
 - Gourd bottles capacity can now be configured.
 - Gourd bottle blocks transfer amount can now be configured.
 

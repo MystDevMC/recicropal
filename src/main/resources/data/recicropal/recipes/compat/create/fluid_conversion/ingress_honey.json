@@ -1,0 +1,13 @@
+{
+  "type": "recicropal:fluid_conversion",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "from": {
+    "tag": "forge:honey"
+  },
+  "to": "create:honey"
+}
