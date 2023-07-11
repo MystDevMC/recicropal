@@ -1,6 +1,7 @@
 package com.mystdev.recicropal.content.mixing;
 
 import com.mystdev.recicropal.ModFluids;
+import com.mystdev.recicropal.common.ColorUtils;
 import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import com.mystdev.recicropal.common.fluid.VirtualFluid;
 import com.mystdev.recicropal.content.drinking.DrinkingRecipe;
@@ -87,11 +88,10 @@ public class PotionFluid extends VirtualFluid {
         @Override
         public Component getDescription(FluidStack stack) {
             var item = PotionFluid.extractPotionFrom(stack);
-            var potion = PotionUtils.getPotion(item);
-            var color = PotionUtils.getColor(potion);
+            var color = PotionUtils.getColor(item);
             return Component
                     .translatable(item.getDescriptionId())
-                    .withStyle(s -> s.withColor(color));
+                    .withStyle(s -> s.withColor(ColorUtils.clampToBrightness(color, 128)));
         }
 
         @Override

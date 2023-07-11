@@ -1,6 +1,7 @@
 package com.mystdev.recicropal.content.mixing;
 
 import com.mystdev.recicropal.ModFluids;
+import com.mystdev.recicropal.common.ColorUtils;
 import com.mystdev.recicropal.common.fluid.VirtualFluid;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -24,7 +25,7 @@ public class MixtureFluid extends VirtualFluid {
             var info = Mixture.getColorAndCategory(stack);
             return Component
                     .translatable(this.getDescriptionId() + "." + info.right().getSerializedName())
-                    .withStyle(s -> s.withColor(info.left()));
+                    .withStyle(s -> s.withColor(ColorUtils.clampToBrightness(info.left(), 128)));
         }
 
         @Override
