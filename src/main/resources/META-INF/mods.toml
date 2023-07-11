@@ -27,7 +27,7 @@ displayName = "Recicropal" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="repicropal.png" #optional
+#logoFile="recicropal.png" #optional
 # A text field displayed in the mod UI
 #credits="Thanks for this example mod goes to Java" #optional
 # A text field displayed in the mod UI
@@ -64,3 +64,6 @@ mandatory = true
 versionRange = "[1.19.2,1.20)"
 ordering = "NONE"
 side = "BOTH"
+
+[modproperties.recicropal]
+catalogueItemIcon="recicropal:bottle_gourd"
