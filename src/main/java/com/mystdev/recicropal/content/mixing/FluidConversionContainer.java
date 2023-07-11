@@ -7,6 +7,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 public class FluidConversionContainer extends RecipeWrapper {
     public final FluidStack fluidStack;
     public final boolean isIngress;
+
     public FluidConversionContainer(FluidStack fluidStack, boolean isIngress) {
         super(new ItemStackHandler());
         this.fluidStack = fluidStack;

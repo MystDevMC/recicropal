@@ -188,22 +188,31 @@ public class ClientEvents {
         var dv = sprite.getV0() - sprite.getV1();
         var crop = dv - (cropY * dv);
         blit(poseStack.last().pose(),
-                          x0,
-                          x0 + w,
-                          y0,
-                          y0 + h,
-                          0,
-                          sprite.getU0(),
-                          sprite.getU1(),
-                          sprite.getV0(),
-                          sprite.getV1() + crop
+             x0,
+             x0 + w,
+             y0,
+             y0 + h,
+             0,
+             sprite.getU0(),
+             sprite.getU1(),
+             sprite.getV0(),
+             sprite.getV1() + crop
         );
 
     }
 
 
     // Got from vanilla's GuiComponent
-    public static void blit(Matrix4f poseStack, int x0, int y0, int w, int h, int blitOffset, float u0, float u1, float v0, float v1) {
+    public static void blit(Matrix4f poseStack,
+                            int x0,
+                            int y0,
+                            int w,
+                            int h,
+                            int blitOffset,
+                            float u0,
+                            float u1,
+                            float v0,
+                            float v1) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);

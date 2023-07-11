@@ -72,6 +72,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     public boolean hasAmount() {
         return amount != null;
     }
+
     @Nullable
     public Integer getAmount() {
         return amount;

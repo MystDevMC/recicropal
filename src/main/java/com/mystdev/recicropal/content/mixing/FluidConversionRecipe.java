@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class FluidConversionRecipe implements Recipe<FluidConversionContainer> {
 
+    public static final Serializer SERIALIZER = new Serializer();
     private final ResourceLocation rl;
     private final FluidIngredient ingredient;
     private final Fluid fluid;
@@ -42,6 +43,7 @@ public class FluidConversionRecipe implements Recipe<FluidConversionContainer> {
         if (this.isIngress != container.isIngress) return false;
         return this.ingredient.test(container.fluidStack);
     }
+
     public FluidStack convert(FluidStack stack) {
         return this.transformer.convert(fluid, stack);
     }
@@ -61,7 +63,23 @@ public class FluidConversionRecipe implements Recipe<FluidConversionContainer> {
         return ModRecipes.FLUID_CONVERSION_RECIPE.get();
     }
 
-    public static final Serializer SERIALIZER = new Serializer();
+    @Deprecated
+    @Override
+    public ItemStack assemble(FluidConversionContainer container) {
+        return ItemStack.EMPTY;
+    }
+
+    @Deprecated
+    @Override
+    public boolean canCraftInDimensions(int x, int y) {
+        return false;
+    }
+
+    @Deprecated
+    @Override
+    public ItemStack getResultItem() {
+        return ItemStack.EMPTY;
+    }
 
     public static class Serializer implements RecipeSerializer<FluidConversionRecipe> {
 
@@ -92,24 +110,6 @@ public class FluidConversionRecipe implements Recipe<FluidConversionContainer> {
             buf.writeBoolean(recipe.isIngress);
             buf.writeEnum(recipe.transformer);
         }
-    }
-
-    @Deprecated
-    @Override
-    public ItemStack assemble(FluidConversionContainer container) {
-        return ItemStack.EMPTY;
-    }
-
-    @Deprecated
-    @Override
-    public boolean canCraftInDimensions(int x, int y) {
-        return false;
-    }
-
-    @Deprecated
-    @Override
-    public ItemStack getResultItem() {
-        return ItemStack.EMPTY;
     }
 
 }

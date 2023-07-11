@@ -43,10 +43,6 @@ public enum FluidTransformer {
         this.converter = converter;
     }
 
-    public FluidStack convert(Fluid fluid, FluidStack stack) {
-        return this.converter.apply(fluid, stack);
-    }
-
     public static FluidTransformer tryParse(String name) {
         if (name.isEmpty()) return NORMAL;
         return Arrays
@@ -54,5 +50,9 @@ public enum FluidTransformer {
                 .filter(transformer -> transformer.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(NORMAL);
+    }
+
+    public FluidStack convert(Fluid fluid, FluidStack stack) {
+        return this.converter.apply(fluid, stack);
     }
 }

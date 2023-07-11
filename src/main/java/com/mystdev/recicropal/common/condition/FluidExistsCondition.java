@@ -2,17 +2,11 @@ package com.mystdev.recicropal.common.condition;
 
 import com.google.gson.JsonObject;
 import com.mystdev.recicropal.Recicropal;
-import com.mystdev.recicropal.common.fluid.ModFluidUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
-import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
 
 public class FluidExistsCondition implements ICondition {
     public static final ResourceLocation FLUID_EXISTS_RL = new ResourceLocation(Recicropal.MOD_ID, "fluid_exists");

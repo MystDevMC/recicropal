@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DrinkHandler implements IDrinkHandler, ICapabilityProvider {
     private final LazyOptional<IDrinkHandler> lazyBackend = LazyOptional.of(() -> this);
-
+    private final EffectWaiter effectWaiter = new EffectWaiter();
     private DrinkContext ctx;
 
     public static void attachPlayerCaps(AttachCapabilitiesEvent<Entity> event) {
@@ -31,7 +31,6 @@ public class DrinkHandler implements IDrinkHandler, ICapabilityProvider {
         this.ctx = ctx;
     }
 
-    private final EffectWaiter effectWaiter = new EffectWaiter();
     @Override
     public EffectWaiter getEffectWaiter() {
         return effectWaiter;

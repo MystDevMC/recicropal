@@ -31,13 +31,12 @@ public class FluidTagEmptyCondition implements ICondition {
             return FLUID_TAG_EMPTY_RL;
         }
     };
+    TagKey<Fluid> fluidTag;
 
     @Override
     public String toString() {
         return "fluid_exists(\"" + fluidTag.location() + "\")";
     }
-
-    TagKey<Fluid> fluidTag;
 
     @Override
     public ResourceLocation getID() {
