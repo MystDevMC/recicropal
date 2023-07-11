@@ -1,8 +1,9 @@
 package com.mystdev.recicropal.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.mystdev.recicropal.ModItems;
 import com.mystdev.recicropal.Recicropal;
@@ -11,6 +12,7 @@ import com.mystdev.recicropal.content.crop.bottle_gourd.BottleGourdBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
@@ -129,7 +131,6 @@ public class ClientEvents {
                      startV + 16 + 2 * offset,
                      mc.options.getBackgroundColor(0.8F));
         }
-
         RenderSystem.disableDepthTest();
         poseStack.pushPose();
         poseStack.translate(0, 0, -.005);
@@ -157,42 +158,59 @@ public class ClientEvents {
             var startV = -(htot / 2) + offset;
             var ratio = (float) fluid.getAmount() / bottle.tank.getCapacity();
             var fluidHeight = Math.round((ratio) * 16);
-
-            blit(poseStack,
-                 startH,
-                 startV + (16 - fluidHeight),
-                 fluidSprite.getWidth(),
-                 fluidHeight,
-                 fluidSprite,
-                 ratio);
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            drawScaledTexture(poseStack,
+                              startH,
+                              startV + (16 - fluidHeight),
+                              fluidSprite.getWidth(),
+                              fluidHeight,
+                              fluidSprite,
+                              ratio);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            RenderSystem.disableBlend();
+            RenderSystem.disableDepthTest();
         }
-
         poseStack.popPose();
         poseStack.popPose();
         poseStack.popPose();
 
     }
 
-    private static void blit(PoseStack poseStack,
-                             int x0,
-                             int y0,
-                             int w,
-                             int h,
-                             TextureAtlasSprite sprite,
-                             float cropY) {
+    private static void drawScaledTexture(PoseStack poseStack,
+                                          int x0,
+                                          int y0,
+                                          int w,
+                                          int h,
+                                          TextureAtlasSprite sprite,
+                                          float cropY) {
         var dv = sprite.getV0() - sprite.getV1();
         var crop = dv - (cropY * dv);
-        Gui.innerBlit(poseStack.last().pose(),
-                      x0,
-                      x0 + w,
-                      y0,
-                      y0 + h,
-                      0,
-                      sprite.getU0(),
-                      sprite.getU1(),
-                      sprite.getV0(),
-                      sprite.getV1() + crop
+        blit(poseStack.last().pose(),
+                          x0,
+                          x0 + w,
+                          y0,
+                          y0 + h,
+                          0,
+                          sprite.getU0(),
+                          sprite.getU1(),
+                          sprite.getV0(),
+                          sprite.getV1() + crop
         );
+
+    }
+
+
+    // Got from vanilla's GuiComponent
+    public static void blit(Matrix4f poseStack, int x0, int y0, int w, int h, int blitOffset, float u0, float u1, float v0, float v1) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.vertex(poseStack, (float) x0, (float) h, (float) blitOffset).uv(u0, v1).endVertex();
+        bufferbuilder.vertex(poseStack, (float) y0, (float) h, (float) blitOffset).uv(u1, v1).endVertex();
+        bufferbuilder.vertex(poseStack, (float) y0, (float) w, (float) blitOffset).uv(u1, v0).endVertex();
+        bufferbuilder.vertex(poseStack, (float) x0, (float) w, (float) blitOffset).uv(u0, v0).endVertex();
+        BufferUploader.drawWithShader(bufferbuilder.end());
     }
 }
