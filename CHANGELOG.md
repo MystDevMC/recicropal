@@ -21,11 +21,11 @@
     - Different types of potion also modifies the resulting length of each drink.
         - Splash potions averages the durations of all effects added. This averaging effect
           is controlled by the proportions too.
-            - The more splash potion is in the mix, the more well-distributed the durations.
+            - The more splash potion is in the mix, the more well-distributed the durations become.
         - Lingering potions extends the duration of applied effects per drink depending on
           their proportions in the mix.
             - The more lingering potion is in the mix, the longer the duration of each effects
-              per drink.
+              per drink become.
             - The maximum length can be achieved here is twice the effect's length. This happens
               when 100% of the potions in the mix were all lingering.
     - Instantaneous effects will wait until enough "moles" or amounts of serving has been drunk.
@@ -114,7 +114,6 @@
 - `create`: `create`'s potion fluids now automatically convert to this mod's potions.
 - `create`: Honey fluid inserted to gourd bottles would be converted to `create`'s honey.
     - This may make complications when there's other variants of honey.
-- `create`: `create`'s potion fluids now automatically convert to this mod's potions.
 - `cofh_core`: Potion fluid inserted to gourd bottles would be converted to this mod's potions.
 - `thermal`: Gourd bottles now accept syrup bottles for interaction. Syrup can also be drunk.
 - `farmersdelight`: Gourd bottles now accept milk bottles for interaction.
@@ -127,7 +126,7 @@
 - Potions, honey bottles, and milk buckets now can be used to fill gourd bottles.
 - Gourd bottle blocks now show the fluid contained graphically.
 - Gourd bottle blocks now emit comparator signal.
-- Gourd bottles capacity can now be configured.
+- Gourd bottles' capacity can now be configured.
 - Gourd bottle blocks transfer amount can now be configured.
 
 ## Fixes
