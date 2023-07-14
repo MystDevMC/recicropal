@@ -172,7 +172,7 @@ dependencies {
     // MC<minecraft_version>-<registrate_version>
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
     // [MC<minecraft_version>,MC<next_minecraft_version>)
-    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: '[MC1.19-1.1.5,)')
+    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: '[MC1.19-1.1.5,MC1.19.3)')
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
@@ -190,6 +190,8 @@ jar {
         ])
     }
 }
+
+jarJar.enable()
 
 reobf {
     jarJar { }

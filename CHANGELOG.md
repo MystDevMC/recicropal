@@ -1,10 +1,13 @@
+# 1.0.0.a
+`HOTFIX` Fix Registrate not being found crashing the game.
+
 # 1.0.0
 
 ## Additions
 
 ### Mod
 
-- This mod's seeds and gourd bottles are now added into villager house loot tables
+- This mod's seeds and gourd bottles are now added into villager house loot tables.
 - Bottle gourd patches now spawn as a vegetation feature in vanilla savanna biomes, in a similar manner to pumpkins.
 - New structures are added to villages
     - A small pumpkin garden can now be found in taiga villages
